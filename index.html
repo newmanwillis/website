@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --ink: #0f0e0c;
+      --muted: #8a8880;
+      --accent: #1a1a1a;
+      --tag-bg: #e8e6e0;
+      --border: #dedad2;
+      --white: #ffffff;
+      --hover-lift: translateY(-3px);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 3rem;
+      background: rgba(245, 244, 240, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.875rem;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--ink); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 3rem;
+      gap: 4rem;
+      padding-top: 80px;
+    }
+
+    .hero-left { max-width: 560px; }
+
+    .hero-eyebrow {
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.6rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 420px;
+      margin-bottom: 2.4rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.75s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 2px;
+      font-size: 0.875rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #333;
+      transform: var(--hover-lift);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--ink);
+      transform: var(--hover-lift);
+    }
+
+    .hero-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.9s;
+    }
+
+    .hero-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.8rem 1.5rem;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .hero-card:hover {
+      transform: var(--hover-lift);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.07);
+    }
+
+    .hero-card:nth-child(2) { margin-top: 1.8rem; }
+    .hero-card:nth-child(4) { margin-top: -1.8rem; }
+
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── SECTION ── */
+    section {
+      padding: 6rem 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .section-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── FILTERS ── */
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.45rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.04em;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--ink);
+      color: var(--white);
+      border-color: var(--ink);
+    }
+
+    /* ── PROJECT GRID ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .project-card:hover {
+      transform: var(--hover-lift);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+    }
+
+    .project-card.hidden { display: none; }
+
+    .project-thumb {
+      width: 100%;
+      aspect-ratio: 16/10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.04));
+    }
+
+    .thumb-gaming { background: linear-gradient(135deg, #e8ede8 0%, #d0dfd0 100%); }
+    .thumb-arvr   { background: linear-gradient(135deg, #e8e8f0 0%, #d0d0e8 100%); }
+    .thumb-ui     { background: linear-gradient(135deg, #f0ebe8 0%, #e4d8d0 100%); }
+
+    .project-body { padding: 1.4rem; }
+
+    .project-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      background: var(--tag-bg);
+      color: var(--muted);
+      border-radius: 2px;
+    }
+
+    .project-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .project-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .project-link {
+      font-size: 0.78rem;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 1px;
+      transition: opacity 0.2s;
+    }
+
+    .project-link:hover { opacity: 0.5; }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      line-height: 1.75;
+    }
+
+    .about-text p strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+    .skills-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .skill-item {
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+    }
+
+    .skill-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .skill-tools {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── CONTACT ── */
+    .contact-inner {
+      max-width: 640px;
+    }
+
+    .contact-inner p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      line-height: 1.75;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 3rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-top: 120px; min-height: auto; padding-bottom: 4rem; }
+      .hero-right { display: none; }
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      nav { padding: 1.2rem 1.5rem; }
+      section { padding: 4rem 1.5rem; }
+      .hero { padding: 6rem 1.5rem 3rem; }
+      .divider { margin: 0 1.5rem; }
+      footer { padding: 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">YN</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Game Designer · AR/VR · UI/UX</p>
+      <h1 class="hero-name">Your<br>Name</h1>
+      <p class="hero-desc">I design and build immersive experiences — from game interfaces to spatial AR/VR environments and polished UI systems.</p>
+      <div class="hero-ctas">
+        <a href="#work" class="btn btn-primary">View Work →</a>
+        <a href="#contact" class="btn btn-ghost">Get in touch</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="card-icon">🎮</div>
+        <div class="card-label">Game Design</div>
+        <div class="card-sub">Mechanics · Level Design · HUDs</div>
+      </div>
+      <div class="hero-card">
+        <div class="card-icon">🥽</div>
+        <div class="card-label">AR / VR</div>
+        <div class="card-sub">Spatial UI · Interaction Design</div>
+      </div>
+      <div class="hero-card">
+        <div class="card-icon">✦</div>
+        <div class="card-label">UI/UX</div>
+        <div class="card-sub">Design Systems · Prototyping</div>
+      </div>
+      <div class="hero-card">
+        <div class="card-icon">⚙︎</div>
+        <div class="card-label">Tools</div>
+        <div class="card-sub">Unity · Unreal · Figma · WebXR</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="section-header reveal">
+      <h2 class="section-title">Selected Work</h2>
+      <span class="section-count">06 Projects</span>
+    </div>
+
+    <div class="filters reveal">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="gaming">Gaming</button>
+      <button class="filter-btn" data-filter="arvr">AR / VR</button>
+      <button class="filter-btn" data-filter="ui">UI / UX</button>
+    </div>
+
+    <div class="projects-grid">
+
+      <div class="project-card reveal" data-category="gaming">
+        <div class="project-thumb thumb-gaming">🎮</div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">Gaming</span><span class="tag">Unity</span></div>
+          <div class="project-title">Project Title One</div>
+          <div class="project-desc">A brief description of this project — what it is, what you did, and what makes it interesting.</div>
+          <a href="#" class="project-link">View case study ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-category="arvr">
+        <div class="project-thumb thumb-arvr">🥽</div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">AR/VR</span><span class="tag">WebXR</span></div>
+          <div class="project-title">Project Title Two</div>
+          <div class="project-desc">A brief description of this project — what it is, what you did, and what makes it interesting.</div>
+          <a href="#" class="project-link">View case study ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-category="ui">
+        <div class="project-thumb thumb-ui">✦</div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">UI/UX</span><span class="tag">Figma</span></div>
+          <div class="project-title">Project Title Three</div>
+          <div class="project-desc">A brief description of this project — what it is, what you did, and what makes it interesting.</div>
+          <a href="#" class="project-link">View case study ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-category="arvr">
+        <div class="project-thumb thumb-arvr">🌐</div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">AR/VR</span><span class="tag">Unreal</span></div>
+          <div class="project-title">Project Title Four</div>
+          <div class="project-desc">A brief description of this project — what it is, what you did, and what makes it interesting.</div>
+          <a href="#" class="project-link">View case study ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-category="gaming">
+        <div class="project-thumb thumb-gaming">⚔️</div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">Gaming</span><span class="tag">HUD Design</span></div>
+          <div class="project-title">Project Title Five</div>
+          <div class="project-desc">A brief description of this project — what it is, what you did, and what makes it interesting.</div>
+          <a href="#" class="project-link">View case study ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-category="ui">
+        <div class="project-thumb thumb-ui">📱</div>
+        <div class="project-body">
+          <div class="project-tags"><span class="tag">UI/UX</span><span class="tag">Design System</span></div>
+          <div class="project-title">Project Title Six</div>
+          <div class="project-desc">A brief description of this project — what it is, what you did, and what makes it interesting.</div>
+          <a href="#" class="project-link">View case study ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header reveal">
+      <h2 class="section-title">About</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>Hi, I'm <strong>Your Name</strong> — a designer and developer specializing in <strong>interactive and immersive experiences</strong>. I work across the full spectrum from game interfaces and AR/VR spatial design to polished UI systems.</p>
+        <p>I care about the details: the feel of an interaction, the clarity of a heads-up display, the way spatial design guides attention without demanding it. My background spans <strong>games, extended reality, and product UI</strong>, giving me a unique lens on how people interact with digital worlds.</p>
+        <p>Currently open to freelance projects and full-time opportunities.</p>
+        <br />
+        <a href="#contact" class="btn btn-ghost">Let's talk →</a>
+      </div>
+      <div class="skills-list reveal">
+        <div class="skill-item">
+          <div class="skill-name">Game Design</div>
+          <div class="skill-tools">Unity, Unreal Engine, C#, Blueprints</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">AR / VR</div>
+          <div class="skill-tools">WebXR, ARKit, Meta Quest, Spark AR</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">UI / UX Design</div>
+          <div class="skill-tools">Figma, Prototyping, Design Systems</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Frontend Dev</div>
+          <div class="skill-tools">HTML/CSS, JavaScript, React, Three.js</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Motion & 3D</div>
+          <div class="skill-tools">After Effects, Blender, Shader Graph</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Collaboration</div>
+          <div class="skill-tools">Notion, Miro, Git, Jira</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <h2 class="section-title">Get in Touch</h2>
+    </div>
+    <div class="contact-inner reveal">
+      <p>Have a project in mind, want to collaborate, or just want to say hello? I'd love to hear from you. I'm especially interested in work involving immersive or interactive experiences.</p>
+      <div class="contact-links">
+        <a href="mailto:hello@yourname.com" class="btn btn-primary">hello@yourname.com</a>
+        <a href="#" class="btn btn-ghost">LinkedIn ↗</a>
+        <a href="#" class="btn btn-ghost">ArtStation ↗</a>
+        <a href="#" class="btn btn-ghost">GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Your Name</span>
+    <span>Designed & built with care</span>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Filter buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.project-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        cards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
