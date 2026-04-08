@@ -231,3 +231,90 @@ body {
   .block-image-grid { grid-template-columns: 1fr; }
   .meta-row { gap: 1.5rem; }
 }
+
+/* ── LIGHTBOX ── */
+
+/* Make all content images look clickable */
+.block-image img,
+.block-image-grid img {
+  cursor: zoom-in;
+  transition: opacity 0.15s;
+}
+.block-image img:hover,
+.block-image-grid img:hover {
+  opacity: 0.88;
+}
+
+/* Overlay backdrop */
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(10, 10, 14, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: zoom-out;
+}
+
+.lightbox-overlay.active {
+  display: flex;
+  animation: lbFadeIn 0.2s ease;
+}
+
+@keyframes lbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* The image inside */
+.lightbox-overlay img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  cursor: default;        /* don't show zoom-out on the image itself */
+  animation: lbScaleIn 0.2s ease;
+  user-select: none;
+}
+
+@keyframes lbScaleIn {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Close button (top-right corner) */
+.lightbox-close {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.4rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  z-index: 1001;
+}
+
+.lightbox-close:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+.lightbox-close svg {
+  width: 16px;
+  height: 16px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+

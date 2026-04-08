@@ -96,5 +96,57 @@
     <a href="../index.html">← Back to all projects</a>
   </div>
 
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script>
+    (function () {
+      const overlay  = document.getElementById('lightbox');
+      const lbImg    = document.getElementById('lightbox-img');
+      const closeBtn = document.getElementById('lightbox-close');
+
+      function open(src, alt) {
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function close() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        // small delay so the image doesn't flash away before fade
+        setTimeout(() => { lbImg.src = ''; }, 200);
+      }
+
+      // Attach click to all content images (not the lightbox image itself)
+      document.querySelectorAll('.block-image img, .block-image-grid img')
+        .forEach(function (img) {
+          img.addEventListener('click', function () {
+            open(img.src, img.alt);
+          });
+        });
+
+      // Close on overlay backdrop click (not on the image)
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
+      });
+
+      // Close button
+      closeBtn.addEventListener('click', close);
+
+      // Close on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) close();
+      });
+    })();
+  </script>
+
 </body>
 </html>
