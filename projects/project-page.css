@@ -8,7 +8,7 @@
   --muted: #8a8880;
   --border: #dedad2;
   --white: #ffffff;
-  --max: 760px;
+  --max: 900px;
 }
 
 body {
@@ -21,10 +21,12 @@ body {
 }
 
 /* ── BACK BUTTON ── */
+
+/* Always fixed so it never causes layout reflow */
 .back-bar {
   position: fixed;
   top: 1.5rem;
-  left: 2rem;
+  left: 1.5rem;
   z-index: 100;
 }
 
@@ -36,10 +38,37 @@ body {
   color: var(--muted);
   font-size: 0.85rem;
   letter-spacing: 0.03em;
-  transition: color 0.2s;
+  transition: color 0.2s, opacity 0.2s;
 }
 
 .back-btn:hover { color: var(--ink); }
+
+.back-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Narrow screens: button fades out as page scrolls so it doesn't
+   permanently overlap content. JS below handles the fade. */
+.back-bar.scrolled-past {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Thin invisible spacer so content doesn't start behind the button area */
+.back-spacer {
+  height: 3rem;
+  display: none;
+}
+
+@media (max-width: 1150px) {
+  .back-spacer { display: block; }
+}
 
 .back-btn svg {
   width: 14px;
@@ -224,7 +253,6 @@ body {
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
   .page-content { padding: 2.5rem 1.5rem 4rem; }
-  .back-bar { padding: 1.2rem 1.5rem; }
   .block-image-grid { grid-template-columns: 1fr; }
   .meta-row { gap: 1.5rem; }
 }
