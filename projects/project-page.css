@@ -22,13 +22,10 @@ body {
 
 /* ── BACK BUTTON ── */
 .back-bar {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: rgba(245, 244, 240, 0.9);
-  backdrop-filter: blur(10px);
-  z-index: 10;
+  position: fixed;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 100;
 }
 
 .back-btn {
