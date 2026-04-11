@@ -75,9 +75,20 @@
     }
 
     .project-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
       gap: 1.25rem;
+    }
+
+    .project-card {
+      flex: 0 1 calc((100% - 2 * 1.25rem) / 3);
+    }
+
+    /* Center only when a single card is alone in its row */
+    .project-card:last-child:nth-child(3n+1) {
+      margin-left: auto;
+      margin-right: auto;
     }
 
     /* ── PROJECT CARD ── */
@@ -106,6 +117,8 @@
     .project-card:nth-child(4) { animation-delay: 0.8s; }
     .project-card:nth-child(5) { animation-delay: 0.9s; }
     .project-card:nth-child(6) { animation-delay: 1.0s; }
+    .project-card:nth-child(7) { animation-delay: 1.1s; }
+    .project-card:nth-child(8) { animation-delay: 1.2s; }
 
     .card-thumb {
       width: 100%;
@@ -188,10 +201,12 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 800px) {
-      .project-grid { grid-template-columns: repeat(2, 1fr); }
+      .project-card { flex: 0 1 calc((100% - 1.25rem) / 2); }
+      .project-card:last-child:nth-child(3n+1) { margin-left: 0; margin-right: 0; }
+      .project-card:last-child:nth-child(2n+1) { margin-left: auto; margin-right: auto; }
     }
     @media (max-width: 520px) {
-      .project-grid { grid-template-columns: 1fr; }
+      .project-card { flex: 0 1 100%; }
       header { padding: 3.5rem 1.5rem 2.5rem; }
       .grid-section { padding: 0 1.5rem 4rem; }
     }
@@ -274,6 +289,28 @@
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
       </a>
+
+      <!-- PROJECT 7 -->
+      <!-- TO SWAP IMAGE: replace the src below with your own, e.g. src="images/project7-thumb.jpg" -->
+      <a class="project-card" href="projects/project-7.html">
+        <img class="card-thumb" src="images/project7-thumb.jpg" alt="Project Seven thumbnail" />
+        <div class="card-body">
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> Gaming</div>
+          <div class="card-title">Project Seven Title</div>
+          <div class="card-desc">Short description of what this project is and what makes it special.</div>
+        </div>
+      </a>
+
+      <!-- PROJECT 8 — hidden, uncomment to restore
+      <a class="project-card" href="projects/project-8.html">
+        <img class="card-thumb" src="images/project8-thumb.jpg" alt="Project Eight thumbnail" />
+        <div class="card-body">
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> Gaming</div>
+          <div class="card-title">Project Eight Title</div>
+          <div class="card-desc">Short description of what this project is and what makes it special.</div>
+        </div>
+      </a>
+      -->
 
     </div>
   </main>
