@@ -129,11 +129,37 @@
     }
 
     .card-category {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-size: 0.7rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 0.35rem;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid;
+      line-height: 1.6;
+      flex-shrink: 0;
+    }
+
+    .tag-personal {
+      color: #7c6fcf;
+      border-color: #7c6fcf;
+    }
+
+    .tag-professional {
+      color: #4a8fc4;
+      border-color: #4a8fc4;
     }
 
     .card-title {
@@ -171,7 +197,7 @@
 
   <header>
     <h1>Newman Willis</h1>
-    <p>Unity Developer <br> AR, VR, UI/UX, and gaming projects</p>
+    <p>Unity Developer <br> AR, VR, UI/UX, mobile, and gaming projects</p>
   </header>
 
   <main class="grid-section">
@@ -184,8 +210,8 @@
       <a class="project-card" href="projects/project-1.html">
         <img class="card-thumb" src="images/project1-thumb.jpg" alt="Project One thumbnail" />
         <div class="card-body">
-          <div class="card-category">Gaming</div>
-          <div class="card-title">Project One Title</div>
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> Gaming</div>
+          <div class="card-title">Google Robotics UI</div>
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
       </a>
@@ -195,8 +221,8 @@
       <a class="project-card" href="projects/project-2.html">
         <img class="card-thumb" src="images/project2-thumb.jpg" alt="Project Two thumbnail" />
         <div class="card-body">
-          <div class="card-category">AR / VR</div>
-          <div class="card-title">Project Two Title</div>
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> AR / VR</div>
+          <div class="card-title">Sturfee Projects</div>
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
       </a>
@@ -206,8 +232,8 @@
       <a class="project-card" href="projects/project-3.html">
         <img class="card-thumb" src="images/project3-thumb.jpg" alt="Project Three thumbnail" />
         <div class="card-body">
-          <div class="card-category">UI / UX</div>
-          <div class="card-title">Project Three Title</div>
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> UI / UX</div>
+          <div class="card-title">Breach</div>
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
       </a>
@@ -217,7 +243,7 @@
       <a class="project-card" href="projects/project-4.html">
         <img class="card-thumb" src="images/project4-thumb.jpg" alt="Project Four thumbnail" />
         <div class="card-body">
-          <div class="card-category">AR / VR</div>
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> AR / VR</div>
           <div class="card-title">Project Four Title</div>
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
@@ -228,7 +254,7 @@
       <a class="project-card" href="projects/project-5.html">
         <img class="card-thumb" src="images/project5-thumb.jpg" alt="Project Five thumbnail" />
         <div class="card-body">
-          <div class="card-category">Gaming</div>
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> Gaming</div>
           <div class="card-title">Project Five Title</div>
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
@@ -239,7 +265,7 @@
       <a class="project-card" href="projects/project-6.html">
         <img class="card-thumb" src="images/project6-thumb.jpg" alt="Project Six thumbnail" />
         <div class="card-body">
-          <div class="card-category">UI / UX</div>
+          <div class="card-category"><span class="card-tag tag-personal">Personal</span> UI / UX</div>
           <div class="card-title">Project Six Title</div>
           <div class="card-desc">Short description of what this project is and what makes it special.</div>
         </div>
