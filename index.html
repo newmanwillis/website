@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Name — Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400&family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&family=Barlow+Semi+Condensed:wght@600&family=Urbanist:wght@600;700;800&family=Figtree:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Merriweather:wght@700&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400&family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&family=Barlow+Semi+Condensed:wght@400;600;700&family=Urbanist:wght@600;700;800&family=Figtree:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -34,23 +34,59 @@
 
     header h1 {
       font-family: 'Oswald', sans-serif;
-      font-size: clamp(2rem, 5vw, 4rem);
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
       font-weight: 600;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.01em;
       line-height: 1;
-      margin-bottom: 1rem;
+      margin-bottom: 1.1rem;
       opacity: 0;
       animation: fadeUp 0.7s ease forwards 0.1s;
     }
 
-    header p {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 480px;
-      margin: 0 auto;
+    .header-role {
+      font-size: 1.15rem;
+      color: #2e2c2a;
+      margin-bottom: 0.4rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.25s;
+    }
+
+    .header-bio {
+      font-size: 1rem;
+      color: #3e3c3a;
+      max-width: 400px;
+      margin: 0 auto 1.1rem;
       line-height: 1.65;
       opacity: 0;
-      animation: fadeUp 0.7s ease forwards 0.3s;
+      animation: fadeUp 0.7s ease forwards 0.38s;
+    }
+
+    .header-contact {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-size: 0.88rem;
+      color: #4e4c49;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .header-contact .contact-divider {
+      opacity: 0.4;
+    }
+
+    .header-contact a {
+      color: #4e4c49;
+      text-decoration: none;
+      border-bottom: 1px solid #9e9c99;
+      padding-bottom: 1px;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .header-contact a:hover {
+      color: var(--ink);
+      border-color: var(--ink);
     }
 
     /* ── GRID ── */
@@ -216,7 +252,15 @@
 
   <header>
     <h1>Newman Willis</h1>
-    <p>Unity Developer <br> AR, VR, UI/UX, mobile, and gaming projects</p>
+    <div class="header-role">Unity Developer</div>
+    <p class="header-bio">AR, VR, UI/UX, mobile, and gaming projects</p>
+    <div class="header-contact">
+      <a href="mailto:newmanwillis@gmail.com">newmanwillis@gmail.com</a>
+      <span class="contact-divider">·</span>
+      <a href="https://www.linkedin.com/in/newman-willis-25626924/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <span class="contact-divider">·</span>
+      <a href="#" target="_blank" rel="noopener">Resume ↗</a>
+    </div>
   </header>
 
   <main class="grid-section">
