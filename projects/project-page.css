@@ -101,7 +101,7 @@ body {
 }
 
 .project-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 800;
   letter-spacing: -0.03em;
