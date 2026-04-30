@@ -112,6 +112,7 @@ body {
 
 .project-summary {
   font-size: 1.1rem;
+  font-weight: 400;
   color: #252320;
   max-width: 600px;
   border-left: 2px solid var(--border);
@@ -150,7 +151,7 @@ body {
 }
 
 .block-text h2 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-weight: 700;
   font-size: 1.3rem;
   letter-spacing: -0.02em;
