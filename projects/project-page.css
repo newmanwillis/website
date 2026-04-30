@@ -93,10 +93,11 @@ body {
 }
 
 .project-category {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
+  font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: #4a4845;
   margin-bottom: 0.75rem;
 }
 
@@ -111,7 +112,7 @@ body {
 
 .project-summary {
   font-size: 1.1rem;
-  color: var(--muted);
+  color: #252320;
   max-width: 600px;
   border-left: 2px solid var(--border);
   padding-left: 1.2rem;
