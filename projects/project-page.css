@@ -179,7 +179,7 @@ body {
 
 .block-image figcaption {
   font-size: 0.78rem;
-  color: var(--muted);
+  color: #4a4845;
   margin-top: 0.6rem;
   text-align: center;
   letter-spacing: 0.02em;
@@ -225,7 +225,7 @@ body {
 
 .block-video figcaption {
   font-size: 0.78rem;
-  color: var(--muted);
+  color: #4a4845;
   margin-top: 0.6rem;
   text-align: center;
 }
