@@ -264,7 +264,8 @@ body {
 
 .footer-nav a {
   font-size: 0.85rem;
-  color: var(--muted);
+  color: #4a4845;
+  letter-spacing: 0.03em;
   text-decoration: none;
   transition: color 0.2s;
 }
