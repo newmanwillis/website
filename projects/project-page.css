@@ -241,17 +241,35 @@ body {
 .page-footer {
   border-top: 1px solid var(--border);
   padding: 2rem;
+}
+
+.footer-nav {
+  display: flex;
+  align-items: center;
+  max-width: var(--max);
+  margin: 0 auto;
+}
+
+.footer-slot {
+  flex: 1;
+}
+
+.footer-slot--center {
   text-align: center;
 }
 
-.page-footer a {
+.footer-slot--right {
+  text-align: right;
+}
+
+.footer-nav a {
   font-size: 0.85rem;
   color: var(--muted);
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.page-footer a:hover { color: var(--ink); }
+.footer-nav a:hover { color: var(--ink); }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
