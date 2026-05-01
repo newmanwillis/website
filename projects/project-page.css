@@ -170,6 +170,10 @@ body {
   margin-bottom: 2.5rem;
 }
 
+.block-image-stack .block-image {
+  margin-bottom: 1.5rem;
+}
+
 .block-image img {
   width: 100%;
   border-radius: 3px;
