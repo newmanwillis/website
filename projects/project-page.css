@@ -185,6 +185,31 @@ body {
   letter-spacing: 0.02em;
 }
 
+/* Image grid (4-up screenshots, bleeds wider than content) */
+.block-image-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  margin-left: -6rem;
+  margin-right: -6rem;
+}
+
+.block-image-grid-4 img {
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .block-image-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 /* Image grid (2-up screenshots) */
 .block-image-grid {
   display: grid;
@@ -283,12 +308,14 @@ body {
 
 /* Make all content images look clickable */
 .block-image img,
-.block-image-grid img {
+.block-image-grid img,
+.block-image-grid-4 img {
   cursor: zoom-in;
   transition: opacity 0.15s;
 }
 .block-image img:hover,
-.block-image-grid img:hover {
+.block-image-grid img:hover,
+.block-image-grid-4 img:hover {
   opacity: 0.88;
 }
 
