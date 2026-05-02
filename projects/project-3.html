@@ -38,6 +38,14 @@
       <p>Write a paragraph here about what this project is. What problem were you solving? Who was the audience? What was your role in the team?</p>
       <p>Keep it conversational — visitors want to understand your process and thinking, not just the output.</p>
     </div>
+    
+    <div class="block-image-grid-4">
+      <img src="../images/breach/breach-1.jpg" alt="Breach screenshot 1" />
+      <img src="../images/breach/breach-2.jpg" alt="Breach screenshot 2" />
+      <img src="../images/breach/breach-3.jpg" alt="Breach screenshot 3" />
+      <img src="../images/breach/breach-4.jpg" alt="Breach screenshot 4" />
+      <!-- <img src="../images/breach/breach-6.jpg" alt="Breach screenshot 6" /> -->
+    </div>
 
     <div class="block-text">
       <h2>Design Process</h2>
@@ -48,6 +56,10 @@
       <img src="../images/breach/halloween-3-scoreboard.jpg" alt="Halloween 3 scoreboard" />
       <figcaption>Caption describing what's shown in this image</figcaption>
     </figure>
+
+    <div class="block-text">
+      <p>Write a paragraph here about what this project is. What problem were you solving? Who was the audience? What was your role in the team?</p>
+    </div>
 
     <figure class="block-video">
       <div class="video-wrapper">
@@ -113,7 +125,7 @@
       }
 
       // Attach click to all content images (not the lightbox image itself)
-      document.querySelectorAll('.block-image img, .block-image-grid img')
+      document.querySelectorAll('.block-image img, .block-image-grid img, .block-image-grid-4 img, .block-image-grid-5 img')
         .forEach(function (img) {
           img.addEventListener('click', function () {
             open(img.src, img.alt);
