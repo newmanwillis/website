@@ -120,13 +120,15 @@
     <button class="lightbox-close" id="lightbox-close" aria-label="Close">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <img id="lightbox-img" src="" alt="" />
-    <button class="lightbox-next" id="lightbox-next" aria-label="Next">
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
+    <div class="lightbox-inner">
+      <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">
+        <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></span>
+      </button>
+      <img id="lightbox-img" src="" alt="" />
+      <button class="lightbox-next" id="lightbox-next" aria-label="Next">
+        <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </button>
+    </div>
   </div>
 
   <script>
@@ -185,7 +187,7 @@
         });
 
       overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) close();
+        if (e.target === overlay || e.target.classList.contains('lightbox-inner')) close();
       });
 
       closeBtn.addEventListener('click', close);

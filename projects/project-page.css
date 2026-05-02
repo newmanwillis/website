@@ -398,6 +398,12 @@ body {
   to   { opacity: 1; }
 }
 
+/* Wrapper that keeps image and nav buttons in a row */
+.lightbox-inner {
+  display: flex;
+  align-items: stretch;
+}
+
 /* The image inside */
 .lightbox-overlay img {
   max-width: 100%;
@@ -405,7 +411,7 @@ body {
   object-fit: contain;
   border-radius: 3px;
   box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-  cursor: default;        /* don't show zoom-out on the image itself */
+  cursor: default;
   animation: lbScaleIn 0.2s ease;
   user-select: none;
 }
@@ -446,27 +452,41 @@ body {
   stroke-linecap: round;
 }
 
-/* Prev / next arrow buttons */
+/* Prev / next arrow buttons — large transparent hit area */
 .lightbox-prev,
 .lightbox-next {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 90px;
+  height: 78px;
+  align-self: center;
   border: none;
   background: transparent;
-  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, opacity 0.15s;
   z-index: 1001;
-  margin: 0 0.75rem;
-  opacity: 0.35;
+  margin: 0;
+  padding: 0;
 }
 
-.lightbox-prev:hover,
-.lightbox-next:hover {
+/* Visual circle inside the button */
+.lightbox-prev .btn-circle,
+.lightbox-next .btn-circle {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  opacity: 0.35;
+  transition: background 0.15s, opacity 0.15s;
+  pointer-events: none;
+}
+
+.lightbox-prev:hover .btn-circle,
+.lightbox-next:hover .btn-circle {
   background: rgba(255,255,255,0.1);
   opacity: 0.8;
 }
