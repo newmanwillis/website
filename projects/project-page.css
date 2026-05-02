@@ -446,3 +446,39 @@ body {
   stroke-linecap: round;
 }
 
+/* Prev / next arrow buttons */
+.lightbox-prev,
+.lightbox-next {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, opacity 0.15s;
+  z-index: 1001;
+  margin: 0 0.75rem;
+  opacity: 0.35;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  background: rgba(255,255,255,0.1);
+  opacity: 0.8;
+}
+
+.lightbox-prev svg,
+.lightbox-next svg {
+  width: 20px;
+  height: 20px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+

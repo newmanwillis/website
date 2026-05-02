@@ -97,7 +97,13 @@
     <button class="lightbox-close" id="lightbox-close" aria-label="Close">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
+    <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
     <img id="lightbox-img" src="" alt="" />
+    <button class="lightbox-next" id="lightbox-next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
   </div>
 
   <script>
@@ -105,40 +111,69 @@
       const overlay  = document.getElementById('lightbox');
       const lbImg    = document.getElementById('lightbox-img');
       const closeBtn = document.getElementById('lightbox-close');
+      const prevBtn  = document.getElementById('lightbox-prev');
+      const nextBtn  = document.getElementById('lightbox-next');
 
-      function open(src, alt) {
-        lbImg.src = src;
-        lbImg.alt = alt || '';
+      let currentGroup = null;
+      let currentIndex = 0;
+
+      const gridSelectors = '.block-image-grid img, .block-image-grid-3 img, .block-image-grid-4 img, .block-image-grid-5 img';
+      const gridParents   = '.block-image-grid, .block-image-grid-3, .block-image-grid-4, .block-image-grid-5';
+
+      function open(img) {
+        const parent = img.closest(gridParents);
+        if (parent) {
+          currentGroup = Array.from(parent.querySelectorAll('img'));
+          currentIndex = currentGroup.indexOf(img);
+        } else {
+          currentGroup = null;
+          currentIndex = 0;
+        }
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        updateArrows();
+      }
+
+      function updateArrows() {
+        const show = currentGroup && currentGroup.length > 1;
+        prevBtn.style.display = show ? 'flex' : 'none';
+        nextBtn.style.display = show ? 'flex' : 'none';
+      }
+
+      function navigate(dir) {
+        if (!currentGroup) return;
+        currentIndex = (currentIndex + dir + currentGroup.length) % currentGroup.length;
+        lbImg.src = currentGroup[currentIndex].src;
+        lbImg.alt = currentGroup[currentIndex].alt || '';
+        updateArrows();
       }
 
       function close() {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
-        // small delay so the image doesn't flash away before fade
         setTimeout(() => { lbImg.src = ''; }, 200);
       }
 
-      // Attach click to all content images (not the lightbox image itself)
-      document.querySelectorAll('.block-image img, .block-image-grid img')
+      document.querySelectorAll('.block-image img, ' + gridSelectors)
         .forEach(function (img) {
-          img.addEventListener('click', function () {
-            open(img.src, img.alt);
-          });
+          img.addEventListener('click', function () { open(img); });
         });
 
-      // Close on overlay backdrop click (not on the image)
       overlay.addEventListener('click', function (e) {
         if (e.target === overlay) close();
       });
 
-      // Close button
       closeBtn.addEventListener('click', close);
+      prevBtn.addEventListener('click', function (e) { e.stopPropagation(); navigate(-1); });
+      nextBtn.addEventListener('click', function (e) { e.stopPropagation(); navigate(1); });
 
-      // Close on Escape key
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.classList.contains('active')) close();
+        if (!overlay.classList.contains('active')) return;
+        if (e.key === 'Escape')      close();
+        if (e.key === 'ArrowLeft')   navigate(-1);
+        if (e.key === 'ArrowRight')  navigate(1);
       });
     })();
   </script>
