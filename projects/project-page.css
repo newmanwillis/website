@@ -502,3 +502,114 @@ body {
   stroke-linejoin: round;
 }
 
+/* ── CAROUSEL ── */
+.block-carousel {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  margin: 0 65px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 0.5rem;
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+
+.carousel-item {
+  flex: 0 0 100%;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  display: block;
+  cursor: zoom-in;
+  transition: opacity 0.15s;
+}
+
+.carousel-item img:hover {
+  opacity: 0.88;
+}
+
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 2;
+}
+
+.carousel-prev { left: 0; }
+.carousel-next { right: 0; }
+
+.carousel-prev:disabled,
+.carousel-next:disabled {
+  opacity: 0.15;
+  cursor: default;
+}
+
+.carousel-prev .btn-circle,
+.carousel-next .btn-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.carousel-prev:not(:disabled):hover .btn-circle,
+.carousel-next:not(:disabled):hover .btn-circle {
+  opacity: 1;
+}
+
+.carousel-prev svg,
+.carousel-next svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--ink);
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 0.75rem;
+}
+
+.carousel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: #a8a49d;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.carousel-dot.active {
+  background: var(--ink);
+  transform: scale(1.35);
+}
+

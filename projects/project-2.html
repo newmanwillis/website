@@ -103,10 +103,26 @@
       <p>Describe how you approached this project. What were the key design decisions? What challenges came up and how did you solve them?</p>
     </div>
 
-    <!-- TWO SCREENSHOTS SIDE BY SIDE — swap both srcs -->
-    <div class="block-image-grid">
-      <img src="../images/project2-screen1.jpg" alt="Screenshot 1" />
-      <img src="../images/project2-screen2.jpg" alt="Screenshot 2" />
+    <div class="block-carousel">
+      <button class="carousel-prev" aria-label="Previous images" disabled>
+        <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></span>
+      </button>
+      <div class="carousel-viewport">
+        <div class="carousel-track">
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-0.jpg" alt="Vortex Ball 1" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-1.jpg" alt="Vortex Ball 2" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-2.jpg" alt="Vortex Ball 3" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-3.jpg" alt="Vortex Ball 4" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-4.jpg" alt="Vortex Ball 5" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-5.jpg" alt="Vortex Ball 6" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-6.jpg" alt="Vortex Ball 7" /></div>
+          <div class="carousel-item"><img src="../images/sturfee/vortexball-7.jpg" alt="Vortex Ball 8" /></div>
+        </div>
+      </div>
+      <button class="carousel-next" aria-label="Next images">
+        <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </button>
+      <div class="carousel-dots" id="carousel-dots"></div>
     </div>
 
     <div class="block-text">
@@ -125,7 +141,6 @@
       </div>
       <figcaption>Spiders at the office parking lot</figcaption>
     </figure>
-
 
 
     <div class="block-text">
@@ -161,7 +176,15 @@
     <button class="lightbox-close" id="lightbox-close" aria-label="Close">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <img id="lightbox-img" src="" alt="" />
+    <div class="lightbox-inner">
+      <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">
+        <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></span>
+      </button>
+      <img id="lightbox-img" src="" alt="" />
+      <button class="lightbox-next" id="lightbox-next" aria-label="Next">
+        <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </button>
+    </div>
   </div>
 
   <script>
@@ -169,41 +192,108 @@
       const overlay  = document.getElementById('lightbox');
       const lbImg    = document.getElementById('lightbox-img');
       const closeBtn = document.getElementById('lightbox-close');
+      const prevBtn  = document.getElementById('lightbox-prev');
+      const nextBtn  = document.getElementById('lightbox-next');
 
-      function open(src, alt) {
-        lbImg.src = src;
-        lbImg.alt = alt || '';
+      let currentGroup = null;
+      let currentIndex = 0;
+
+      const gridSelectors = '.block-image-grid img, .block-image-grid-3 img, .block-image-grid-4 img, .block-image-grid-5 img, .carousel-item img';
+      const gridParents   = '.block-image-grid, .block-image-grid-3, .block-image-grid-4, .block-image-grid-5, .carousel-track';
+
+      function open(img) {
+        const parent = img.closest(gridParents);
+        if (parent) {
+          currentGroup = Array.from(parent.querySelectorAll('img'));
+          currentIndex = currentGroup.indexOf(img);
+        } else {
+          currentGroup = null;
+          currentIndex = 0;
+        }
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        updateArrows();
+      }
+
+      function updateArrows() {
+        const show = currentGroup && currentGroup.length > 1;
+        prevBtn.style.display = show ? 'flex' : 'none';
+        nextBtn.style.display = show ? 'flex' : 'none';
+      }
+
+      function navigate(dir) {
+        if (!currentGroup) return;
+        currentIndex = (currentIndex + dir + currentGroup.length) % currentGroup.length;
+        lbImg.src = currentGroup[currentIndex].src;
+        lbImg.alt = currentGroup[currentIndex].alt || '';
+        updateArrows();
       }
 
       function close() {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
-        // small delay so the image doesn't flash away before fade
         setTimeout(() => { lbImg.src = ''; }, 200);
       }
 
-      // Attach click to all content images (not the lightbox image itself)
-      document.querySelectorAll('.block-image img, .block-image-grid img')
+      document.querySelectorAll('.block-image img, ' + gridSelectors)
         .forEach(function (img) {
-          img.addEventListener('click', function () {
-            open(img.src, img.alt);
-          });
+          img.addEventListener('click', function () { open(img); });
         });
 
-      // Close on overlay backdrop click (not on the image)
       overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) close();
+        if (e.target === overlay || e.target.classList.contains('lightbox-inner')) close();
       });
 
-      // Close button
       closeBtn.addEventListener('click', close);
+      prevBtn.addEventListener('click', function (e) { e.stopPropagation(); navigate(-1); });
+      nextBtn.addEventListener('click', function (e) { e.stopPropagation(); navigate(1); });
 
-      // Close on Escape key
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.classList.contains('active')) close();
+        if (!overlay.classList.contains('active')) return;
+        if (e.key === 'Escape')     close();
+        if (e.key === 'ArrowLeft')  navigate(-1);
+        if (e.key === 'ArrowRight') navigate(1);
       });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      const track   = document.querySelector('.carousel-track');
+      if (!track) return;
+      const items   = Array.from(track.querySelectorAll('.carousel-item'));
+      const prevBtn = document.querySelector('.carousel-prev');
+      const nextBtn = document.querySelector('.carousel-next');
+      const visible = 1;
+      const max     = items.length - visible;
+      let index     = 0;
+
+      const dotsContainer = document.getElementById('carousel-dots');
+      const dots = items.map(function (_, i) {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot';
+        dot.setAttribute('aria-label', 'Go to image ' + (i + 1));
+        dot.addEventListener('click', function () { index = i; update(); });
+        dotsContainer.appendChild(dot);
+        return dot;
+      });
+
+      function update() {
+        const offset = index > 0 ? items[index].offsetLeft - items[0].offsetLeft : 0;
+        track.style.transform = `translateX(-${offset}px)`;
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index >= max;
+        dots.forEach(function (d, i) {
+          d.classList.toggle('active', i === index);
+        });
+      }
+
+      prevBtn.addEventListener('click', function () { if (index > 0)   { index--; update(); } });
+      nextBtn.addEventListener('click', function () { if (index < max) { index++; update(); } });
+
+      update();
     })();
   </script>
 
