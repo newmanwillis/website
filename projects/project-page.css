@@ -510,7 +510,7 @@ body {
 
 .carousel-viewport {
   overflow: hidden;
-  margin: 0 65px;
+  margin: 0 60px;
 }
 
 .carousel-track {
@@ -566,11 +566,15 @@ body {
 
 .carousel-prev .btn-circle,
 .carousel-next .btn-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.4;
-  transition: opacity 0.15s;
+  background: rgba(0,0,0,0.1);
+  opacity: 1;
+  transition: opacity 0.15s, background 0.15s;
   pointer-events: none;
 }
 
@@ -581,8 +585,8 @@ body {
 
 .carousel-prev svg,
 .carousel-next svg {
-  width: 20px;
-  height: 20px;
+  width: 36px;
+  height: 36px;
   stroke: var(--ink);
   fill: none;
   stroke-width: 2.5;
