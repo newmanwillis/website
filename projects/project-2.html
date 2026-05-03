@@ -104,7 +104,7 @@
     </div>
 
     <div class="block-carousel">
-      <button class="carousel-prev" aria-label="Previous images" disabled>
+      <button class="carousel-prev" aria-label="Previous images">
         <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></span>
       </button>
       <div class="carousel-viewport">
@@ -283,15 +283,13 @@
       function update() {
         const offset = index > 0 ? items[index].offsetLeft - items[0].offsetLeft : 0;
         track.style.transform = `translateX(-${offset}px)`;
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index >= max;
         dots.forEach(function (d, i) {
           d.classList.toggle('active', i === index);
         });
       }
 
-      prevBtn.addEventListener('click', function () { if (index > 0)   { index--; update(); } });
-      nextBtn.addEventListener('click', function () { if (index < max) { index++; update(); } });
+      prevBtn.addEventListener('click', function () { index = (index - 1 + items.length) % items.length; update(); });
+      nextBtn.addEventListener('click', function () { index = (index + 1) % items.length; update(); });
 
       update();
     })();
