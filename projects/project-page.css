@@ -98,6 +98,27 @@ body {
   max-width: var(--max);
   margin: 0 auto;
   padding: 4rem 2rem 6rem;
+  position: relative;
+  z-index: 0;
+}
+
+/* Soft background panel that masks the canvas behind content,
+   fading out to the sides so animation lines blend back in */
+.page-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -80px;
+  right: -80px;
+  background: linear-gradient(to right,
+    transparent 0,
+    var(--bg) 80px,
+    var(--bg) calc(100% - 80px),
+    transparent 100%
+  );
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* ── PROJECT HEADER ── */
