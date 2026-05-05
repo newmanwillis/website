@@ -44,6 +44,8 @@ body {
   mask-composite: intersect;
   z-index: -1;
   pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 0.7s ease forwards 0.1s;
 }
 
 .intro-cover::after {
@@ -60,6 +62,8 @@ body {
   mask-image: linear-gradient(to right, transparent 0, black 80px, black calc(100% - 80px), transparent 100%);
   z-index: -1;
   pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 0.7s ease forwards 0.45s;
 }
 
 /* ── HEADER ── */
@@ -267,6 +271,11 @@ header h1 {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ── RESPONSIVE ── */
