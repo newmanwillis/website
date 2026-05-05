@@ -6,6 +6,9 @@
   var SEGS = 8;
   var t = 0;
   var w, h;
+  var tIncrement = 0.009;
+  var HOME_SPEED    = 0.009;
+  var PROJECT_SPEED = 0.002;
 
   var lines = Array.from({ length: LINE_COUNT }, function (_, i) {
     return {
@@ -44,11 +47,15 @@
   }
 
   function animate() {
+    var onProject = location.pathname.indexOf('/projects/') !== -1;
+    var target = onProject ? PROJECT_SPEED : HOME_SPEED;
+    tIncrement += (target - tIncrement) * 0.02;
+
     ctx.clearRect(0, 0, w, h);
     for (var i = 0; i < lines.length; i++) {
       drawLine(lines[i], t * lines[i].speed * 800);
     }
-    t += 0.009;
+    t += tIncrement;
     requestAnimationFrame(animate);
   }
 
