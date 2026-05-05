@@ -61,5 +61,5 @@
 
   window.addEventListener('resize', resize);
   resize();
-  // animate(); // uncomment to re-enable background wave animation
+  animate(); // uncomment to re-enable background wave animation
 })();
