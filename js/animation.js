@@ -46,9 +46,9 @@
   function animate() {
     ctx.clearRect(0, 0, w, h);
     for (var i = 0; i < lines.length; i++) {
-      drawLine(lines[i], t * lines[i].speed * 1000);
+      drawLine(lines[i], t * lines[i].speed * 800);
     }
-    t += 0.016;
+    t += 0.009;
     requestAnimationFrame(animate);
   }
 
