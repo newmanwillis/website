@@ -99,7 +99,7 @@ body {
 .page-content {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 4rem 2rem 6rem;
+  padding: 4rem 2rem 2.5rem;
   position: relative;
   z-index: 0;
 }
@@ -224,8 +224,8 @@ body {
 }
 
 .block-image figcaption {
-  font-size: 0.78rem;
-  color: #4a4845;
+  font-size: 0.85rem;
+  color: #3c3a37;
   margin-top: 0.6rem;
   margin-bottom: -1rem;
   text-align: center;
@@ -336,8 +336,8 @@ body {
 }
 
 .block-video figcaption {
-  font-size: 0.78rem;
-  color: #4a4845;
+  font-size: 0.85rem;
+  color: #3c3a37;
   margin-top: 0.6rem;
   text-align: center;
 }
