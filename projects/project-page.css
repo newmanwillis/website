@@ -15,7 +15,9 @@
   z-index: 1;
 }
 
+/**/
 :root {
+  font-size: 15px;
   --bg: #f5f4f0;
   --ink: #0f0e0c;
   --muted: #8a8880;
@@ -191,6 +193,7 @@ body {
   margin-bottom: 0.75rem;
 }
 
+/* Standard text on project pages */
 .block-text p {
   font-size: 1rem;
   font-weight: 400;
