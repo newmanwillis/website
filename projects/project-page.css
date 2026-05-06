@@ -123,7 +123,7 @@ body {
 
 /* ── PROJECT HEADER ── */
 .project-header {
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
 }
 
 .project-category {
@@ -224,6 +224,7 @@ body {
   font-size: 0.78rem;
   color: #4a4845;
   margin-top: 0.6rem;
+  margin-bottom: -1rem;
   text-align: center;
   letter-spacing: 0.02em;
 }
