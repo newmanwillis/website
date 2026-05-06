@@ -224,7 +224,7 @@ body {
 }
 
 .block-image figcaption {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #3c3a37;
   margin-top: 0.6rem;
   margin-bottom: -1rem;
@@ -336,7 +336,7 @@ body {
 }
 
 .block-video figcaption {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #3c3a37;
   margin-top: 0.6rem;
   text-align: center;
