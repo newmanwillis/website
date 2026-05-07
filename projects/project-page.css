@@ -413,12 +413,19 @@ body {
 
 /* ── LIGHTBOX ── */
 
+#lightbox-img-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+
 #lightbox-caption {
   color: rgba(255, 255, 255, 0.75);
   font-size: 0.85rem;
   margin-top: 0.75rem;
   text-align: center;
-  max-width: 600px;
+  width: 100%;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
