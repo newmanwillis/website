@@ -210,10 +210,12 @@ body {
   margin-bottom: 1.5rem;
 }
 
-.block-image.block-image--natural img {
+.block-image.block-image--natural img,
+.block-image.block-image--natural video {
   width: auto;
   max-width: 100%;
   margin: 0 auto;
+  display: block;
 }
 
 .block-image img {
