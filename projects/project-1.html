@@ -49,8 +49,8 @@
     </div>
 
     <div class="block-image-grid" style="align-items: stretch;">
-      <img src="../images/rui/pretime-reachui.jpg" alt="Early Robotics UI" style="height: 100%; object-fit: cover;" />
-      <img src="../images/rui/realrobot-binview-square.jpg" alt="Real robot bin view" style="height: 100%; object-fit: cover;" />
+      <img src="../images/rui/pretime-reachui.jpg" alt="Early Robotics UI" style="height: 100%; object-fit: cover;" data-caption="Robot arm environment visualized in the UI" />
+      <img src="../images/rui/realrobot-binview-square.jpg" alt="Real robot bin view" style="height: 100%; object-fit: cover;" data-caption="The corresponding physical robot arm" />
       <p style="font-size: 0.9rem; color: #3c3a37; margin-top: -0.5rem; text-align: center; letter-spacing: 0.02em;">Robot arm environment visualized in the UI</p>
       <p style="font-size: 0.9rem; color: #3c3a37; margin-top: -0.5rem; text-align: center; letter-spacing: 0.02em;">The corresponding physical robot arm</p>
     </div>
@@ -179,7 +179,10 @@
       <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous">
         <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></span>
       </button>
-      <img id="lightbox-img" src="" alt="" />
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <img id="lightbox-img" src="" alt="" />
+        <p id="lightbox-caption" style="color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-top: 0.75rem; text-align: center; max-width: 600px; display: none;"></p>
+      </div>
       <button class="lightbox-next" id="lightbox-next" aria-label="Next">
         <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
       </button>
@@ -188,17 +191,31 @@
 
   <script>
     (function () {
-      const overlay  = document.getElementById('lightbox');
-      const lbImg    = document.getElementById('lightbox-img');
-      const closeBtn = document.getElementById('lightbox-close');
-      const prevBtn  = document.getElementById('lightbox-prev');
-      const nextBtn  = document.getElementById('lightbox-next');
+      const overlay   = document.getElementById('lightbox');
+      const lbImg     = document.getElementById('lightbox-img');
+      const lbCaption = document.getElementById('lightbox-caption');
+      const closeBtn  = document.getElementById('lightbox-close');
+      const prevBtn   = document.getElementById('lightbox-prev');
+      const nextBtn   = document.getElementById('lightbox-next');
 
       let currentGroup = null;
       let currentIndex = 0;
 
       const gridSelectors = '.block-image-grid img, .block-image-grid-3 img, .block-image-grid-4 img, .block-image-grid-5 img';
       const gridParents   = '.block-image-grid, .block-image-grid-3, .block-image-grid-4, .block-image-grid-5';
+
+      function getCaption(img) {
+        if (img.dataset.caption) return img.dataset.caption;
+        const fig = img.closest('figure');
+        if (fig) { const cap = fig.querySelector('figcaption'); if (cap) return cap.textContent.trim(); }
+        return '';
+      }
+
+      function showCaption(img) {
+        const text = getCaption(img);
+        lbCaption.textContent = text;
+        lbCaption.style.display = text ? 'block' : 'none';
+      }
 
       function open(img) {
         const parent = img.closest(gridParents);
@@ -211,6 +228,7 @@
         }
         lbImg.src = img.src;
         lbImg.alt = img.alt || '';
+        showCaption(img);
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         updateArrows();
@@ -227,13 +245,14 @@
         currentIndex = (currentIndex + dir + currentGroup.length) % currentGroup.length;
         lbImg.src = currentGroup[currentIndex].src;
         lbImg.alt = currentGroup[currentIndex].alt || '';
+        showCaption(currentGroup[currentIndex]);
         updateArrows();
       }
 
       function close() {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
-        setTimeout(() => { lbImg.src = ''; }, 200);
+        setTimeout(() => { lbImg.src = ''; lbCaption.textContent = ''; }, 200);
       }
 
       document.querySelectorAll('.block-image img, ' + gridSelectors)
