@@ -191,7 +191,7 @@
       </button>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <img id="lightbox-img" src="" alt="" />
-        <p id="lightbox-caption" style="color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-top: 0.75rem; text-align: center; max-width: 600px; display: none;"></p>
+        <p id="lightbox-caption"></p>
       </div>
       <button class="lightbox-next" id="lightbox-next" aria-label="Next">
         <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
@@ -210,6 +210,7 @@
 
       let currentGroup = null;
       let currentIndex = 0;
+      let captionTimer = null;
 
       const gridSelectors = '.block-image-grid img, .block-image-grid-3 img, .block-image-grid-4 img, .block-image-grid-5 img, .carousel-item img';
       const gridParents   = '.block-image-grid, .block-image-grid-3, .block-image-grid-4, .block-image-grid-5, .carousel-track';
@@ -224,7 +225,13 @@
       function showCaption(img) {
         const text = getCaption(img);
         lbCaption.textContent = text;
-        lbCaption.style.display = text ? 'block' : 'none';
+        lbCaption.style.opacity = '0';
+        if (captionTimer) clearTimeout(captionTimer);
+        if (text) {
+          captionTimer = setTimeout(function () {
+            lbCaption.style.opacity = '1';
+          }, 30);
+        }
       }
 
       function open(img) {
@@ -262,7 +269,8 @@
       function close() {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
-        setTimeout(() => { lbImg.src = ''; lbCaption.textContent = ''; }, 200);
+        if (captionTimer) { clearTimeout(captionTimer); captionTimer = null; }
+        setTimeout(() => { lbImg.src = ''; lbCaption.textContent = ''; lbCaption.style.opacity = '0'; }, 200);
       }
 
       document.querySelectorAll('.block-image img, ' + gridSelectors)
