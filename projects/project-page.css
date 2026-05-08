@@ -150,7 +150,6 @@ body {
   font-size: 1.1rem;
   font-weight: 400;
   color: #252320;
-  max-width: 600px;
   border-left: 2px solid var(--border);
   padding-left: 1.2rem;
   line-height: 1.7;
