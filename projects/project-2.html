@@ -227,6 +227,8 @@ Other times these demos would be targeted toward specific companies we were in t
         if (img.dataset.caption) return img.dataset.caption;
         const fig = img.closest('figure');
         if (fig) { const cap = fig.querySelector('figcaption'); if (cap) return cap.textContent.trim(); }
+        const carouselItem = img.closest('.carousel-item');
+        if (carouselItem) { const cap = carouselItem.querySelector('.carousel-caption'); if (cap) return cap.textContent.trim(); }
         return '';
       }
 
