@@ -123,7 +123,7 @@ So the game served as an impetus for users to make a Fight or Flight games accou
     <figure class="block-image block-image--natural">
       <img src="../images/breach/halloween-3-scoreboard.jpg" alt="Halloween 3 scoreboard" />
       <figcaption>
-        Shooting two bombs while still getting flared immediately after.<br>
+        Shooting two bombs while still getting flared immediately after.
         That's why I'm not at the top of the leaderboard.
       </figcaption>
     </figure>
@@ -273,7 +273,7 @@ So the game served as an impetus for users to make a Fight or Flight games accou
         setTimeout(() => { lbImg.src = ''; lbCaption.textContent = ''; lbCaption.style.opacity = '0'; }, 200);
       }
 
-      document.querySelectorAll('.block-image img, ' + gridSelectors)
+      document.querySelectorAll('.block-image img, .split-image img, ' + gridSelectors)
         .forEach(function (img) {
           img.addEventListener('click', function () { open(img); });
         });
