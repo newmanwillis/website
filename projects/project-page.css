@@ -671,6 +671,14 @@ body {
   opacity: 0.88;
 }
 
+.carousel-caption {
+  font-size: 0.9rem;
+  color: #3c3a37;
+  text-align: center;
+  letter-spacing: 0.02em;
+  margin-top: 0.6rem;
+}
+
 .carousel-prev,
 .carousel-next {
   position: absolute;
