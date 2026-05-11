@@ -61,5 +61,8 @@
 
   window.addEventListener('resize', resize);
   resize();
-  animate(); // uncomment to re-enable background wave animation
+  // Checks if finger is primary input (Meant to disable animation on mobile)
+  if (!window.matchMedia('(pointer: coarse)').matches) {
+    animate(); // uncomment to re-enable background wave animation
+  }
 })();
