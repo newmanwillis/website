@@ -303,7 +303,11 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.block-image-grid figure {
+  margin: 0;
 }
 
 .block-image-grid img {
@@ -311,6 +315,14 @@ body {
   border-radius: 3px;
   border: 1px solid var(--border);
   display: block;
+}
+
+.block-image-grid figcaption {
+  font-size: 0.9rem;
+  color: #3c3a37;
+  margin-top: 0.6rem;
+  text-align: center;
+  letter-spacing: 0.02em;
 }
 
 /* Video embed */
