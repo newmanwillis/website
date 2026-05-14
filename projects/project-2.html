@@ -79,25 +79,70 @@ By having the models spatially aligned with the buildings in the camera, digital
       <p> Normally these models are invisible for the sake of immersion.
 The video however shows a green 3D grid effect to show where the models are in relation to the real environment.
       <!-- </p><p> -->
-I actually implemented this visual effect personally much earlier in the company's life (this video was made after I left) that's really just a projection effect over the invisible models.
-This visual was originally only a concept shown in the company's promotional material, but afterwards would become a mainstay visual feature as well as debugging tool.
+I actually implemented this grid visual personally much earlier in the company's life (this video was made after I left) that's really just a projection effect over the invisible models.
+This visual was originally only a concept shown in the company's promotional material, but after its actual implementation it became a mainstay visual feature as well as debugging tool.
       </p>
     </div>
 
 
     <div class="block-text">
       <h2>Vortex Ball</h2>
-      <p>Describe how you approached this project. What were the key design decisions? What challenges came up and how did you solve them?</p>
+      <p>Vortex Ball was a mobile AR game that allowed users to create and compete over virtual arenas at real-world city locations.
+Through the app, a player could take a picture of the environment and then tap on the ground or buildings of the image to place a vortex.
+Since the city colliders were saved to the image position, tapping the building through the screen snapped the vortex to its real-world surface through a simple raycast.
+</p>
     </div>
 
-    <div class="block-carousel">
+    <div class="block-image-grid">
+      <img src="../images/sturfee/vortexball-0.jpg" alt="Vortex Ball 1" />
+      <img src="../images/sturfee/vortexball-1.jpg" alt="Vortex Ball 2" />
+    </div>
+
+    <div class="block-text">
+      <p>Once an arena was created, the goal was to throw a virtual ball via screen swipes into the vortex in as few attempts as possible.
+I reworked the initial ball tossing mechanics to better account for the speed, length, and direction of each swipe.
+This allowed for more targeted, precise throws, as well as major long-distance shots that fixed broken arenas where the vortex was placed incredibly high and far out into the environment.
+      </p>
+    </div>
+
+    <figure class="block-image block-image--natural">
+      <img src="../images/sturfee/vortexball-7.jpg" alt="Vortex Ball Arena List" />
+      <figcaption>List of available arenas sorted by the most difficult and nearby to the user.</figcaption>
+    </figure>
+
+    <div class="block-text">
+      <p>Arenas were persistent and could be accessed by all players anywhere once created.
+Each arena tracked both team and individual player scores.
+Individual scores were initially only determined by the amount of swipes it took to score.
+I added the time it took for the ball to reach the vortex as an additional variable to allow more variance in the scores.
+This encouraged more competition in the leaderboard of each arena as it made ties much less common.
+      </p>
+    </div>
+
+    <div class="block-image-grid">
+      <img src="../images/sturfee/vortexball-2.jpg" alt="Vortex Ball 3" />
+      <img src="../images/sturfee/vortexball-3.jpg" alt="Vortex Ball 4" />
+    </div>
+
+    <div class="block-text">
+      <p>Team scores were determined based on the teams players chose to align with when they first started the game.
+The first team to have three players score in the arena would claim ownership of it.
+Team scores would then reset after this and the other team would have a chance to take the arena again while the owning team would fight to maintain it.
+      </p>
+    </div>
+
+    <div class="block-text">
+      <p>Team ownership of the arena came with the advantage of not getting attacked by the robot spiders crawling around in the environment.
+I programmed robot spider enemies that spawned out of the vortex at the start and crawled around the sides of buildings.
+While they could potentially get in the way of the ball on their own, if your team did not own the arena, they would occasionally shoot lasers at the ball and knock it off course if they hit it.      </p>
+    </div>
+
+    <!-- <div class="block-carousel">
       <button class="carousel-prev" aria-label="Previous images">
         <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></span>
       </button>
       <div class="carousel-viewport">
         <div class="carousel-track">
-          <div class="carousel-item"><img src="../images/sturfee/vortexball-0.jpg" alt="Vortex Ball 1" /><p class="carousel-caption">Caption filler text for image 1</p></div>
-          <div class="carousel-item"><img src="../images/sturfee/vortexball-1.jpg" alt="Vortex Ball 2" /><p class="carousel-caption">Caption filler text for image 2</p></div>
           <div class="carousel-item"><img src="../images/sturfee/vortexball-2.jpg" alt="Vortex Ball 3" /><p class="carousel-caption">Caption filler text for image 3</p></div>
           <div class="carousel-item"><img src="../images/sturfee/vortexball-3.jpg" alt="Vortex Ball 4" /><p class="carousel-caption">Caption filler text for image 4</p></div>
           <div class="carousel-item"><img src="../images/sturfee/vortexball-4.jpg" alt="Vortex Ball 5" /><p class="carousel-caption">Caption filler text for image 5</p></div>
@@ -109,24 +154,21 @@ This visual was originally only a concept shown in the company's promotional mat
         <span class="btn-circle"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
       </button>
       <div class="carousel-dots" id="carousel-dots"></div>
-    </div>
+    </div> -->
 
     <div class="block-text">
-      <p>Write a paragraph here describing the context of this video.</p>
+      <p> Footage of the app version of the game has been lost.
+        The video below shows an older version of the game before it was in the app store and before team mechanics even existed.
+        It does however show an early version of the spiders moving around the environment
+      </p>
     </div>
 
     <figure class="block-video">
       <div class="video-wrapper">
         <iframe src="https://www.youtube.com/embed/9Ms_oV8LTlU" allowfullscreen title="Bank of America Spider Attack"></iframe>
       </div>
-      <figcaption>"Mecha spider attack at Bank of America</figcaption>
+      <figcaption>Robot spider attack at Bank of America</figcaption>
     </figure>    
-    <figure class="block-video">
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/HlepLm7Hprg" allowfullscreen title="Office Spider Attack"></iframe>
-      </div>
-      <figcaption>Spiders at the office parking lot</figcaption>
-    </figure>
 
 
     <div class="block-text">
