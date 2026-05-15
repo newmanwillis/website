@@ -151,13 +151,13 @@ header h1 {
 }
 
 .section-label {
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink);
   margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  padding-bottom: 0.3rem;
   border-bottom: 1px solid #a8a39a;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
