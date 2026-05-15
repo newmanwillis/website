@@ -330,6 +330,16 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.block-video--vertical {
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.block-video.block-video--vertical .video-wrapper {
+  padding-bottom: 177.78%; /* 9:16 */
+}
+
 .block-video .video-wrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
