@@ -267,7 +267,7 @@ header h1 {
 
 .card-desc {
   font-size: 0.9rem;
-  color: var(--muted);
+  color: #474646;
   line-height: 1.5;
 }
 
