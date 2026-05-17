@@ -11,17 +11,17 @@
   var SEGS         = 26;
   var DESIGN_W     = 1440;
   var DESIGN_H     = 900;
-  var RIBBON_COUNT = 8;
+  var RIBBON_COUNT = 5;
   var HALF_STRANDS = 5;   // strands on each side + center = 11 per ribbon
   var t = 0;
   var w, h, scale;
-  var tIncrement   = 0.009;
-  var HOME_SPEED    = 0.009;
-  var PROJECT_SPEED = 0.002;
+  var tIncrement   = 0.006;
+  var HOME_SPEED    = 0.006;
+  var PROJECT_SPEED = 0.0015;
 
   var ribbons = [];
   for (var r = 0; r < RIBBON_COUNT; r++) {
-    var peakAlpha = 0.09 //+ Math.random() * 0.08;
+    var peakAlpha = 0.11 //+ Math.random() * 0.08;
     var spread    = 20 + Math.random() * 18;
     // Golden-brown tones with slight variation between ribbons
     var hue  = Math.random();
@@ -153,7 +153,7 @@
 
   window.addEventListener('resize', resize);
   resize();
-  if (!window.matchMedia('(pointer: coarse)').matches) {
+  // if (!window.matchMedia('(pointer: coarse)').matches) {
     animate();
-  }
+  // }
 })();
