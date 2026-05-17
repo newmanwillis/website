@@ -1,0 +1,62 @@
+BREACH — References
+===================
+
+VORTEX BALL
+-----------
+- Android APK
+	- https://apkpure.com/vortex-ball/com.sturfee.vortexball
+
+WEBSITES FOR IMAGES
+-------------------
+- https://geospatialworld.net/news/sturfee-rolls-out-worlds-first-ar-cloud-technology-for-cities/
+
+UNLISTED VIDEOS
+---------------
+- https://mashable.com/article/sturfee-augmented-reality-navigation-platform
+- Navigation Demo
+	- https://www.youtube.com/watch?v=z5Gkgu6DY5c
+- Ride Sharing
+	- https://www.youtube.com/watch?v=93DsK-EEsdQ
+
+UNUSED VIDEOS
+-------------
+- Flag placement
+	- https://www.youtube.com/watch?v=pdNmB6XPq70
+- Level Placement Demo
+	- https://www.youtube.com/watch?v=QJ6RmzzPnss
+- Grid + Vortex placement
+	- https://www.youtube.com/watch?v=jY78iMDBT4M
+- Vortex Placement + spiders
+	- https://www.youtube.com/watch?v=8FMsP39rx8g
+
+KDDI
+-----
+- XR Channel compilation
+	- https://www.youtube.com/watch?v=LBGf3Aodltc
+	- https://vimeo.com/883157184/8118aef562?fl=pl&fe=cm
+- Tokyo Station
+	- https://www.youtube.com/watch?v=Yi5GyCA4fCE
+	- https://www.youtube.com/shorts/50mhojvFXOM
+	- https://www.youtube.com/watch?v=HGGDLD0R-hc
+	- https://www.youtube.com/watch?v=6_Qc6P73N-Q
+- Nagano Station (Bull)
+	- https://www.youtube.com/watch?v=n4aFBklpLTc
+- Shibuya Crossing
+	- https://www.youtube.com/watch?v=6bw5fVRJN2E
+- Ginza (Unsure if using Sturfee)
+	- https://www.youtube.com/watch?v=77uIGc-Gi7o
+	- https://www.youtube.com/watch?v=EsVXljmUe-o
+- Additional
+	- https://www.youtube.com/watch?v=bxtlJi0UQWo
+
+- Websites w/gifs
+	- https://time-space.kddi.com/au-kddi/20201221/3005.html
+	- https://time-space.kddi.com/au-kddi/20210709/3140.html
+- Website articles
+	- https://prtimes.jp/main/html/rd/p/000000016.000045734.html
+	- https://prtimes.jp/main/html/rd/p/000000021.000045734.html
+	- https://prtimes.jp/main/html/rd/p/000000018.000045734.html
+
+XR Channel app:
+	- https://play.google.com/store/apps/details?id=net.sovec
+	- https://www.sovec.net/xrchannel/
