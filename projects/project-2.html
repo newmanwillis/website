@@ -195,14 +195,14 @@ I combined Sturfee's AR with Foursquare and Mapbox to create an enhanced city ex
     <div class="block-text">
       <p>
       Users would point their camera toward buildings around them and tap on them to find out more.
-      The user tap was raycasted into a point on the building's surface and have a visual marker instantiated there (similar to vortex placement in Vortex Ball).
-      That point on the building would then also get translated into a GPS position that was sent to Foursquare to find the businesses closest to it.
+      The user tap was raycasted into a point on the building's surface and instantiated a visual marker there (similar to vortex placement in Vortex Ball).
+      That point on the building would then get translated into a GPS position that was sent to Foursquare to find the businesses closest to it.
       Those businesses were then displayed alongside that point, ordered by distance.
       </p><p>
-      An overhead map of the area was also simultaneously shown using Mapbox.
-      I synced Sturfee's 3D building models with their map to create a more precise live 3D map effect.
-      The digital markers created on the sides of buildings in the camera view were synced to pins at their corresponding locations in the map view.
-      </p>
+      A 3D overhead map overlays Sturfee's building models onto a Mapbox basemap.
+Both get generated from the same GPS coordinates of the user and could be made to automatically sync together.
+While Mapbox and other map services include their own 3D buildings, Sturfee's models more faithfully reflected their actual geometry.
+Thus things like markers in the map view representing user taps against the buildings showed a more accurate match of what appears in the camera view.      </p>
     </div>
 
 
