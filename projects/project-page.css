@@ -111,12 +111,12 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: -100px;
-  right: -100px;
+  left: -150px;
+  right: -150px;
   background: linear-gradient(to right,
     transparent 0,
-    var(--bg) 100px,
-    var(--bg) calc(100% - 100px),
+    var(--bg) 185px,
+    var(--bg) calc(100% - 185px),
     transparent 100%
   );
   z-index: -1;
