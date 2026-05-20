@@ -26,17 +26,18 @@
     // Golden-brown tones with slight variation between ribbons
     var hue  = Math.random();
     var ribbon = {
-      cr: Math.floor(95 + hue * 40),
-      cg: Math.floor(58 + hue * 28),
-      cb: Math.floor(8  + hue * 12),
+      cr:  Math.floor(95 + hue * 40),
+      cg:  Math.floor(58 + hue * 28),
+      cb:  Math.floor(8  + hue * 12),
+      dir: (r % 2 === 0) ? 1 : -1,
       baseY: (r + 0.5) / RIBBON_COUNT,
-      amp1:  28 + Math.random() * 28,
+      amp1:  20 + Math.random() * 20,
       wl1:   0.5 + Math.random() * 0.65,
       ph1:   Math.random() * Math.PI * 2,
       sp1:   0.0005 + Math.random() * 0.0004,
       // Slow drift — very long wavelength so only a fraction of the cycle
       // is visible, creating a gradual slope from one side to the other
-      ampD:  55 + Math.random() * 60,
+      ampD:  30 + Math.random() * 50,
       wlD:   2.0 + Math.random() * 2.0,
       phD:   Math.random() * Math.PI * 2,
       spD:   0.00015 + Math.random() * 0.00015,
@@ -72,11 +73,12 @@
   function drawStrandTo(c, ribbon, strand, tEff) {
     var step = DESIGN_W / SEGS;
     function yAt(x) {
+      var tDir = tEff * ribbon.dir;
       return ribbon.baseY * DESIGN_H + strand.offset
-        + Math.sin(x / (DESIGN_W * ribbon.wlD) * Math.PI * 4 + ribbon.phD + tEff * ribbon.spD) * ribbon.ampD
-        + Math.sin(x / (DESIGN_W * ribbon.wl1) * Math.PI * 4 + ribbon.ph1 + tEff * ribbon.sp1) * ribbon.amp1
-        + Math.sin(x / (DESIGN_W * strand.wl2) * Math.PI * 4 + strand.ph2 + tEff * strand.sp2) * strand.amp2
-        + Math.sin(x / (DESIGN_W * strand.wl3) * Math.PI * 4 + strand.ph3 + tEff * strand.sp3) * strand.amp3;
+        + Math.sin(x / (DESIGN_W * ribbon.wlD) * Math.PI * 4 + ribbon.phD + tDir * ribbon.spD) * ribbon.ampD
+        + Math.sin(x / (DESIGN_W * ribbon.wl1) * Math.PI * 4 + ribbon.ph1 + tDir * ribbon.sp1) * ribbon.amp1
+        + Math.sin(x / (DESIGN_W * strand.wl2) * Math.PI * 4 + strand.ph2 + tDir * strand.sp2) * strand.amp2
+        + Math.sin(x / (DESIGN_W * strand.wl3) * Math.PI * 4 + strand.ph3 + tDir * strand.sp3) * strand.amp3;
     }
     c.beginPath();
     var x0 = -step, x1 = 0;
