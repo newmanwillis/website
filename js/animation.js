@@ -155,7 +155,7 @@
 
   window.addEventListener('resize', resize);
   resize();
-  // if (!window.matchMedia('(pointer: coarse)').matches) {
+  if (!window.matchMedia('(pointer: coarse)').matches) {
     animate();
-  // }
+  }
 })();
