@@ -95,7 +95,10 @@ Dedicated areas for new buttons and menus meant features could be added without 
 
     <div class="block-text">
       <h2>Multi-robot UI</h2>
-      <p>What was the result? Shipped? Won an award? Learned something key? Show the impact of your work here.</p>
+      <p>The UI supported robots from a range of manufacturers, and each new hardware addition brought unique features that had to be accounted for in the interface.
+        When I joined, all connected robots were single-arm.
+        Much of the active development at the time was around supporting Google's own EDR Meta robot, which introduced driving and head movement capabilities on top of the standard arm controls.
+      </p>
     </div>
 
     <div class="block-image-grid-3">
@@ -123,16 +126,22 @@ Dedicated areas for new buttons and menus meant features could be added without 
       <img src="../images/rui/rui-camera.png" alt="Proxy Robot" />
       <figcaption>EDR Meta robot</figcaption>
     </figure> -->
+
+    <div class="block-text">
+      <p>My earliest major milestone on the project was integrating the first bi-arm robot into the UI, a simulated Kuka dual-arm setup, and extending VR controller support to operate both arms.
+      </p>
+    </div>
+  
     <figure class="block-image">
       <img src="../images/rui/reach-biarm.png" alt="Bi-arm Kuka robot" />
-      <figcaption>Bi-arm Kuka LBR iiwa robots</figcaption>
+      <figcaption>Early-stage implementation of bi-arm Kuka LBR iiwa robots</figcaption>
     </figure>
 
     <div class="block-text">
-      <p>Part of the work involved adding new robots to use through the UI. 
-        Prior to my starting there, there had only been single-arm robots connected through this UI. 
-        I would help set up the first bi-arm robot to the UI which involved updating the project wefawefawefawefwa 
-        Adjusting the UI to different robots. sdfsd sd
+      <p>Quest 2 controllers already supported single-arm teleoperation, but adapting that logic for two arms required rethinking how robot arms were represented in the codebase.
+        I refactored the controller mapping so that each arm was treated as its own object, which both enabled dual-arm control and cleaned up how single-arm robots referenced the same logic going forward.
+      </p><p>
+        I demoed the result in a live meeting to a room of Googlers, the first time a bi-arm robot had been operated through the UI using VR controllers.
       </p>
     </div>
 
