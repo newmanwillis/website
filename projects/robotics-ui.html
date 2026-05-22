@@ -59,40 +59,6 @@ The bulk of my work, however, involved fixing, updating, and polishing the many 
       <figcaption>EDR Meta robot with camera and occupancy grid active to view the environment</figcaption>
     </figure>   
 
-
-    <div class="block-text" style="margin-bottom: 0.5rem;">
-      <h2>Improving the UI/UX</h2>
-      <p>The Robotics UI was a long-running and frequently reimagined initiative with numerous engineers rotating in and out over its history, often with limited experience in the Unity software it was made in.
-This resulted in a sprawl of partially implemented and outdated features added wherever they could fit, with little consideration for the UI as a whole.
-What started as fixing individual features would regularly surface the need for larger structural overhauls.
-I took it upon myself to make these changes, especially as more new features were added by the team.       
-      </p>
-    </div>
-
-    <p style="text-align: center; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem;">Initial UI state</p>
-    <figure class="block-image">
-      <img src="../images/rui/reach-badscene1.png" alt="Old Unorganized UI" />
-      <figcaption>Screenshot showcasing numerous issues with the initial UI a few months after I started</figcaption>
-    </figure>
-
-      <p>To just highlight a few clearly visible issues above, you can see how the transparent UI components bleed into the contents underneath them, multiple dropdown menus in the top right stay open on click-away, the central viewing area has many buttons and text that can be obstructed by configurable windows, and a right-side menu opens to an empty panel.
-        Feel free to spot more.
-      </p>
-
-    <p style="text-align: center; font-weight: 600; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">Later redesign stage</p>
-    <figure class="block-image">
-      <img src="../images/rui/ruip2p2-shortenedgif.gif" alt="UI Improvements" />
-      <figcaption>Later stage of the UI demonstrating some improvements over the scattered features of the old design</figcaption>
-    </figure>
-  
-    <div class="block-text">
-      <p> The gif above shows an intermediate stage of the final redesign, but the core improvements are visible.
-The visuals are more consistent and uniform — transparent components are made solid and given their own space, buttons and menus look and behave predictably, the center view is free of buttons that get in the way of windows and visuals, and unused or duplicate features are removed.
-And beyond addressing existing issues facing the UI, the design was built with flexibility for potential future features as well.
-Dedicated areas for new buttons and menus meant features could be added without crowding the viewport, and parts of the UI automatically adapted to different robot types and the control method in use.
-      </p>
-    </div>
-
     <div class="block-text">
       <h2>Multi-robot UI</h2>
       <p>The UI supported robots from a range of manufacturers, and each new hardware addition brought unique features that had to be accounted for in the interface.
@@ -102,12 +68,12 @@ Dedicated areas for new buttons and menus meant features could be added without 
     </div>
 
     <div class="block-image-grid-3">
-      <img src="../images/rui/rui-2dboardsim01.jpg" alt="2D Board Sim Robot" style="aspect-ratio: 2/3; object-fit: cover;" data-caption="Franka Emika Panda robot sim" />
+      <img src="../images/rui/rui-2dboardsim01.jpg" alt="2D Board Sim Robot" style="aspect-ratio: 2/3; object-fit: cover;" data-caption="Franka Emika Panda robot moving blocks" />
       <div style="aspect-ratio: 2/3; overflow: hidden;">
-        <img src="../images/rui/reach-foldingsim.png" alt="Folding Sim Robot" style="width: 100%; height: 100%; object-fit: cover; object-position: 49% 62%; transform: scale(1.7); transform-origin: 60% 65%;" data-caption="UR robot folding T-shirt sim" />
+        <img src="../images/rui/reach-foldingsim.png" alt="Folding Sim Robot" style="width: 100%; height: 100%; object-fit: cover; object-position: 49% 62%; transform: scale(1.7); transform-origin: 60% 65%;" data-caption="UR robot folding a T-shirt" />
       </div>
       <div style="aspect-ratio: 2/3; overflow: hidden;">
-        <img src="../images/rui/rui-camera.png" alt="EDR Meta Robot" style="width: 100%; height: 100%; object-fit: cover; object-position: 58% 65%; transform: scale(2); transform-origin: 50% 70%;" data-caption="EDR Meta robot" />
+        <img src="../images/rui/rui-camera.png" alt="EDR Meta Robot" style="width: 100%; height: 100%; object-fit: cover; object-position: 58% 65%; transform: scale(2); transform-origin: 50% 70%;" data-caption="EDR Meta robot standing solemnly" />
       </div>
       <p style="font-size: 0.9rem; color: #3c3a37; margin-top: -0.1rem; text-align: center; letter-spacing: 0.02em;">Franka Emika Panda robot moving blocks</p>
       <p style="font-size: 0.9rem; color: #3c3a37; margin-top: -0.1rem; text-align: center; letter-spacing: 0.02em;">UR robot folding a T-shirt</p>
@@ -128,7 +94,8 @@ Dedicated areas for new buttons and menus meant features could be added without 
     </figure> -->
 
     <div class="block-text">
-      <p>My earliest major milestone on the project was integrating the first bi-arm robot into the UI and expanding VR controller support to operate both arms.
+      <p> I helped adapt many of these features,but 
+        My earliest major milestone on the project was integrating the first bi-arm robot into the UI and expanding VR controller support to operate both arms.
       </p>
     </div>
   
@@ -149,6 +116,39 @@ I converted arms into their own objects, allowing bi-arms to easily extend that 
         I demoed the result using a simulated version of the Kuka bi-arms to a room full of Googlers, showcasing the first time bi-arm controls were operated in the UI.
       </p>
     </div>
+
+    <div class="block-text" style="margin-bottom: 0.5rem;">
+      <h2>Improving the UI/UX</h2>
+      <p>The Robotics UI was a long-running and frequently reimagined initiative with numerous engineers rotating in and out over its history, often with limited experience in the Unity software it was made in.
+This resulted in a sprawl of partially implemented and outdated features added wherever they could fit, with little consideration for the UI as a whole.
+What started as fixing individual features would regularly surface the need for larger structural overhauls.
+I took it upon myself to make these changes, especially as more new features were added by the team.       
+      </p>
+    </div>
+
+    <p style="text-align: center; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem;">Initial UI state</p>
+    <figure class="block-image">
+      <img src="../images/rui/reach-badscene1.png" alt="Old Unorganized UI" />
+      <figcaption>Screenshot showcasing numerous issues with the initial UI a few months after I started</figcaption>
+    </figure>
+
+      <p>To just highlight a few clearly visible issues above, you can see how the transparent UI components bleed into the contents underneath them, multiple dropdown menus in the top right stay open on click-away, the central viewing area has many buttons and text that can be obstructed by configurable windows, and a right-side menu opens to an empty panel.
+      </p>
+
+    <p style="text-align: center; font-weight: 600; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">Later redesign stage</p>
+    <figure class="block-image">
+      <img src="../images/rui/ruip2p2-shortenedgif.gif" alt="UI Improvements" />
+      <figcaption>Later stage of the UI demonstrating some improvements over the scattered features of the old design</figcaption>
+    </figure>
+  
+    <div class="block-text">
+      <p> The gif above shows an intermediate stage of the final redesign, but the core improvements are visible.
+The visuals are more consistent and uniform — transparent components are made solid and given their own space, buttons and menus look and behave predictably, the center view is free of buttons that get in the way of windows and visuals, and unused or duplicate features are removed.
+And beyond addressing existing issues facing the UI, the design was built with flexibility for potential future features as well.
+Dedicated areas for new buttons and menus meant features could be added without crowding the viewport, and parts of the UI automatically adapted to different robot types and the control method in use.
+      </p>
+    </div>
+
 
     <div class="block-text">
       <h2>Protobuf RUI</h2>
