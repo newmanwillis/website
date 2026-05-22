@@ -31,13 +31,13 @@
       cb:  Math.floor(8  + hue * 12),
       dir: (r % 2 === 0) ? 1 : -1,
       baseY: (r + 0.5) / RIBBON_COUNT,
-      amp1:  20 + Math.random() * 20,
+      amp1:  32 + Math.random() * 32,
       wl1:   0.5 + Math.random() * 0.65,
       ph1:   Math.random() * Math.PI * 2,
       sp1:   0.0005 + Math.random() * 0.0004,
       // Slow drift — very long wavelength so only a fraction of the cycle
       // is visible, creating a gradual slope from one side to the other
-      ampD:  30 + Math.random() * 50,
+      ampD:  50 + Math.random() * 70,
       wlD:   2.0 + Math.random() * 2.0,
       phD:   Math.random() * Math.PI * 2,
       spD:   0.00015 + Math.random() * 0.00015,
