@@ -138,11 +138,15 @@ Dedicated areas for new buttons and menus meant features could be added without 
     </figure>
 
     <div class="block-text">
-      <p>Grrrrbrrrr Quest 2 controllers already supported single-arm teleoperation, but adapting that logic for two arms required rethinking how robot arms were represented in the codebase.
-        I refactored the controller mapping so that each arm was treated as its own object, which both enabled dual-arm control and cleaned up how single-arm robots referenced the same logic going forward.
+      <p>Much of the initial work was just about extending the existing single-arm logic to support two.
+Several features needed to be duplicated and updated to read in data for each arm properly.
+Mouse and keyboard controls were still designed to operate one arm at a time, so the logic primarily just needed to be able to switch between them correctly.
       </p><p>
-        I demoed the result in a live meeting to a room of Googlers, the first time a bi-arm robot had been operated through the UI using VR controllers.
-        GGrrrrRRR
+However, the codebase was hardcoded with the assumption that there would only ever be one arm.
+That meant using two VR controllers to control both arms at once would require a significant refactor.
+I converted arms into their own objects, allowing bi-arms to easily extend that logic for two, updating the single-arm code as well as a by-product.
+      </p><p>
+        I demoed the result using a simulated version of the Kuka bi-arms to a room full of Googlers, showcasing the first time bi-arm controls were operated in the UI.
       </p>
     </div>
 
