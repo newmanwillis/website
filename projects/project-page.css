@@ -23,7 +23,7 @@
   --muted: #8a8880;
   --border: #dedad2;
   --white: #ffffff;
-  --max: 1020px;
+  --max: clamp(1020px, 68vw, 1200px);
 }
 
 body {
@@ -342,7 +342,7 @@ body {
 
 .block-vertical-row {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -350,7 +350,8 @@ body {
 
 .block-vertical-row .block-video--vertical {
   flex-shrink: 0;
-  width: 380px;
+  width: clamp(300px, 37%, 440px);
+  max-width: none;
   margin: 0;
 }
 
@@ -379,10 +380,10 @@ body {
 }
 
 .vertical-gif-col img {
-  max-height: 100%;
-  max-width: 100%;
-  width: auto;
-  height: auto;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: cover;
   display: block;
   border-radius: 3px;
   border: 1px solid var(--border);
@@ -682,16 +683,24 @@ body {
   flex-direction: column;
   align-items: flex-end;
   margin-top: 3rem;
-  width: fit-content;
+  width: clamp(200px, 36%, 360px);
+}
+
+.split-img-fill {
+  flex: 1;
+  min-height: 0;
+  align-self: stretch;
+  position: relative;
 }
 
 .block-split .split-image img {
   display: block;
-  max-height: 100%;
-  width: auto;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   border-radius: 3px;
-  border: 1px solid var(--border);
 }
 
 .block-split .split-image figcaption {
@@ -705,6 +714,8 @@ body {
 
 @media (max-width: 600px) {
   .block-split { flex-direction: column; }
+  .block-split .split-image { width: 100%; }
+  .block-split .split-image img { height: auto; width: 100%; position: static; }
 }
 
 /* ── CAROUSEL ── */
