@@ -39,10 +39,15 @@ body {
 
 /* Always fixed so it never causes layout reflow */
 .back-bar {
+  display: none;
   position: fixed;
   top: 1.5rem;
   left: 1.5rem;
   z-index: 100;
+}
+
+body.project-page .back-bar {
+  display: block;
 }
 
 .nav-btn-group {
@@ -142,7 +147,7 @@ body {
 }
 
 @media (max-width: 1150px) {
-  .back-spacer { display: block; }
+  body.project-page .back-spacer { display: block; }
 }
 
 
