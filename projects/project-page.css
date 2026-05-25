@@ -54,15 +54,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  background: rgba(245, 244, 240, 0.85);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
   cursor: pointer;
   color: var(--muted);
   text-decoration: none;
-  transition: color 0.2s, border-color 0.2s;
+  transition: color 0.2s;
   padding: 0;
   font: inherit;
   line-height: 1;
@@ -70,12 +69,17 @@ body {
 
 .nav-btn:hover {
   color: var(--ink);
-  border-color: #aaa8a2;
+}
+
+#nav-menu-btn[aria-expanded="true"] {
+  background: rgba(245, 244, 240, 0.9);
+  border: 1px solid #b8b4ac;
+  border-radius: 6px;
 }
 
 .nav-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 24px;
+  height: 24px;
   stroke: currentColor;
   fill: none;
   stroke-width: 2;
@@ -106,9 +110,9 @@ body {
 .project-nav-menu a {
   display: block;
   padding: 0.45rem 1rem;
-  color: var(--muted);
+  color: #52514f;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   letter-spacing: 0.01em;
   transition: color 0.15s, background 0.15s;
 }
@@ -123,7 +127,7 @@ body {
   padding: 0.45rem 1rem;
   color: var(--ink);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   letter-spacing: 0.01em;
 }
 
@@ -140,6 +144,7 @@ body {
 @media (max-width: 1150px) {
   .back-spacer { display: block; }
 }
+
 
 /* ── PAGE CONTENT ── */
 .page-content {

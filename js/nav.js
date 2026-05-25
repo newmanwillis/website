@@ -27,7 +27,7 @@
         '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>' +
       '</button>' +
       '<a class="nav-btn" href="../index.html" aria-label="Home">' +
-        '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' +
+        '<svg viewBox="0 0 24 24"><path d="M12 2L1 10L4 10L4 21L9 21L9 15L15 15L15 21L20 21L20 10L23 10Z"/></svg>' +
       '</a>' +
     '</div>' +
     '<div class="project-nav-menu" id="project-nav-menu" hidden>' +
