@@ -52,6 +52,7 @@ body.project-page .back-bar {
 
 .nav-btn-group {
   display: flex;
+  flex-direction: column;
   gap: 0.4rem;
 }
 

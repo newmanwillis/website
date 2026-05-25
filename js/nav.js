@@ -42,12 +42,12 @@
 
   bar.innerHTML =
     '<div class="nav-btn-group">' +
-      '<button class="nav-btn" id="nav-menu-btn" aria-label="Project menu" aria-expanded="false">' +
-        '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>' +
-      '</button>' +
       '<a class="nav-btn" href="' + siteRoot + 'index.html" aria-label="Home">' +
         '<svg viewBox="0 0 24 24"><path d="M12 2L1 10L4 10L4 21L9 21L9 15L15 15L15 21L20 21L20 10L23 10Z"/></svg>' +
       '</a>' +
+      '<button class="nav-btn" id="nav-menu-btn" aria-label="Project menu" aria-expanded="false">' +
+        '<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>' +
+      '</button>' +
     '</div>' +
     '<div class="project-nav-menu" id="project-nav-menu" hidden>' +
       '<ul>' + buildMenuItems() + '</ul>' +
