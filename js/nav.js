@@ -72,4 +72,19 @@
   window.addEventListener('scroll', checkScroll, { passive: true });
   window.addEventListener('resize', checkScroll);
   checkScroll();
+
+  // Update current-page highlight after client-side navigation
+  window.addEventListener('navchange', function () {
+    var cf = window.location.pathname.split('/').pop();
+    menu.querySelectorAll('li').forEach(function (li, i) {
+      var p = projects[i];
+      if (!p) return;
+      li.innerHTML = p.file === cf
+        ? '<span class="current">' + p.title + '</span>'
+        : '<a href="' + p.file + '">' + p.title + '</a>';
+    });
+    menu.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    checkScroll();
+  });
 })();

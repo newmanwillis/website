@@ -41,6 +41,7 @@
 
     el.style.opacity = '1';
     if (pushState) history.pushState({ url: url }, doc.title, url);
+    window.dispatchEvent(new CustomEvent('navchange'));
   }
 
   document.addEventListener('click', function (e) {
