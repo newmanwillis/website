@@ -45,22 +45,37 @@ body {
   z-index: 100;
 }
 
-.back-btn {
-  display: inline-flex;
-  align-items: center;
+.nav-btn-group {
+  display: flex;
   gap: 0.4rem;
-  text-decoration: none;
-  color: var(--muted);
-  font-size: 0.85rem;
-  letter-spacing: 0.03em;
-  transition: color 0.2s, opacity 0.2s;
 }
 
-.back-btn:hover { color: var(--ink); }
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(245, 244, 240, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+  padding: 0;
+  font: inherit;
+  line-height: 1;
+}
 
-.back-btn svg {
-  width: 14px;
-  height: 14px;
+.nav-btn:hover {
+  color: var(--ink);
+  border-color: #aaa8a2;
+}
+
+.nav-btn svg {
+  width: 15px;
+  height: 15px;
   stroke: currentColor;
   fill: none;
   stroke-width: 2;
@@ -68,14 +83,51 @@ body {
   stroke-linejoin: round;
 }
 
-/* Narrow screens: button fades out as page scrolls so it doesn't
-   permanently overlap content. JS below handles the fade. */
+.project-nav-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+}
+
+.project-nav-menu[hidden] {
+  display: none;
+}
+
+.project-nav-menu ul {
+  list-style: none;
+}
+
+.project-nav-menu a {
+  display: block;
+  padding: 0.45rem 1rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+  transition: color 0.15s, background 0.15s;
+}
+
+.project-nav-menu a:hover {
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.project-nav-menu a.current {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 .back-bar.scrolled-past {
   opacity: 0;
   pointer-events: none;
 }
 
-/* Thin invisible spacer so content doesn't start behind the button area */
 .back-spacer {
   height: 3rem;
   display: none;
@@ -83,16 +135,6 @@ body {
 
 @media (max-width: 1150px) {
   .back-spacer { display: block; }
-}
-
-.back-btn svg {
-  width: 14px;
-  height: 14px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 /* ── PAGE CONTENT ── */

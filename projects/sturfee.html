@@ -15,12 +15,7 @@
 
   <div id="site-content">
 
-  <div class="back-bar">
-    <a class="back-btn" href="../index.html">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to projects
-    </a>
-  </div>
+  <div class="back-bar"></div>
   <div class="back-spacer"></div>
 
   <div class="page-content">
@@ -474,27 +469,9 @@ I wasn't aware Sturfee made my projects accessible to them, but I can be proud t
     })();
   </script>
 
-  <script>
-    // On narrow screens, fade the back button out once user scrolls past it
-    (function () {
-      var bar = document.querySelector('.back-bar');
-      var spacer = document.querySelector('.back-spacer');
-      function check() {
-        if (window.innerWidth <= 1150) {
-          var threshold = spacer ? spacer.offsetHeight : 48;
-          bar.classList.toggle('scrolled-past', window.scrollY > threshold);
-        } else {
-          bar.classList.remove('scrolled-past');
-        }
-      }
-      window.addEventListener('scroll', check, { passive: true });
-      window.addEventListener('resize', check);
-      check();
-    })();
-  </script>
-
   </div><!-- #site-content -->
 
+  <script src="../js/nav.js"></script>
   <script src="../js/animation.js"></script>
   <script src="../js/router.js"></script>
 
