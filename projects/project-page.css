@@ -64,7 +64,7 @@ body.project-page .back-bar {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--muted);
+  color: #868480;
   text-decoration: none;
   transition: color 0.2s;
   padding: 0;
@@ -115,7 +115,7 @@ body.project-page .back-bar {
 .project-nav-menu a {
   display: block;
   padding: 0.45rem 1rem;
-  color: #52514f;
+  color: var(--muted);
   text-decoration: none;
   font-size: 0.92rem;
   letter-spacing: 0.01em;
