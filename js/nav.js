@@ -12,8 +12,10 @@
   var currentFile = window.location.pathname.split('/').pop();
 
   var menuItems = projects.map(function (p) {
-    var cls = p.file === currentFile ? ' class="current"' : '';
-    return '<li><a href="' + p.file + '"' + cls + '>' + p.title + '</a></li>';
+    if (p.file === currentFile) {
+      return '<li><span class="current">' + p.title + '</span></li>';
+    }
+    return '<li><a href="' + p.file + '">' + p.title + '</a></li>';
   }).join('');
 
   var bar = document.querySelector('.back-bar');
