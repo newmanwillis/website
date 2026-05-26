@@ -407,7 +407,7 @@ I wasn't aware Sturfee made my projects accessible to them, but I can be proud t
         setTimeout(() => { lbImg.src = ''; lbCaption.textContent = ''; lbCaption.style.opacity = '0'; }, 200);
       }
 
-      document.querySelectorAll('.block-image img, ' + gridSelectors)
+      document.querySelectorAll('.block-image img, .vertical-gif-col img, ' + gridSelectors)
         .forEach(function (img) {
           img.addEventListener('click', function () { open(img); });
         });

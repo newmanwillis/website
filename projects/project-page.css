@@ -565,7 +565,8 @@ body.project-page .back-bar {
 .block-image-grid-3 img,
 .block-image-grid-4 img,
 .block-image-grid-5 img,
-.split-image img {
+.split-image img,
+.vertical-gif-col img {
   cursor: zoom-in;
   transition: opacity 0.15s;
 }
@@ -574,7 +575,8 @@ body.project-page .back-bar {
 .block-image-grid-3 img:hover,
 .block-image-grid-4 img:hover,
 .block-image-grid-5 img:hover,
-.split-image img:hover {
+.split-image img:hover,
+.vertical-gif-col img:hover {
   opacity: 0.88;
 }
 
