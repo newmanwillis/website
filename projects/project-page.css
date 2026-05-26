@@ -56,6 +56,12 @@ body.project-page .back-bar {
   gap: 0.4rem;
 }
 
+@media (max-width: 768px) and (orientation: portrait) {
+  .nav-btn-group {
+    flex-direction: row;
+  }
+}
+
 .nav-btn {
   display: flex;
   align-items: center;
