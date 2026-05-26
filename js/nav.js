@@ -6,7 +6,7 @@
     { title: 'Rainbow Blues Cat',  file: 'rainbow-blues-cat.html' },
     { title: 'Bursting Brains',    file: 'bursting-brains.html' },
     { title: 'Dead Week',          file: 'dead-week.html' },
-    { title: 'Miscellaneous',      file: 'miscellaneous.html' },
+    // { title: 'Miscellaneous',      file: 'miscellaneous.html' },
   ];
 
   // Derive site root from this script's URL so links work from any page depth
