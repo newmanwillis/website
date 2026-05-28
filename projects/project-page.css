@@ -327,11 +327,23 @@ body.project-page .back-bar {
   margin-bottom: 1.5rem;
 }
 
+.block-image-grid-3 figure {
+  margin: 0;
+}
+
 .block-image-grid-3 img {
   width: 100%;
   border-radius: 3px;
   border: 1px solid var(--border);
   display: block;
+}
+
+.block-image-grid-3 figcaption {
+  font-size: 0.9rem;
+  color: #3c3a37;
+  margin-top: 0.6rem;
+  text-align: center;
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 600px) {
