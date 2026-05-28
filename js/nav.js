@@ -4,7 +4,7 @@
     { title: 'Sturfee AR Projects', file: 'sturfee.html' },
     { title: 'Breach',             file: 'breach.html' },
     { title: 'Rainbow Blues Cat',  file: 'rainbow-blues-cat.html' },
-    { title: 'Bursting Brains',    file: 'bursting-brains.html' },
+    { title: 'Oculus Escape',       file: 'oculus-escape.html' },
     { title: 'Dead Week',          file: 'dead-week.html' },
     // { title: 'Miscellaneous',      file: 'miscellaneous.html' },
   ];
