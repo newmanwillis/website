@@ -87,6 +87,18 @@ body {
 }
 */
 
+/* ── HEADER TEXT SHADOW ── */
+header h1 {
+  text-shadow: 0 0 12px #f5f4f0, 0 0 24px #f5f4f0, 0 0 40px rgba(245, 244, 240, 0.8);
+}
+
+.header-role,
+.header-bio,
+.header-contact,
+.intro-cover .section-label {
+  text-shadow: 0 0 6px #f5f4f0, 0 0 14px #f5f4f0, 0 0 22px rgba(245, 244, 240, 0.9);
+}
+
 /* ── HEADER ── */
 header {
   text-align: center;
@@ -105,22 +117,22 @@ header h1 {
 }
 
 .header-role {
-  font-size: 1.35rem;
+  font-size: 1.49rem;
   font-family: 'Titillium Web', sans-serif;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--ink);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0rem;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.25s;
 }
 
 .header-bio {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-family: 'Titillium Web', sans-serif;
-  font-weight: 600;
+  font-weight: 900;
   color: var(--ink);
   max-width: 400px;
-  margin: 0 auto 0.5rem;
+  margin: 0 auto 0.3rem;
   line-height: 1.65;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.38s;
@@ -131,7 +143,8 @@ header h1 {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  font-size: 0.88rem;
+  font-size: 0.97rem;
+  font-weight: 700;
   color: var(--ink);
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.5s;
@@ -168,8 +181,8 @@ header h1 {
 }
 
 .section-label {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--ink);
