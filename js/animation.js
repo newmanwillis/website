@@ -247,8 +247,8 @@
     var content = document.querySelector('.page-content');
     if (!content) return;
     var r = content.getBoundingClientRect();
-    var targetL = Math.floor(r.left  / CELL) * CELL - 3;
-    var targetR = Math.ceil(r.right / CELL) * CELL + 3;
+    var targetL = Math.floor(r.left  / CELL) * CELL - 4;
+    var targetR = Math.ceil(r.right / CELL) * CELL + 4;
     // Offsets are relative to each element's own containing block.
     // .page-content::before: containing block = .page-content (left edge = r.left)
     var cLeft  = targetL - r.left;   // negative = extends left of content
