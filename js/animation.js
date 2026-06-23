@@ -1,161 +1,321 @@
-(function () {
-  var canvas = document.getElementById('bg-canvas');
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
+(function() {
+  var canvasEl = document.getElementById('bg-canvas');
+  if (!canvasEl) return;
+  var dpr = window.devicePixelRatio || 1;
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  canvasEl.width = w * dpr;
+  canvasEl.height = h * dpr;
+  var ctx = canvasEl.getContext('2d');
+  ctx.scale(dpr, dpr);
 
-  // Offscreen canvas: each ribbon is drawn here first, then composited
-  // onto the main canvas with a blur — merging all strands into one soft band.
-  var offscreen = document.createElement('canvas');
-  var offCtx    = offscreen.getContext('2d');
+  var CELL = 8;
+  var cols, rows;
+  var BASE_R = 58, BASE_G = 56, BASE_B = 48;  // Dark pixels drawn on light background
+  var AMB_MIN = 0.03, AMB_MAX = 0.13, LEAD_DARK = 0.16;
+  var TRAIL_LEN = 10;
+  var RIPPLE_MAX_R = 130;
+  var RIPPLE_LIFE = 2000;
+  var FLASH_DECAY = 0.0015;
 
-  var SEGS         = 26;
-  var DESIGN_W     = 1440;
-  var DESIGN_H     = 900;
-  var RIBBON_COUNT = 5;
-  var HALF_STRANDS = 5;   // strands on each side + center = 11 per ribbon
-  var t = 0;
-  var w, h, scale;
-  var tIncrement   = 0.006;
-  var HOME_SPEED    = 0.006;
-  var PROJECT_SPEED = 0.0015;
+  // ripple zones (in px from click point)
+  var RIPPLE_CLEAR_R = 4 * CELL;           // inner clear zone: 0 to 4 cells out
+  var RIPPLE_TARGET_MAX = AMB_MAX * 0.70;  // ~0.091 — max darkness at outer edge
 
-  var ribbons = [];
-  for (var r = 0; r < RIBBON_COUNT; r++) {
-    var peakAlpha = 0.11 //+ Math.random() * 0.08;
-    var spread    = 20 + Math.random() * 18;
-    // Golden-brown tones with slight variation between ribbons
-    var hue  = Math.random();
-    var ribbon = {
-      cr:  Math.floor(95 + hue * 40),
-      cg:  Math.floor(58 + hue * 28),
-      cb:  Math.floor(8  + hue * 12),
-      dir: (r % 2 === 0) ? 1 : -1,
-      baseY: (r + 0.5) / RIBBON_COUNT,
-      amp1:  32 + Math.random() * 32,
-      wl1:   0.5 + Math.random() * 0.65,
-      ph1:   Math.random() * Math.PI * 2,
-      sp1:   0.0005 + Math.random() * 0.0004,
-      // Slow drift — very long wavelength so only a fraction of the cycle
-      // is visible, creating a gradual slope from one side to the other
-      ampD:  50 + Math.random() * 70,
-      wlD:   2.0 + Math.random() * 2.0,
-      phD:   Math.random() * Math.PI * 2,
-      spD:   0.00015 + Math.random() * 0.00015,
-      strands: [],
-    };
+  function easeOut(t) { var inv = 1 - t; return 1 - inv * inv * inv; }
+  function randAmbient() { return AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN); }
+  function randSpeed() { return 0.003 + Math.random() * 0.007; }
 
-    for (var s = -HALF_STRANDS; s <= HALF_STRANDS; s++) {
-      var frac = Math.abs(s) / HALF_STRANDS;
-      ribbon.strands.push({
-        offset: s * spread / HALF_STRANDS,
-        amp2: 8 + Math.random() * 9,
-        wl2:  0.1  + Math.random() * 0.12,
-        ph2:  Math.random() * Math.PI * 2,
-        sp2:  0.0009 + Math.random() * 0.001,
-        amp3: 5 + Math.random() * 7,
-        wl3:  0.055 + Math.random() * 0.045,
-        ph3:  Math.random() * Math.PI * 2,
-        sp3:  0.0016 + Math.random() * 0.0013,
-        alpha: peakAlpha * (1.0 - frac * 0.75),
-        lw:    5.0 - frac * 3.0,
-      });
-    }
-
-    ribbons.push(ribbon);
+  var alphaCache = {};
+  function fillColor(a) {
+    var key = (a * 1000 | 0);
+    if (!alphaCache[key]) alphaCache[key] = 'rgba(' + BASE_R + ',' + BASE_G + ',' + BASE_B + ',' + a.toFixed(3) + ')';
+    return alphaCache[key];
   }
 
-  function resize() {
-    w = canvas.width = offscreen.width  = window.innerWidth;
-    h = canvas.height = offscreen.height = window.innerHeight;
-    scale = Math.max(w / DESIGN_W, h / DESIGN_H, 1);
+  // get current effective darkness of a pixel for comparison
+  function currentDarkness(p, t) {
+    if (p.state === 'cleared') return 0;
+    if (p.state === 'flashing') return Math.max(0, p.flashAlpha);
+    if (p.state === 'tinted') return p.rippleAlpha;
+    var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
+    return p.ambMin + (p.ambMax - p.ambMin) * wave;
   }
 
-  function drawStrandTo(c, ribbon, strand, tEff) {
-    var step = DESIGN_W / SEGS;
-    function yAt(x) {
-      var tDir = tEff * ribbon.dir;
-      return ribbon.baseY * DESIGN_H + strand.offset
-        + Math.sin(x / (DESIGN_W * ribbon.wlD) * Math.PI * 4 + ribbon.phD + tDir * ribbon.spD) * ribbon.ampD
-        + Math.sin(x / (DESIGN_W * ribbon.wl1) * Math.PI * 4 + ribbon.ph1 + tDir * ribbon.sp1) * ribbon.amp1
-        + Math.sin(x / (DESIGN_W * strand.wl2) * Math.PI * 4 + strand.ph2 + tDir * strand.sp2) * strand.amp2
-        + Math.sin(x / (DESIGN_W * strand.wl3) * Math.PI * 4 + strand.ph3 + tDir * strand.sp3) * strand.amp3;
+  // compute what the ripple wants to do at a given pixel distance from click
+  // returns { mode: 'clear' | 'lighten', targetAlpha: number }
+  function rippleTarget(dist) {
+    if (dist <= RIPPLE_CLEAR_R) {
+      return { mode: 'clear', targetAlpha: 0 };
     }
-    c.beginPath();
-    var x0 = -step, x1 = 0;
-    c.moveTo((x0 + x1) / 2, (yAt(x0) + yAt(x1)) / 2);
-    for (var i = 0; i <= SEGS + 1; i++) {
-      var cx = i * step, nx = (i + 1) * step;
-      c.quadraticCurveTo(cx, yAt(cx), (cx + nx) / 2, (yAt(cx) + yAt(nx)) / 2);
-    }
-    c.strokeStyle = 'rgba(' + ribbon.cr + ',' + ribbon.cg + ',' + ribbon.cb + ',' + strand.alpha.toFixed(3) + ')';
-    c.lineWidth   = strand.lw / scale;
-    c.stroke();
+    // from RIPPLE_CLEAR_R to RIPPLE_MAX_R: ramp from 0 up to RIPPLE_TARGET_MAX
+    var outerFrac = (dist - RIPPLE_CLEAR_R) / (RIPPLE_MAX_R - RIPPLE_CLEAR_R);
+    outerFrac = Math.min(1, Math.max(0, outerFrac));
+    var targetAlpha = RIPPLE_TARGET_MAX * outerFrac;
+    return { mode: 'lighten', targetAlpha: targetAlpha };
   }
 
-  function drawRibbonSoft(ribbon, tEff) {
-    offCtx.save();
-    offCtx.translate((w - DESIGN_W * scale) / 2, (h - DESIGN_H * scale) / 2);
-    offCtx.scale(scale, scale);
-    offCtx.lineCap  = 'round';
-    offCtx.lineJoin = 'round';
-    for (var s = 0; s < ribbon.strands.length; s++) {
-      drawStrandTo(offCtx, ribbon, ribbon.strands[s], tEff);
+  var pixels = [];
+  var grid = [];
+  var columns = [];
+
+  function initGrid() {
+    cols = Math.ceil(w / CELL);
+    rows = Math.ceil(h / CELL);
+
+    // build pixels
+    pixels = [];
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        pixels.push({
+          x: x, y: y,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.0002 + Math.random() * 0.00022,
+          ambMin: AMB_MIN + Math.random() * 0.02,
+          ambMax: AMB_MIN + 0.02 + Math.random() * (AMB_MAX - AMB_MIN - 0.02),
+          seededDark: randAmbient(),
+          seededArmed: false,
+          flashAlpha: 0,
+          state: 'ambient',
+          rippleAlpha: 0
+        });
+      }
     }
-    offCtx.restore();
+
+    // grid lookup
+    grid = new Array(cols * rows);
+    pixels.forEach(function(p) { grid[p.x * rows + p.y] = p; });
+
+    // columns: random spread across the page (some start above, some within)
+    columns = [];
+    for (var x = 0; x < cols; x++) {
+      var colY = (Math.random() * (rows + TRAIL_LEN)) - TRAIL_LEN; // range [-TRAIL_LEN, rows]
+      columns.push({ y: colY, speed: randSpeed() });
+
+      // pre-seed trail pixels so the column appears filled on load where applicable
+      var baseX = x;
+      for (var k = 0; k < TRAIL_LEN; k++) {
+        var gy = Math.floor(colY) - k;
+        if (gy < 0 || gy >= rows) continue;
+        var p = grid[baseX * rows + gy];
+        if (!p) continue;
+        p.seededDark = randAmbient();
+        p.seededArmed = true;
+        p.flashAlpha = LEAD_DARK;
+        p.rippleAlpha = 0;
+        p.state = 'flashing';
+      }
+    }
   }
 
-  function drawRibbonHard(ribbon, tEff) {
-    ctx.save();
-    ctx.translate((w - DESIGN_W * scale) / 2, (h - DESIGN_H * scale) / 2);
-    ctx.scale(scale, scale);
-    ctx.lineCap  = 'round';
-    ctx.lineJoin = 'round';
-    for (var s = 0; s < ribbon.strands.length; s++) {
-      var strand = ribbon.strands[s];
-      var hardStrand = {
-        offset: strand.offset,
-        amp2: strand.amp2, wl2: strand.wl2, ph2: strand.ph2, sp2: strand.sp2,
-        amp3: strand.amp3, wl3: strand.wl3, ph3: strand.ph3, sp3: strand.sp3,
-        alpha: strand.alpha * 0.2,
-        lw:    strand.lw * 0.4,
-      };
-      drawStrandTo(ctx, ribbon, hardStrand, tEff);
+  var mouseX = -1000, mouseY = -1000;
+  canvasEl.addEventListener('mousemove', function(e) {
+    var r = canvasEl.getBoundingClientRect();
+    mouseX = e.clientX - r.left; mouseY = e.clientY - r.top;
+  });
+  canvasEl.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
+  canvasEl.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    var r = canvasEl.getBoundingClientRect();
+    mouseX = e.touches[0].clientX - r.left; mouseY = e.touches[0].clientY - r.top;
+  }, { passive: false });
+  canvasEl.addEventListener('touchend', function() { mouseX = -1000; mouseY = -1000; });
+
+  var ripples = [];
+  function addRipple(rx, ry) {
+    ripples.push({ x: rx, y: ry, lastR: 0, born: performance.now() });
+    if (ripples.length > 5) ripples.shift();
+  }
+  canvasEl.addEventListener('click', function(e) {
+    var r = canvasEl.getBoundingClientRect();
+    addRipple(e.clientX - r.left, e.clientY - r.top);
+  });
+  canvasEl.addEventListener('touchstart', function(e) {
+    var r = canvasEl.getBoundingClientRect();
+    addRipple(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+  });
+
+  function applyRipples(now, t) {
+    var i = ripples.length;
+    while (i--) {
+      var rp = ripples[i];
+      var age = now - rp.born;
+      if (age > RIPPLE_LIFE) { ripples.splice(i, 1); continue; }
+
+      var progress = age / RIPPLE_LIFE;
+      var waveR = RIPPLE_MAX_R * easeOut(progress);
+      var rMin = rp.lastR, rMax = waveR;
+      rp.lastR = waveR;
+      if (rMax - rMin < 0.3) continue;
+
+      // bounding box around annulus only
+      var outerR = rMax + CELL;
+      var xMinC = Math.max(0, Math.floor((rp.x - outerR) / CELL));
+      var xMaxC = Math.min(cols - 1, Math.ceil((rp.x + outerR) / CELL));
+      var yMinC = Math.max(0, Math.floor((rp.y - outerR) / CELL));
+      var yMaxC = Math.min(rows - 1, Math.ceil((rp.y + outerR) / CELL));
+
+      for (var cx = xMinC; cx <= xMaxC; cx++) {
+        for (var cy = yMinC; cy <= yMaxC; cy++) {
+          var px = cx * CELL + CELL / 2, py = cy * CELL + CELL / 2;
+          var dx = px - rp.x, dy = py - rp.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < rMin || dist > rMax) continue;
+          var p = grid[cx * rows + cy];
+          if (!p || p.state === 'flashing') continue;
+
+          var target = rippleTarget(dist);
+          var curDark = currentDarkness(p, t);
+
+          if (target.mode === 'clear') {
+            // always clear inner zone regardless of current brightness
+            p.state = 'cleared';
+            p.seededArmed = false;
+            p.rippleAlpha = 0;
+          } else {
+            // only apply if pixel is currently darker than target
+            if (curDark > target.targetAlpha) {
+              p.rippleAlpha = target.targetAlpha;
+              p.state = target.targetAlpha <= 0 ? 'cleared' : 'tinted';
+              p.seededArmed = false;
+            }
+            // if already lighter than target, leave it alone
+          }
+        }
+      }
     }
-    ctx.restore();
   }
 
-  function animate() {
-    var onProject = location.pathname.indexOf('/projects/') !== -1;
-    var target = onProject ? PROJECT_SPEED : HOME_SPEED;
-    tIncrement += (target - tIncrement) * 0.02;
-
-    ctx.clearRect(0, 0, w, h);
-    var tEff = t * 800;
-
-    // Pass 1 — all ribbons to offscreen, single blur composite
-    offCtx.clearRect(0, 0, w, h);
-    for (var r = 0; r < ribbons.length; r++) {
-      drawRibbonSoft(ribbons[r], tEff);
+  function advanceColumns(dt) {
+    for (var x = 0; x < cols; x++) {
+      var col = columns[x];
+      var prevY = col.y;
+      col.y += col.speed * dt;
+      if (col.y > rows + TRAIL_LEN + 2) {
+        col.y = -TRAIL_LEN - Math.random() * rows * 0.5;
+        col.speed = randSpeed();
+      }
+      var fromY = Math.floor(prevY), toY = Math.floor(col.y);
+      for (var gy = fromY; gy <= toY; gy++) {
+        if (gy < 0 || gy >= rows) continue;
+        var p = grid[x * rows + gy];
+        if (!p) continue;
+        p.seededDark = randAmbient();
+        p.seededArmed = true;
+        p.flashAlpha = LEAD_DARK;
+        p.rippleAlpha = 0;
+        p.state = 'flashing';
+      }
     }
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    ctx.filter = 'blur(6px)';
-    ctx.drawImage(offscreen, 0, 0);
-    ctx.filter = 'none';
-    ctx.restore();
-
-    // Pass 2 — hard lines for all ribbons directly on main canvas
-    for (var r = 0; r < ribbons.length; r++) {
-      drawRibbonHard(ribbons[r], tEff);
-    }
-
-    t += tIncrement;
-    requestAnimationFrame(animate);
   }
 
-  window.addEventListener('resize', resize);
-  resize();
-  // if (!window.matchMedia('(pointer: coarse)').matches) {
-  //   animate();
-  // }
+  function clearNearMouse() {
+    if (mouseX < 0 || mouseX > w || mouseY < 0 || mouseY > h) return;
+    var cx = Math.floor(mouseX / CELL), cy = Math.floor(mouseY / CELL);
+    for (var dx = -1; dx <= 1; dx++) {
+      for (var dy = -1; dy <= 1; dy++) {
+        if (Math.abs(dx) + Math.abs(dy) > 1) continue;
+        var gx = cx + dx, gy = cy + dy;
+        if (gx < 0 || gx >= cols || gy < 0 || gy >= rows) continue;
+        var p = grid[gx * rows + gy];
+        if (p && p.state !== 'flashing') { p.state = 'cleared'; p.seededArmed = false; p.rippleAlpha = 0; }
+      }
+    }
+  }
+
+  var paused = false;
+  document.addEventListener('visibilitychange', function() { paused = document.hidden; });
+  var observer = new IntersectionObserver(function(entries) { paused = !entries[0].isIntersecting; }, { threshold: 0.01 });
+  observer.observe(canvasEl);
+  var resizeTimer = null;
+
+  function draw(t, now, dt) {
+    advanceColumns(dt);
+    applyRipples(now, t);
+    clearNearMouse();
+
+    ctx.fillStyle = '#f5f4f0';
+    ctx.fillRect(0, 0, w, h);
+
+    for (var i = 0; i < pixels.length; i++) {
+      var p = pixels[i];
+      var px = p.x * CELL, py = p.y * CELL;
+
+      if (p.state === 'cleared') continue;
+
+      if (p.state === 'flashing') {
+        p.flashAlpha -= FLASH_DECAY * dt;
+        if (p.seededArmed && p.flashAlpha <= p.seededDark) {
+          p.ambMin = Math.max(AMB_MIN, p.seededDark - 0.015);
+          p.ambMax = Math.min(AMB_MAX, p.seededDark + 0.015);
+          p.phase = 0; p.seededArmed = false; p.state = 'ambient';
+        }
+        if (p.flashAlpha <= AMB_MIN) { p.seededArmed = false; p.state = 'ambient'; }
+        if (p.state === 'flashing') {
+          ctx.fillStyle = fillColor(Math.min(LEAD_DARK, Math.max(0, p.flashAlpha)));
+          ctx.fillRect(px, py, CELL - 1, CELL - 1);
+          continue;
+        }
+      }
+
+      if (p.state === 'tinted') {
+        ctx.fillStyle = fillColor(p.rippleAlpha);
+        ctx.fillRect(px, py, CELL - 1, CELL - 1);
+        continue;
+      }
+
+      // ambient
+      var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
+      var darkness = p.ambMin + (p.ambMax - p.ambMin) * wave;
+      ctx.fillStyle = fillColor(darkness);
+      ctx.fillRect(px, py, CELL - 1, CELL - 1);
+    }
+
+    // column streaks
+    for (var x = 0; x < cols; x++) {
+      var col = columns[x];
+      for (var k = 0; k < TRAIL_LEN; k++) {
+        var gy = Math.floor(col.y) - k;
+        if (gy < 0 || gy >= rows) continue;
+        var streakAlpha = k < 3
+          ? LEAD_DARK - (k / 3) * (LEAD_DARK - AMB_MAX)
+          : AMB_MAX * (1 - (k - 3) / (TRAIL_LEN - 3));
+        ctx.fillStyle = fillColor(streakAlpha);
+        ctx.fillRect(x * CELL, gy * CELL, CELL - 1, CELL - 1);
+      }
+    }
+  }
+
+  var start = null, lastT = 0;
+  function frame(ts) {
+    if (!paused) {
+      if (!start) { start = ts; lastT = ts; }
+      var t = ts - start;
+      var dt = Math.min(ts - lastT, 50);
+      lastT = ts;
+      draw(t, ts, dt);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', function() {
+    // update target sizes immediately, but debounce reinitialization to avoid visual spazz
+    w = window.innerWidth;
+    h = window.innerHeight;
+    // pause animation while resizing for smoother result
+    paused = true;
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      dpr = window.devicePixelRatio || 1;
+      canvasEl.width = w * dpr;
+      canvasEl.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      initGrid();
+      paused = false;
+    }, 150);
+  });
+
+  // initialize grid and start animation
+  initGrid();
+  requestAnimationFrame(frame);
 })();
