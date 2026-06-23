@@ -188,7 +188,7 @@ body.project-page .back-bar {
 .page-content::before {
   content: '';
   position: absolute;
-  top: 0; bottom: 0;
+  top: -200px; bottom: 0;
   left: -500px; right: -500px;
   background: var(--bg);
   z-index: -1;
