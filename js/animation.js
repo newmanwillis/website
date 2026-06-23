@@ -342,7 +342,7 @@
     // Stepped column fade at panel edges — 3 columns per side, each a uniform
     // opacity overlay of the background color (outermost = most transparent).
     if (fadeEdgeL >= 0 && fadeEdgeR >= 0) {
-      var fadeAlphas = [0.3, 0.6, 0.8]; // outer → inner
+      var fadeAlphas = [0.3, 0.55, 0.8]; // outer → inner
       // var fadeAlphas = [1, 0, 0.5]; // outer → inner
       ctx.fillStyle = '#f5f4f0';
       for (var fi = 0; fi < fadeAlphas.length; fi++) {

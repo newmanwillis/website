@@ -68,8 +68,9 @@ body.project-page .back-bar {
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: none;
-  border: none;
+  background: var(--bg);
+  border: 2px solid #b8b4ac;
+  border-radius: 4px;
   cursor: pointer;
   color: #868480;
   text-decoration: none;
@@ -84,9 +85,8 @@ body.project-page .back-bar {
 }
 
 #nav-menu-btn[aria-expanded="true"] {
-  background: rgba(245, 244, 240, 0.9);
-  border: 1px solid #b8b4ac;
-  border-radius: 6px;
+  background: var(--bg);
+  border: 2px solid #b8b4ac;
 }
 
 .nav-btn svg {
