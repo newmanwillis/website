@@ -86,10 +86,25 @@
     grid = new Array(cols * rows);
     pixels.forEach(function(p) { grid[p.x * rows + p.y] = p; });
 
-    // columns: random spread across the page (some start above, some within)
+    // columns: stratified random vertical distribution for even coverage without large gaps
     columns = [];
+    var extendedRows = rows + TRAIL_LEN * 2;
+    var segment = extendedRows / Math.max(1, cols);
+    var positions = [];
+    for (var i = 0; i < cols; i++) {
+      var center = (i + 0.5) * segment;
+      var jitter = (Math.random() - 0.5) * segment * 0.5;
+      positions.push(Math.max(-TRAIL_LEN, Math.min(rows + TRAIL_LEN, center + jitter - TRAIL_LEN)));
+    }
+    for (var i = positions.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = positions[i];
+      positions[i] = positions[j];
+      positions[j] = temp;
+    }
+
     for (var x = 0; x < cols; x++) {
-      var colY = (Math.random() * (rows + TRAIL_LEN)) - TRAIL_LEN; // range [-TRAIL_LEN, rows]
+      var colY = positions[x];
       columns.push({ y: colY, speed: randSpeed() });
 
       // pre-seed trail pixels so the column appears filled on load where applicable
