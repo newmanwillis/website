@@ -148,6 +148,11 @@ body.project-page .back-bar {
   pointer-events: none;
 }
 
+body:has(.lightbox-overlay.active) .back-bar {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .back-spacer {
   height: 3rem;
   display: none;
