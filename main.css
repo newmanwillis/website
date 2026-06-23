@@ -108,7 +108,7 @@ header h1 {
   font-size: 1.35rem;
   font-family: 'Titillium Web', sans-serif;
   font-weight: 700;
-  color: #2e2c2a;
+  color: var(--ink);
   margin-bottom: 0.3rem;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.25s;
@@ -118,7 +118,7 @@ header h1 {
   font-size: 1rem;
   font-family: 'Titillium Web', sans-serif;
   font-weight: 600;
-  color: #2e2c2a;
+  color: var(--ink);
   max-width: 400px;
   margin: 0 auto 0.5rem;
   line-height: 1.65;
@@ -132,7 +132,7 @@ header h1 {
   justify-content: center;
   gap: 0.6rem;
   font-size: 0.88rem;
-  color: #4e4c49;
+  color: var(--ink);
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.5s;
 }
@@ -142,7 +142,7 @@ header h1 {
 }
 
 .header-contact a {
-  color: #4e4c49;
+  color: var(--ink);
   text-decoration: none;
   border-bottom: 1px solid #9e9c99;
   padding-bottom: 1px;
@@ -175,7 +175,7 @@ header h1 {
   color: var(--ink);
   margin-bottom: 1.25rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid #a8a39a;
+  border-bottom: 1.5px solid rgba(15, 14, 12, 0.6);
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
   text-align: center;
