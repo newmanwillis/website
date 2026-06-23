@@ -242,13 +242,19 @@
   // hard panel edges always land in the 1px gap between columns.
   // Uses a <style> tag injection so the values are exact pixels with no
   // CSS-variable inheritance or relative-offset ambiguity.
+  // Column indices where the stepped fade begins on each side.
+  // Set by alignPanels(), read by draw().
+  var fadeEdgeL = -1, fadeEdgeR = -1;
+
   var panelStyle = null;
   function alignPanels() {
     var content = document.querySelector('.page-content');
     if (!content) return;
     var r = content.getBoundingClientRect();
-    var targetL = Math.floor(r.left  / CELL) * CELL - 3.5;
-    var targetR = Math.ceil(r.right / CELL) * CELL + 4;
+    fadeEdgeL = Math.floor(r.left  / CELL);  // first column index at/past left edge
+    fadeEdgeR = Math.ceil(r.right / CELL);   // first column index at/past right edge
+    var targetL = fadeEdgeL * CELL - 3.5;
+    var targetR = fadeEdgeR * CELL + 4;
     // Offsets are relative to each element's own containing block.
     // .page-content::before: containing block = .page-content (left edge = r.left)
     var cLeft  = targetL - r.left;   // negative = extends left of content
@@ -331,6 +337,20 @@
         ctx.fillStyle = fillColor(streakAlpha);
         ctx.fillRect(x * CELL, gy * CELL, CELL - 1, CELL - 1);
       }
+    }
+
+    // Stepped column fade at panel edges — 3 columns per side, each a uniform
+    // opacity overlay of the background color (outermost = most transparent).
+    if (fadeEdgeL >= 0 && fadeEdgeR >= 0) {
+      var fadeAlphas = [0.3, 0.6, 0.8]; // outer → inner
+      // var fadeAlphas = [1, 0, 0.5]; // outer → inner
+      ctx.fillStyle = '#f5f4f0';
+      for (var fi = 0; fi < fadeAlphas.length; fi++) {
+        ctx.globalAlpha = fadeAlphas[fi];
+        ctx.fillRect((fadeEdgeL - fadeAlphas.length + fi) * CELL, 0, CELL, h); // left side
+        ctx.fillRect((fadeEdgeR + fadeAlphas.length + 1 - fi) * CELL, 0, CELL, h); // right side
+      }
+      ctx.globalAlpha = 1;
     }
   }
 
