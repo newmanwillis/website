@@ -3,7 +3,9 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\newma\\\\Unity Projects\\\\GitHub\\\\website\" -Recurse -Filter \"index.html\")",
       "Bash(Select-Object -First 10)",
-      "Read(//c/Users/newma/.claude/projects/c--Users-newma-Unity-Projects-GitHub-website/memory/**)"
+      "Read(//c/Users/newma/.claude/projects/c--Users-newma-Unity-Projects-GitHub-website/memory/**)",
+      "Bash(npx --version)",
+      "Bash(npm ls *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\newma\\.claude\\projects\\c--Users-newma-Unity-Projects-GitHub-website\\memory"

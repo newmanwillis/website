@@ -238,6 +238,39 @@
     }
   }
 
+  // Snap the ::before panel edges to the pixel-column grid (CELL=8px) so
+  // hard panel edges always land in the 1px gap between columns.
+  // Uses a <style> tag injection so the values are exact pixels with no
+  // CSS-variable inheritance or relative-offset ambiguity.
+  var panelStyle = null;
+  function alignPanels() {
+    var content = document.querySelector('.page-content');
+    if (!content) return;
+    var r = content.getBoundingClientRect();
+    var targetL = Math.floor(r.left  / CELL) * CELL - 3;
+    var targetR = Math.ceil(r.right / CELL) * CELL + 3;
+    // Offsets are relative to each element's own containing block.
+    // .page-content::before: containing block = .page-content (left edge = r.left)
+    var cLeft  = targetL - r.left;   // negative = extends left of content
+    var cRight = r.right - targetR;  // negative = extends right of content
+    // .page-footer::before: containing block = .page-footer (full viewport width, left edge ≈ 0)
+    var footer = document.querySelector('.page-footer');
+    var fLeft = targetL;
+    var fRight = footer ? (footer.getBoundingClientRect().right - targetR) : cRight;
+    if (!panelStyle) {
+      panelStyle = document.createElement('style');
+      document.head.appendChild(panelStyle);
+    }
+    panelStyle.textContent =
+      '.page-content::before{left:' + cLeft  + 'px!important;right:' + cRight + 'px!important}' +
+      '.page-footer::before{left:'  + fLeft  + 'px!important;right:' + fRight + 'px!important}';
+  }
+
+  if (window.ResizeObserver) {
+    var _content = document.querySelector('.page-content');
+    if (_content) new ResizeObserver(function() { requestAnimationFrame(alignPanels); }).observe(_content);
+  }
+
   var paused = false;
   document.addEventListener('visibilitychange', function() { paused = document.hidden; });
   var observer = new IntersectionObserver(function(entries) { paused = !entries[0].isIntersecting; }, { threshold: 0.01 });
@@ -326,11 +359,15 @@
       canvasEl.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       initGrid();
+      alignPanels();
       paused = false;
     }, 150);
   });
 
+  window.addEventListener('load', alignPanels);
+
   // initialize grid and start animation
   initGrid();
+  alignPanels();
   requestAnimationFrame(frame);
 })();

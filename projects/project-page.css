@@ -185,24 +185,16 @@ body.project-page .back-bar {
   z-index: 0;
 }
 
-/* Soft background panel that masks the canvas behind content,
-   fading out to the sides so animation lines blend back in */
 .page-content::before {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -150px;
-  right: -150px;
-  background: linear-gradient(to right,
-    transparent 0,
-    var(--bg) 185px,
-    var(--bg) calc(100% - 185px),
-    transparent 100%
-  );
+  top: 0; bottom: 0;
+  left: -500px; right: -500px;
+  background: var(--bg);
   z-index: -1;
   pointer-events: none;
 }
+
 
 /* ── PROJECT HEADER ── */
 .project-header {
@@ -525,20 +517,13 @@ body.project-page .back-bar {
 .page-footer::before {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(var(--max) + 160px);
-  background: linear-gradient(to right,
-    transparent 0,
-    var(--bg) 80px,
-    var(--bg) calc(100% - 80px),
-    transparent 100%
-  );
+  top: 0; bottom: 0;
+  left: -500px; right: -500px;
+  background: var(--bg);
   z-index: -1;
   pointer-events: none;
 }
+
 
 .footer-nav {
   display: flex;
