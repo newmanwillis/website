@@ -269,15 +269,12 @@
     var targetR = fadeEdgeR * CELL;
     var cLeft  = targetL - contentL;
     var cRight = contentR - targetR;
-    var fLeft  = targetL;
-    var fRight = vw - targetR;
     if (!panelStyle) {
       panelStyle = document.createElement('style');
       document.head.appendChild(panelStyle);
     }
     panelStyle.textContent =
-      '.page-content::before{left:' + cLeft  + 'px!important;right:' + cRight + 'px!important}' +
-      '.page-footer::before{left:'  + fLeft  + 'px!important;right:' + fRight + 'px!important}';
+      '.page-content::before{left:' + cLeft  + 'px!important;right:' + cRight + 'px!important}';
   }
 
   var paused = false;
