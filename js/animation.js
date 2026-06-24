@@ -367,10 +367,13 @@
   }
 
   window.addEventListener('resize', function() {
-    // update target sizes immediately, but debounce reinitialization to avoid visual spazz
-    w = window.innerWidth;
-    h = window.innerHeight;
-    // pause animation while resizing for smoother result
+    var newW = window.innerWidth, newH = window.innerHeight;
+    // ignore tiny width changes (e.g. scrollbar appearing/disappearing during navigation)
+    if (Math.abs(newW - w) <= 30 && Math.abs(newH - h) <= 30) {
+      requestAnimationFrame(alignPanels);
+      return;
+    }
+    w = newW; h = newH;
     paused = true;
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function() {
@@ -385,6 +388,7 @@
   });
 
   window.addEventListener('load', alignPanels);
+  window.addEventListener('navchange', function() { requestAnimationFrame(alignPanels); });
 
   // initialize grid and start animation
   initGrid();

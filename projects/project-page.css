@@ -33,6 +33,7 @@ body {
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   line-height: 1.7;
+  overflow-x: hidden;
 }
 
 /* ── BACK BUTTON ── */
@@ -194,7 +195,8 @@ body:has(.lightbox-overlay.active) .back-bar {
   content: '';
   position: absolute;
   top: -200px; bottom: 0;
-  left: -500px; right: -500px;
+  left: calc(-(100vw - 100%) / 2);
+  right: calc(-(100vw - 100%) / 2);
   background: var(--bg);
   z-index: -1;
   pointer-events: none;
@@ -523,7 +525,8 @@ body:has(.lightbox-overlay.active) .back-bar {
   content: '';
   position: absolute;
   top: 0; bottom: 0;
-  left: -500px; right: -500px;
+  left: calc((100% - var(--max)) / 2);
+  right: calc((100% - var(--max)) / 2);
   background: var(--bg);
   z-index: -1;
   pointer-events: none;
