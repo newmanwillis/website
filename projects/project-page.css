@@ -515,7 +515,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 
 /* ── FOOTER NAV ── */
 .page-footer {
-  border-top: 2px solid #8a8784;
+  border-top: 2px solid #878787;
   padding: 1.5rem 0 1rem;
 }
 
@@ -531,9 +531,9 @@ body:has(.lightbox-overlay.active) .back-bar {
   align-items: center;
   gap: 0.5rem;
   padding: 0.44rem 1rem;
-  border: 2px solid #8a8784;
+  border: 2px solid #878787;
   border-radius: 4px;
-  color: #7a7774;
+  color: #777777;
   text-decoration: none;
   font-size: 0.9rem;
   letter-spacing: 0.03em;
