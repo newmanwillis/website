@@ -515,7 +515,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 
 /* ── FOOTER NAV ── */
 .page-footer {
-  border-top: 2px solid #b8b4ac;
+  border-top: 2px solid #4a4845;
   padding: 1.5rem 0 1rem;
 }
 
@@ -531,7 +531,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   align-items: center;
   gap: 0.5rem;
   padding: 0.44rem 1rem;
-  border: 2px solid #b8b4ac;
+  border: 2px solid #4a4845;
   border-radius: 4px;
   color: #4a4845;
   text-decoration: none;
@@ -548,11 +548,11 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .nav-pill svg {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 2;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   flex-shrink: 0;
