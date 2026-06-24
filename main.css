@@ -95,7 +95,7 @@ header h1 {
 .header-role,
 .header-bio,
 .header-contact,
-.intro-cover .section-label {
+.section-label {
   text-shadow:
     0 0 4px #f5f4f0,
     0 0 4px #f5f4f0,
@@ -181,11 +181,6 @@ header h1 {
   margin: 0 auto;
 }
 
-.intro-cover .section-label {
-  max-width: calc(clamp(1200px, 72vw, 1600px) - 4rem);
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .section-label {
   font-size: 1.4rem;
