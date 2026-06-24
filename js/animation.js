@@ -247,8 +247,10 @@
   var fadeEdgeL = -1, fadeEdgeR = -1;
 
   var panelStyle = null;
+  var cachedContent = null;
   function alignPanels() {
-    var content = document.querySelector('.page-content');
+    if (!cachedContent) cachedContent = document.querySelector('.page-content');
+    var content = cachedContent;
     if (!content) {
       if (fadeEdgeL !== -1 || fadeEdgeR !== -1) {
         fadeEdgeL = -1; fadeEdgeR = -1;
@@ -391,8 +393,8 @@
   });
 
   window.addEventListener('load', alignPanels);
-  window.addEventListener('navstart', function() { fadeEdgeL = -1; fadeEdgeR = -1; });
-  window.addEventListener('navchange', alignPanels);
+  window.addEventListener('navstart', function() { fadeEdgeL = -1; fadeEdgeR = -1; cachedContent = null; });
+  window.addEventListener('navchange', function() { cachedContent = null; alignPanels(); });
 
   // initialize grid and start animation
   initGrid();
