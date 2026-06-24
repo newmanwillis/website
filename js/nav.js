@@ -116,13 +116,31 @@
 
     pc.insertBefore(topNav, pc.firstChild);
 
-    topNav.querySelector('.topnav-projects-btn').addEventListener('click', function (e) {
+    var projBtn = topNav.querySelector('.topnav-projects-btn');
+    var menuEl  = topNav.querySelector('.topnav-menu');
+
+    projBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      var menuEl = topNav.querySelector('.topnav-menu');
       var isOpen = !menuEl.hidden;
       menuEl.hidden = isOpen;
-      this.setAttribute('aria-expanded', String(!isOpen));
+      projBtn.setAttribute('aria-expanded', String(!isOpen));
     });
+
+    // Close when mouse leaves both the button and the menu
+    var closeTimer = null;
+    function scheduleClose() {
+      closeTimer = setTimeout(function () {
+        menuEl.hidden = true;
+        projBtn.setAttribute('aria-expanded', 'false');
+      }, 80);
+    }
+    function cancelClose() {
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    }
+    projBtn.addEventListener('mouseleave', scheduleClose);
+    projBtn.addEventListener('mouseenter', cancelClose);
+    menuEl.addEventListener('mouseleave', scheduleClose);
+    menuEl.addEventListener('mouseenter', cancelClose);
   }
 
   // Close topnav dropdown on outside click or Escape (single persistent handlers)

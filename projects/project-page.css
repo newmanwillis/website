@@ -252,7 +252,8 @@ body:has(.lightbox-overlay.active) .back-bar {
   transition: background-color 0.12s, color 0.12s;
 }
 
-.topnav-projects-btn:hover {
+.topnav-projects-btn:hover,
+.topnav-projects-btn[aria-expanded="true"] {
   background: #878787;
   color: var(--bg);
 }
@@ -262,7 +263,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   height: 16px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 2;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   flex-shrink: 0;
@@ -271,11 +272,11 @@ body:has(.lightbox-overlay.active) .back-bar {
 
 .topnav-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 2px);
   left: 0;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 0;
   padding: 0.35rem 0;
   width: max-content;
   min-width: 160px;
@@ -298,8 +299,8 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .topnav-menu a:hover {
-  color: var(--ink);
-  background: var(--bg);
+  color: var(--bg);
+  background: #878787;
 }
 
 .topnav-menu .current {
