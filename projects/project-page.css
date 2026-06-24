@@ -192,12 +192,14 @@ body:has(.lightbox-overlay.active) .back-bar {
   padding-bottom: 0;
   border-bottom: 2px solid #878787;
   isolation: isolate;
+  position: relative;
+  z-index: 50;
 }
 
 .topnav-left {
   display: inline-flex;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: 0.4rem;
 }
 
 .topnav-home {
