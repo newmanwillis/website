@@ -125,7 +125,7 @@ body.project-page .back-bar {
   padding: 0.45rem 1rem;
   color: var(--muted);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   letter-spacing: 0.01em;
   transition: color 0.15s, background 0.15s;
 }
@@ -140,7 +140,7 @@ body.project-page .back-bar {
   padding: 0.45rem 1rem;
   color: var(--ink);
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   letter-spacing: 0.01em;
 }
 
@@ -189,13 +189,14 @@ body:has(.lightbox-overlay.active) .back-bar {
   margin-right: -1.1rem;
   padding-left: 0;
   padding-right: 1.1rem;
-  padding-bottom: 0.35rem;
+  padding-bottom: 0;
   border-bottom: 2px solid #878787;
+  isolation: isolate;
 }
 
 .topnav-left {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 0.75rem;
 }
 
@@ -204,26 +205,29 @@ body:has(.lightbox-overlay.active) .back-bar {
   align-items: center;
   text-decoration: none;
   line-height: 1.4;
-  color: #4a4845;
-  font-family: 'Figtree', sans-serif;
-  font-size: 0.92rem;
-  letter-spacing: 0.08em;
-  font-weight: 800;
-  text-transform: uppercase;
-  padding: 0.3rem 0.6rem;
-  border-radius: 5px;
-  transition: background 0.15s, color 0.15s;
+  color: #636363;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  text-transform: none;
+  padding: 0.3rem 0.6rem 0.65rem;
+  border-radius: 5px 5px 0 0;
+  position: relative;
+  z-index: 1;
+  will-change: background-color;
+  transition: background-color 0.12s, color 0.12s;
 }
 
 .topnav-home:hover {
-  background: rgba(0,0,0,0.06);
-  color: var(--ink);
+  background: #878787;
+  color: var(--bg);
 }
 
 .topnav-right {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .topnav-projects-btn {
@@ -233,21 +237,24 @@ body:has(.lightbox-overlay.active) .back-bar {
   line-height: 1.4;
   background: none;
   border: none;
-  border-radius: 5px;
-  padding: 0.3rem 0.6rem;
+  border-radius: 5px 5px 0 0;
+  padding: 0.3rem 0.6rem 0.65rem;
   cursor: pointer;
-  font-family: 'Figtree', sans-serif;
-  font-size: 0.92rem;
-  letter-spacing: 0.08em;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #4a4845;
-  transition: background 0.15s, color 0.15s;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  text-transform: none;
+  color: #636363;
+  position: relative;
+  z-index: 1;
+  will-change: background-color;
+  transition: background-color 0.12s, color 0.12s;
 }
 
 .topnav-projects-btn:hover {
-  background: rgba(0,0,0,0.06);
-  color: var(--ink);
+  background: #878787;
+  color: var(--bg);
 }
 
 .topnav-projects-btn svg {
@@ -259,6 +266,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   stroke-linecap: round;
   stroke-linejoin: round;
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 .topnav-menu {
@@ -284,7 +292,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   padding: 0.45rem 1rem;
   color: var(--muted);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   letter-spacing: 0.01em;
   transition: color 0.15s, background 0.15s;
 }
@@ -299,7 +307,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   padding: 0.45rem 1rem;
   color: var(--ink);
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   letter-spacing: 0.01em;
 }
 
