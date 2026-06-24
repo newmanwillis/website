@@ -523,29 +523,48 @@ body:has(.lightbox-overlay.active) .back-bar {
 .footer-nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
-.footer-slot {
-  flex: 1;
-}
-
-.footer-slot--center {
-  text-align: center;
-}
-
-.footer-slot--right {
-  text-align: right;
-}
-
-.footer-nav a {
-  font-size: 0.85rem;
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  border: 1.5px solid #b8b4ac;
+  border-radius: 999px;
   color: #4a4845;
-  letter-spacing: 0.03em;
   text-decoration: none;
-  transition: color 0.2s;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  font-weight: 400;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
 
-.footer-nav a:hover { color: var(--ink); }
+.nav-pill:hover {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+.nav-pill svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.nav-pill--home {
+  border-style: dashed;
+}
+
+.nav-pill-placeholder {
+  width: 120px;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {

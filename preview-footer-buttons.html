@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Footer Button Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=DM+Sans:wght@300;400&family=Syne:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f4f0;
+      --ink: #0f0e0c;
+      --muted: #8a8880;
+      --border: #dedad2;
+      --border-dark: #b8b4ac;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      padding: 3rem 2rem;
+    }
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      font-weight: 400;
+    }
+    .preview-block {
+      max-width: 860px;
+      margin: 0 auto 4rem;
+      border-top: 2px solid #b8b4ac;
+      padding-top: 2rem;
+    }
+    h1 {
+      font-family: 'Archivo', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 3.5rem;
+      color: var(--ink);
+    }
+
+    /* ── OPTION A: Bordered pills ── */
+    .nav-pills {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.1rem;
+      border: 1.5px solid var(--border-dark);
+      border-radius: 999px;
+      color: #4a4845;
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.03em;
+      font-weight: 400;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .nav-pill:hover {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+    .nav-pill svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .nav-pill--home {
+      border-style: dashed;
+    }
+
+    /* ── OPTION B: Text links with underline ── */
+    .nav-text {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-text-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: #4a4845;
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-text-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--ink);
+      transition: width 0.22s ease;
+    }
+    .nav-text-link--right::after {
+      left: auto;
+      right: 0;
+    }
+    .nav-text-link:hover {
+      color: var(--ink);
+    }
+    .nav-text-link:hover::after {
+      width: 100%;
+    }
+    .nav-text-link svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      transition: transform 0.18s;
+    }
+    .nav-text-link:hover svg.arrow-left  { transform: translateX(-3px); }
+    .nav-text-link:hover svg.arrow-right { transform: translateX(3px); }
+    .nav-text-link--home {
+      font-size: 0.8rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nav-text-link--home:hover { color: var(--ink); }
+    .nav-text-link--home::after { display: none; }
+
+    /* ── OPTION C: Circle icon buttons ── */
+    .nav-circles {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-circle-btn {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      color: #4a4845;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      transition: color 0.18s;
+    }
+    .nav-circle-btn:hover { color: var(--ink); }
+    .nav-circle-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .nav-circle-btn:hover .nav-circle-icon {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+    .nav-circle-btn:hover .nav-circle-icon svg,
+    .nav-circle-btn:hover .nav-circle-icon span {
+      color: var(--bg);
+      stroke: var(--bg);
+    }
+    .nav-circle-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .nav-circle-icon span {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .nav-circle-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+    .nav-circle-btn--home .nav-circle-icon {
+      border-style: dashed;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Footer Button Options</h1>
+
+  <!-- OPTION A -->
+  <div class="preview-block">
+    <p class="section-label">Option A — Bordered Pills</p>
+    <nav class="nav-pills">
+      <a href="#" class="nav-pill">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Previous Project
+      </a>
+      <a href="#" class="nav-pill nav-pill--home">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </a>
+      <a href="#" class="nav-pill">
+        Next Project
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </nav>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="preview-block">
+    <p class="section-label">Option B — Text Links with Underline</p>
+    <nav class="nav-text">
+      <a href="#" class="nav-text-link">
+        <svg class="arrow-left" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Previous Project
+      </a>
+      <a href="#" class="nav-text-link nav-text-link--home">Home</a>
+      <a href="#" class="nav-text-link nav-text-link--right">
+        Next Project
+        <svg class="arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </nav>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="preview-block">
+    <p class="section-label">Option C — Circle Icon Buttons</p>
+    <nav class="nav-circles">
+      <a href="#" class="nav-circle-btn">
+        <div class="nav-circle-icon">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <span class="nav-circle-label">Previous</span>
+      </a>
+      <a href="#" class="nav-circle-btn nav-circle-btn--home">
+        <div class="nav-circle-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <span class="nav-circle-label">Home</span>
+      </a>
+      <a href="#" class="nav-circle-btn">
+        <div class="nav-circle-icon">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <span class="nav-circle-label">Next</span>
+      </a>
+    </nav>
+  </div>
+
+</body>
+</html>
