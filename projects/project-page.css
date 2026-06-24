@@ -530,14 +530,14 @@ body:has(.lightbox-overlay.active) .back-bar {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1.1rem;
-  border: 1.5px solid #b8b4ac;
-  border-radius: 999px;
+  padding: 0.44rem 1rem;
+  border: 2px solid #b8b4ac;
+  border-radius: 4px;
   color: #4a4845;
   text-decoration: none;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   letter-spacing: 0.03em;
-  font-weight: 400;
+  font-weight: 600;
   transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
 
