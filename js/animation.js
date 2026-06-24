@@ -249,7 +249,11 @@
   var panelStyle = null;
   function alignPanels() {
     var content = document.querySelector('.page-content');
-    if (!content) return;
+    if (!content) {
+      fadeEdgeL = -1; fadeEdgeR = -1;
+      if (panelStyle) panelStyle.textContent = '';
+      return;
+    }
     var r = content.getBoundingClientRect();
     fadeEdgeL = Math.floor(r.left  / CELL);  // first column index at/past left edge
     fadeEdgeR = Math.ceil(r.right / CELL);   // first column index at/past right edge
@@ -348,7 +352,7 @@
       for (var fi = 0; fi < fadeAlphas.length; fi++) {
         ctx.globalAlpha = fadeAlphas[fi];
         ctx.fillRect((fadeEdgeL - fadeAlphas.length + fi) * CELL, 0, CELL, h); // left side
-        ctx.fillRect((fadeEdgeR + fadeAlphas.length + 1 - fi) * CELL, 0, CELL, h); // right side
+        ctx.fillRect((fadeEdgeR + fadeAlphas.length - 1 - fi) * CELL, 0, CELL, h); // right side
       }
       ctx.globalAlpha = 1;
     }
@@ -388,7 +392,7 @@
   });
 
   window.addEventListener('load', alignPanels);
-  window.addEventListener('navchange', function() { requestAnimationFrame(alignPanels); });
+  window.addEventListener('navchange', function() { requestAnimationFrame(function() { requestAnimationFrame(alignPanels); }); });
 
   // initialize grid and start animation
   initGrid();
