@@ -665,9 +665,9 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .nav-pill:hover {
-  background: var(--ink);
+  background: #878787;
   color: var(--bg);
-  border-color: var(--ink);
+  border-color: #878787;
 }
 
 .nav-pill svg {
