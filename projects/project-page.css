@@ -186,7 +186,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 .page-content {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 4rem 2rem 2.5rem;
+  padding: 4rem 2rem 0.5rem;
   position: relative;
   z-index: 0;
 }
@@ -516,7 +516,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 /* ── FOOTER NAV ── */
 .page-footer {
   border-top: 2px solid #b8b4ac;
-  padding: 2rem 0;
+  padding: 1.5rem 0 1rem;
 }
 
 
