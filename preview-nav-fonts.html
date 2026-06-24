@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nav Font Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Plus+Jakarta+Sans:wght@700;800&family=Urbanist:wght@700;800&family=Manrope:wght@700;800&family=Outfit:wght@700&family=Work+Sans:wght@700&family=Jost:wght@700&family=Nunito+Sans:wght@800&family=Libre+Franklin:wght@700&family=Sora:wght@700&family=Raleway:wght@700;800&family=Figtree:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root { --bg: #f5f4f0; --ink: #0f0e0c; --border: #dedad2; }
+
+    body {
+      background: var(--bg);
+      font-family: sans-serif;
+      padding: 2.5rem 2rem;
+      color: var(--ink);
+      columns: 2;
+      column-gap: 3rem;
+    }
+
+    .sample {
+      break-inside: avoid;
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 0.9rem;
+      font-family: sans-serif;
+      font-weight: 400;
+    }
+
+    .topnav {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 2px solid #878787;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #4a4845;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.3rem 0.6rem;
+      border-radius: 5px;
+      text-transform: uppercase;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn:hover { background: rgba(0,0,0,0.06); color: var(--ink); }
+
+    .btn svg {
+      width: 13px; height: 13px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .f-inter       .btn { font-family: 'Inter', sans-serif;            font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; }
+    .f-jakarta     .btn { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; }
+    .f-urbanist    .btn { font-family: 'Urbanist', sans-serif;          font-size: 0.82rem; font-weight: 800; letter-spacing: 0.1em; }
+    .f-manrope     .btn { font-family: 'Manrope', sans-serif;           font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; }
+    .f-outfit      .btn { font-family: 'Outfit', sans-serif;            font-size: 0.82rem; font-weight: 700; letter-spacing: 0.09em; }
+    .f-worksans    .btn { font-family: 'Work Sans', sans-serif;         font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; }
+    .f-jost        .btn { font-family: 'Jost', sans-serif;              font-size: 0.8rem;  font-weight: 700; letter-spacing: 0.1em; }
+    .f-nunito      .btn { font-family: 'Nunito Sans', sans-serif;       font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; }
+    .f-franklin    .btn { font-family: 'Libre Franklin', sans-serif;    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; }
+    .f-sora        .btn { font-family: 'Sora', sans-serif;              font-size: 0.75rem; font-weight: 700; letter-spacing: 0.09em; }
+    .f-raleway     .btn { font-family: 'Raleway', sans-serif;           font-size: 0.8rem;  font-weight: 800; letter-spacing: 0.12em; }
+    .f-figtree     .btn { font-family: 'Figtree', sans-serif;           font-size: 0.8rem;  font-weight: 800; letter-spacing: 0.08em; }
+  </style>
+</head>
+<body>
+
+  <div class="sample f-inter">
+    <h2>Inter 700</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-jakarta">
+    <h2>Plus Jakarta Sans 800</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-urbanist">
+    <h2>Urbanist 800</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-manrope">
+    <h2>Manrope 800</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-outfit">
+    <h2>Outfit 700</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-worksans">
+    <h2>Work Sans 700</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-jost">
+    <h2>Jost 700</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-nunito">
+    <h2>Nunito Sans 800</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-franklin">
+    <h2>Libre Franklin 700</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-sora">
+    <h2>Sora 700</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-raleway">
+    <h2>Raleway 800</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+  <div class="sample f-figtree">
+    <h2>Figtree 800</h2>
+    <div class="topnav">
+      <a class="btn" href="#">Home</a>
+      <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+    </div>
+  </div>
+
+</body>
+</html>
