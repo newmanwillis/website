@@ -35,7 +35,8 @@
     }).join('');
   }
 
-  // Create .back-bar once — lives outside #site-content so it survives SPA swaps
+  /* ── BACK BAR (left side fixed buttons) — commented out, replaced by top nav ──
+
   var bar = document.createElement('div');
   bar.className = 'back-bar';
   document.body.appendChild(bar);
@@ -78,13 +79,11 @@
     }
   });
 
-  // Create .back-spacer before #site-content (pushes content down on narrow screens)
   var spacerEl = document.createElement('div');
   spacerEl.className = 'back-spacer';
   var sc = document.getElementById('site-content');
   if (sc) sc.parentNode.insertBefore(spacerEl, sc);
 
-  // Narrow-screen scroll fade
   function checkScroll() {
     if (window.innerWidth <= 1150) {
       var threshold = spacerEl.offsetHeight || 48;
@@ -96,12 +95,59 @@
   window.addEventListener('scroll', checkScroll, { passive: true });
   window.addEventListener('resize', checkScroll);
 
+  ── END BACK BAR ── */
+
+  // ── TOP NAV ──
+  function injectTopNav() {
+    if (!isProjectPage()) return;
+    var pc = document.querySelector('.page-content');
+    if (!pc || pc.querySelector('.page-topnav')) return;
+
+    var topNav = document.createElement('div');
+    topNav.className = 'page-topnav';
+    topNav.innerHTML =
+      '<div class="topnav-left">' +
+        '<a class="topnav-home" href="' + siteRoot + 'index.html">Home</a>' +
+        '<div class="topnav-right">' +
+          '<button class="topnav-projects-btn" aria-expanded="false">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>' +
+          '<div class="topnav-menu" hidden><ul>' + buildMenuItems() + '</ul></div>' +
+        '</div>' +
+      '</div>';
+
+    pc.insertBefore(topNav, pc.firstChild);
+
+    topNav.querySelector('.topnav-projects-btn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var menuEl = topNav.querySelector('.topnav-menu');
+      var isOpen = !menuEl.hidden;
+      menuEl.hidden = isOpen;
+      this.setAttribute('aria-expanded', String(!isOpen));
+    });
+  }
+
+  // Close topnav dropdown on outside click or Escape (single persistent handlers)
+  document.addEventListener('click', function (e) {
+    var menuEl = document.querySelector('.topnav-menu');
+    var btnEl  = document.querySelector('.topnav-projects-btn');
+    if (!menuEl || menuEl.hidden) return;
+    if (!menuEl.contains(e.target) && (!btnEl || !btnEl.contains(e.target))) {
+      menuEl.hidden = true;
+      if (btnEl) btnEl.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var menuEl = document.querySelector('.topnav-menu');
+    var btnEl  = document.querySelector('.topnav-projects-btn');
+    if (!menuEl || menuEl.hidden) return;
+    menuEl.hidden = true;
+    if (btnEl) { btnEl.setAttribute('aria-expanded', 'false'); btnEl.focus(); }
+  });
+
   function updateNav() {
     document.body.classList.toggle('project-page', isProjectPage());
-    menu.querySelector('ul').innerHTML = buildMenuItems();
-    menu.hidden = true;
-    btn.setAttribute('aria-expanded', 'false');
-    checkScroll();
+    injectTopNav();
   }
 
   updateNav();
