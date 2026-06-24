@@ -639,6 +639,8 @@ body:has(.lightbox-overlay.active) .back-bar {
 /* ── FOOTER NAV ── */
 .page-footer {
   border-top: 2px solid #878787;
+  margin-left: -1.1rem;
+  margin-right: -1.1rem;
   padding: 1.5rem 0 1rem;
 }
 
