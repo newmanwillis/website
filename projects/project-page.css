@@ -558,8 +558,12 @@ body:has(.lightbox-overlay.active) .back-bar {
   flex-shrink: 0;
 }
 
-.nav-pill--home {
-  border-style: dashed;
+
+.nav-pill--home svg {
+  fill: currentColor;
+  stroke: none;
+  width: 15px;
+  height: 15px;
 }
 
 .nav-pill-placeholder {
