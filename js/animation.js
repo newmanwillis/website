@@ -250,25 +250,25 @@
   function alignPanels() {
     var content = document.querySelector('.page-content');
     if (!content) {
-      fadeEdgeL = -1; fadeEdgeR = -1;
-      if (panelStyle) panelStyle.textContent = '';
+      if (fadeEdgeL !== -1 || fadeEdgeR !== -1) {
+        fadeEdgeL = -1; fadeEdgeR = -1;
+        if (panelStyle) panelStyle.textContent = '';
+      }
       return;
     }
-    // Read viewport width fresh each call — window.innerWidth always reflects the
-    // current scrollbar state (scrollbar present → smaller vw; absent → larger).
-    // Using the cached `w` would give stale values when the scrollbar appears or
-    // disappears between pages, shifting fadeEdgeR by a full column.
     var vw = window.innerWidth;
     var maxW   = Math.min(vw, Math.min(1200, Math.max(1020, vw * 0.68)));
     var contentL = (vw - maxW) / 2;
     var contentR = contentL + maxW;
-    fadeEdgeL = Math.floor(contentL / CELL);
-    fadeEdgeR = Math.ceil(contentR / CELL);
+    var newEdgeL = Math.floor(contentL / CELL);
+    var newEdgeR = Math.ceil(contentR / CELL);
+    if (newEdgeL === fadeEdgeL && newEdgeR === fadeEdgeR) return;
+    fadeEdgeL = newEdgeL;
+    fadeEdgeR = newEdgeR;
     var targetL = fadeEdgeL * CELL;
     var targetR = fadeEdgeR * CELL;
-    var cLeft  = targetL - contentL;  // negative — extends left of content box
-    var cRight = contentR - targetR;  // negative — extends right of content box
-    // .page-footer::before: footer is full-viewport-width so offsets are from 0 / vw
+    var cLeft  = targetL - contentL;
+    var cRight = contentR - targetR;
     var fLeft  = targetL;
     var fRight = vw - targetR;
     if (!panelStyle) {
@@ -278,11 +278,6 @@
     panelStyle.textContent =
       '.page-content::before{left:' + cLeft  + 'px!important;right:' + cRight + 'px!important}' +
       '.page-footer::before{left:'  + fLeft  + 'px!important;right:' + fRight + 'px!important}';
-  }
-
-  if (window.ResizeObserver) {
-    var _content = document.querySelector('.page-content');
-    if (_content) new ResizeObserver(function() { requestAnimationFrame(alignPanels); }).observe(_content);
   }
 
   var paused = false;
@@ -364,6 +359,20 @@
 
   var start = null, lastT = 0;
   function frame(ts) {
+    // Keep canvas buffer exactly matching the viewport every frame.
+    // This ensures canvas pixel coordinates equal CSS pixels at all times,
+    // including during live window rescaling before the resize debounce fires.
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var newDpr = window.devicePixelRatio || 1;
+    if (canvasEl.width !== Math.round(vw * newDpr) || canvasEl.height !== Math.round(vh * newDpr)) {
+      dpr = newDpr;
+      canvasEl.width = vw * dpr;
+      canvasEl.height = vh * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    // Recompute fade edges every frame — cheap (early-exits when nothing changed),
+    // guarantees fade columns track the panel instantly during resize.
+    alignPanels();
     if (!paused) {
       if (!start) { start = ts; lastT = ts; }
       var t = ts - start;
@@ -376,28 +385,17 @@
 
   window.addEventListener('resize', function() {
     var newW = window.innerWidth, newH = window.innerHeight;
-    // ignore tiny width changes (e.g. scrollbar appearing/disappearing during navigation)
-    if (Math.abs(newW - w) <= 30 && Math.abs(newH - h) <= 30) {
-      requestAnimationFrame(alignPanels);
-      return;
-    }
+    if (Math.abs(newW - w) <= 30 && Math.abs(newH - h) <= 30) return;
     w = newW; h = newH;
-    paused = true;
+    // Only debounce the expensive grid rebuild — canvas size and panel alignment
+    // are handled every frame by the loop above.
     if (resizeTimer) clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() {
-      dpr = window.devicePixelRatio || 1;
-      canvasEl.width = w * dpr;
-      canvasEl.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      initGrid();
-      alignPanels();
-      paused = false;
-    }, 150);
+    resizeTimer = setTimeout(initGrid, 150);
   });
 
   window.addEventListener('load', alignPanels);
   window.addEventListener('navstart', function() { fadeEdgeL = -1; fadeEdgeR = -1; });
-  window.addEventListener('navchange', function() { requestAnimationFrame(alignPanels); });
+  window.addEventListener('navchange', alignPanels);
 
   // initialize grid and start animation
   initGrid();
