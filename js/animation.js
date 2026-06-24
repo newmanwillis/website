@@ -254,19 +254,23 @@
       if (panelStyle) panelStyle.textContent = '';
       return;
     }
-    var r = content.getBoundingClientRect();
-    fadeEdgeL = Math.floor(r.left  / CELL);  // first column index at/past left edge
-    fadeEdgeR = Math.ceil(r.right / CELL);   // first column index at/past right edge
-    var targetL = fadeEdgeL * CELL - 3.5;
-    var targetR = fadeEdgeR * CELL + 4;
-    // Offsets are relative to each element's own containing block.
-    // .page-content::before: containing block = .page-content (left edge = r.left)
-    var cLeft  = targetL - r.left;   // negative = extends left of content
-    var cRight = r.right - targetR;  // negative = extends right of content
-    // .page-footer::before: containing block = .page-footer (full viewport width, left edge ≈ 0)
-    var footer = document.querySelector('.page-footer');
-    var fLeft = targetL;
-    var fRight = footer ? (footer.getBoundingClientRect().right - targetR) : cRight;
+    // Read viewport width fresh each call — window.innerWidth always reflects the
+    // current scrollbar state (scrollbar present → smaller vw; absent → larger).
+    // Using the cached `w` would give stale values when the scrollbar appears or
+    // disappears between pages, shifting fadeEdgeR by a full column.
+    var vw = window.innerWidth;
+    var maxW   = Math.min(vw, Math.min(1200, Math.max(1020, vw * 0.68)));
+    var contentL = (vw - maxW) / 2;
+    var contentR = contentL + maxW;
+    fadeEdgeL = Math.floor(contentL / CELL);
+    fadeEdgeR = Math.ceil(contentR / CELL);
+    var targetL = fadeEdgeL * CELL;
+    var targetR = fadeEdgeR * CELL;
+    var cLeft  = targetL - contentL;  // negative — extends left of content box
+    var cRight = contentR - targetR;  // negative — extends right of content box
+    // .page-footer::before: footer is full-viewport-width so offsets are from 0 / vw
+    var fLeft  = targetL;
+    var fRight = vw - targetR;
     if (!panelStyle) {
       panelStyle = document.createElement('style');
       document.head.appendChild(panelStyle);
@@ -392,7 +396,8 @@
   });
 
   window.addEventListener('load', alignPanels);
-  window.addEventListener('navchange', function() { requestAnimationFrame(function() { requestAnimationFrame(alignPanels); }); });
+  window.addEventListener('navstart', function() { fadeEdgeL = -1; fadeEdgeR = -1; });
+  window.addEventListener('navchange', function() { requestAnimationFrame(alignPanels); });
 
   // initialize grid and start animation
   initGrid();

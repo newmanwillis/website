@@ -30,6 +30,7 @@
     var newContent = doc.getElementById('site-content');
     if (!newContent) { location.href = url; return; }
 
+    window.dispatchEvent(new CustomEvent('navstart'));
     el.style.transition = 'opacity 0.18s ease';
     el.style.opacity = '0';
     await new Promise(function (r) { setTimeout(r, 180); });
