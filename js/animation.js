@@ -124,31 +124,26 @@
   }
 
   var mouseX = -1000, mouseY = -1000;
-  canvasEl.addEventListener('mousemove', function(e) {
-    var r = canvasEl.getBoundingClientRect();
-    mouseX = e.clientX - r.left; mouseY = e.clientY - r.top;
+  document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX; mouseY = e.clientY;
   });
-  canvasEl.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
-  canvasEl.addEventListener('touchmove', function(e) {
-    e.preventDefault();
-    var r = canvasEl.getBoundingClientRect();
-    mouseX = e.touches[0].clientX - r.left; mouseY = e.touches[0].clientY - r.top;
-  }, { passive: false });
-  canvasEl.addEventListener('touchend', function() { mouseX = -1000; mouseY = -1000; });
+  document.addEventListener('mouseleave', function() { mouseX = -1000; mouseY = -1000; });
+  document.addEventListener('touchmove', function(e) {
+    mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function() { mouseX = -1000; mouseY = -1000; });
 
   var ripples = [];
   function addRipple(rx, ry) {
     ripples.push({ x: rx, y: ry, lastR: 0, born: performance.now() });
     if (ripples.length > 5) ripples.shift();
   }
-  canvasEl.addEventListener('click', function(e) {
-    var r = canvasEl.getBoundingClientRect();
-    addRipple(e.clientX - r.left, e.clientY - r.top);
+  document.addEventListener('click', function(e) {
+    addRipple(e.clientX, e.clientY);
   });
-  canvasEl.addEventListener('touchstart', function(e) {
-    var r = canvasEl.getBoundingClientRect();
-    addRipple(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
-  });
+  document.addEventListener('touchstart', function(e) {
+    addRipple(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
 
   function applyRipples(now, t) {
     var i = ripples.length;
