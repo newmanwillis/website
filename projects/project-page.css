@@ -164,7 +164,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   padding-left: 0;
   padding-right: 1.1rem;
   padding-bottom: 0;
-  border-bottom: 2px solid #878787;
+  border-bottom: 2px solid #585858;
   isolation: isolate;
   position: relative;
   z-index: 50;
@@ -181,7 +181,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   align-items: center;
   text-decoration: none;
   line-height: 1.4;
-  color: #636363;
+  color: #585858;
   font-family: 'Sora', sans-serif;
   font-size: 0.95rem;
   letter-spacing: 0.04em;
@@ -192,7 +192,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .topnav-home:hover {
-  background: #878787;
+  background: #585858;
   color: var(--bg);
 }
 
@@ -217,12 +217,12 @@ body:has(.lightbox-overlay.active) .back-bar {
   letter-spacing: 0.04em;
   font-weight: 700;
   text-transform: none;
-  color: #636363;
+  color: #585858;
 }
 
 .topnav-projects-btn:hover,
 .topnav-projects-btn[aria-expanded="true"] {
-  background: #878787;
+  background: #585858;
   color: var(--bg);
 }
 
@@ -267,7 +267,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 
 .topnav-menu a:hover {
   color: var(--bg);
-  background: #878787;
+  background: #585858;
 }
 
 .topnav-menu .current {
@@ -612,7 +612,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 
 /* ── FOOTER NAV ── */
 .page-footer {
-  border-top: 2px solid #878787;
+  border-top: 2px solid #585858;
   margin-left: -1.1rem;
   margin-right: -1.1rem;
   padding: 1.5rem 0 1rem;
@@ -629,21 +629,22 @@ body:has(.lightbox-overlay.active) .back-bar {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.44rem 1rem;
-  border: 2px solid #878787;
+  padding: 0.55rem 1rem;
+  border: 2px solid #585858;
   border-radius: 4px;
-  color: #777777;
+  color: #404040;
   text-decoration: none;
   font-size: 0.9rem;
   letter-spacing: 0.03em;
   font-weight: 600;
+  line-height: 1;
   transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
 
 .nav-pill:hover {
-  background: #878787;
+  background: #585858;
   color: var(--bg);
-  border-color: #878787;
+  border-color: #585858;
 }
 
 .nav-pill svg {
