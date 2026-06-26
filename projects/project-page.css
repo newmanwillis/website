@@ -630,36 +630,42 @@ body:has(.lightbox-overlay.active) .back-bar {
   border-top: 2px solid #6e6e6e;
   margin-left: -1.1rem;
   margin-right: -1.1rem;
-  padding: 1rem 0 0.5rem;
+  padding: 0 0 0.5rem;
 }
 
 
 .footer-nav {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.4rem;
 }
 
 .nav-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1rem;
+  gap: 0.35rem;
+  padding: 0.65rem 0.6rem 0.3rem;
   border: 2px solid #6e6e6e;
-  border-radius: 4px;
-  color: #5a5a5a;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  color: #6b6358;
   text-decoration: none;
-  font-size: 0.9rem;
-  letter-spacing: 0.03em;
-  font-weight: 600;
-  line-height: 1;
-  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .nav-pill:hover {
   background: #585858;
   color: var(--bg);
   border-color: #585858;
+}
+
+.page-footer:has(.nav-pill:hover) {
+  border-top-color: #585858;
 }
 
 .nav-pill svg {
@@ -682,7 +688,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .nav-pill-placeholder {
-  width: 120px;
+  display: none;
 }
 
 /* ── RESPONSIVE ── */
