@@ -32,6 +32,7 @@
   var TRAIL_MIN_SQ     = CELL * CELL;// min squared distance between trail points
   var MAX_TRAIL_POINTS = 80;
   var INNER_R_SQ       = WATER_INNER_R * WATER_INNER_R;
+  var WAKE_DURATION    = 1200;       // ms — time for a woken pixel to return to full ambient
 
   function easeOut(t) { var inv = 1 - t; return 1 - inv * inv * inv; }
   function randAmbient() { return AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN); }
@@ -45,7 +46,7 @@
   }
 
   function currentDarkness(p, t) {
-    if (p.state === 'cleared') return 0;
+    if (p.state === 'cleared' || p.state === 'waking') return 0;
     if (p.state === 'flashing') return Math.max(0, p.flashAlpha);
     if (p.state === 'tinted') return p.rippleAlpha;
     var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
@@ -129,6 +130,32 @@
   var mouseTrail = [];
   var lastTrailX = -9999, lastTrailY = -9999;
 
+  // Set pixels within WATER_INNER_R of (cx, cy) to 'waking' state.
+  // First contact randomises the ambient target; cursor refreshes keep wakeStartTime = now
+  // so the pixel stays invisible while the cursor is there, then self-recovers once it moves.
+  function applyWakeAt(cx, cy, now) {
+    var xMinC = Math.max(0, Math.floor((cx - WATER_INNER_R) / CELL));
+    var xMaxC = Math.min(cols - 1, Math.ceil((cx + WATER_INNER_R) / CELL));
+    var yMinC = Math.max(0, Math.floor((cy - WATER_INNER_R) / CELL));
+    var yMaxC = Math.min(rows - 1, Math.ceil((cy + WATER_INNER_R) / CELL));
+    for (var gx = xMinC; gx <= xMaxC; gx++) {
+      for (var gy = yMinC; gy <= yMaxC; gy++) {
+        var pcx = gx * CELL + CELL / 2, pcy = gy * CELL + CELL / 2;
+        var ddx = pcx - cx, ddy = pcy - cy;
+        if (ddx * ddx + ddy * ddy > INNER_R_SQ) continue;
+        var p = grid[gx * rows + gy];
+        if (!p || p.state === 'flashing') continue;
+        if (p.state !== 'waking') {
+          // First contact: assign a random ambient target for this recovery
+          p.ambMin = AMB_MIN + Math.random() * 0.02;
+          p.ambMax = AMB_MIN + 0.02 + Math.random() * (AMB_MAX - AMB_MIN - 0.02);
+        }
+        p.state = 'waking';
+        p.wakeStartTime = now; // kept at 'now' each frame under cursor → stays invisible
+      }
+    }
+  }
+
   function addTrailPoint(x, y, now) {
     var dx = x - lastTrailX, dy = y - lastTrailY;
     var distSq = dx * dx + dy * dy;
@@ -138,6 +165,7 @@
       var len = Math.sqrt(distSq);
       vx = dx / len; vy = dy / len;
     }
+    applyWakeAt(x, y, now);
     // blockPos/blockNeg: perpendicular signed projections beyond which a column streak
     // has disrupted this trail point's wave. Infinity/-Infinity means unblocked.
     mouseTrail.push({ x: x, y: y, born: now, vx: vx, vy: vy,
@@ -273,51 +301,11 @@
       }
     }
 
-    // Pass 2: Trail clear zones — negative values that fade back as trail ages.
-    // The most-negative value wins so overlapping clears take the strongest effect.
-    // Clears always override waves because any negative < any positive.
-    for (var ti = 0; ti < mouseTrail.length; ti++) {
-      var tp = mouseTrail[ti];
-      var age = now - tp.born;
-      var lifeFrac = 1 - age / WATER_TRAIL_AGE;
-
-      var xMinC = Math.max(0, Math.floor((tp.x - WATER_INNER_R) / CELL));
-      var xMaxC = Math.min(cols - 1, Math.ceil((tp.x + WATER_INNER_R) / CELL));
-      var yMinC = Math.max(0, Math.floor((tp.y - WATER_INNER_R) / CELL));
-      var yMaxC = Math.min(rows - 1, Math.ceil((tp.y + WATER_INNER_R) / CELL));
-
-      for (var cx = xMinC; cx <= xMaxC; cx++) {
-        for (var cy = yMinC; cy <= yMaxC; cy++) {
-          var pcx = cx * CELL + CELL / 2, pcy = cy * CELL + CELL / 2;
-          var ddx = pcx - tp.x, ddy = pcy - tp.y;
-          var distSq = ddx * ddx + ddy * ddy;
-          if (distSq > INNER_R_SQ) continue;
-          var distFrac = Math.sqrt(distSq) / WATER_INNER_R;
-          var clearStr = (1 - distFrac * distFrac) * lifeFrac;
-          var idx = cx * rows + cy;
-          if (-clearStr < mouseRipple[idx]) mouseRipple[idx] = -clearStr;
-        }
-      }
-    }
-
-    // Pass 3: Cursor — always full-strength clear while on canvas.
+    // Cursor — refresh waking state each frame so it stays invisible while hovering.
+    // wakeStartTime is reset to 'now' every frame, so the pixel only starts recovering
+    // once the cursor moves away and the refreshes stop.
     if (mouseX >= 0 && mouseX < w && mouseY >= 0 && mouseY < h) {
-      var xMinC = Math.max(0, Math.floor((mouseX - WATER_INNER_R) / CELL));
-      var xMaxC = Math.min(cols - 1, Math.ceil((mouseX + WATER_INNER_R) / CELL));
-      var yMinC = Math.max(0, Math.floor((mouseY - WATER_INNER_R) / CELL));
-      var yMaxC = Math.min(rows - 1, Math.ceil((mouseY + WATER_INNER_R) / CELL));
-      for (var cx = xMinC; cx <= xMaxC; cx++) {
-        for (var cy = yMinC; cy <= yMaxC; cy++) {
-          var pcx = cx * CELL + CELL / 2, pcy = cy * CELL + CELL / 2;
-          var ddx = pcx - mouseX, ddy = pcy - mouseY;
-          var distSq = ddx * ddx + ddy * ddy;
-          if (distSq > INNER_R_SQ) continue;
-          var distFrac = Math.sqrt(distSq) / WATER_INNER_R;
-          var clearStr = 1 - distFrac * distFrac;
-          var idx = cx * rows + cy;
-          if (-clearStr < mouseRipple[idx]) mouseRipple[idx] = -clearStr;
-        }
-      }
+      applyWakeAt(mouseX, mouseY, now);
     }
   }
 
@@ -432,22 +420,33 @@
       }
 
       if (p.state === 'tinted') {
-        // From click ripple — cursor clear zone can fade it out
+        // From click ripple
         var alpha = p.rippleAlpha;
-        if (inf < 0) alpha = Math.max(0, alpha * (1 + inf));
+        if (inf > 0) alpha = Math.min(LEAD_DARK, alpha + inf);
         if (alpha <= 0.001) continue;
         ctx.fillStyle = fillColor(alpha);
         ctx.fillRect(px, py, CELL - 1, CELL - 1);
         continue;
       }
 
-      // Ambient: wave darkening (positive inf) adds on top; clear zone (negative inf)
-      // multiplicatively fades the pixel back toward background, returning to equilibrium
-      // as the trail ages and the cursor moves away.
+      if (p.state === 'waking') {
+        // Pixel was touched by the mouse; it starts at 0 and independently oscillates
+        // back toward its ambient target over WAKE_DURATION ms.
+        var prog = Math.min(1, (now - p.wakeStartTime) / WAKE_DURATION);
+        var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
+        var darkness = (p.ambMin + (p.ambMax - p.ambMin) * wave) * prog;
+        if (prog >= 1) p.state = 'ambient';
+        if (darkness > 0.001) {
+          ctx.fillStyle = fillColor(darkness);
+          ctx.fillRect(px, py, CELL - 1, CELL - 1);
+        }
+        continue;
+      }
+
+      // Ambient: wave darkening (positive inf only — no negative inf now).
       var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
       var darkness = p.ambMin + (p.ambMax - p.ambMin) * wave;
       if (inf > 0) darkness = Math.min(LEAD_DARK, darkness + inf);
-      if (inf < 0) darkness = Math.max(0, darkness * (1 + inf));
 
       if (darkness <= 0.001) continue;
       ctx.fillStyle = fillColor(darkness);
