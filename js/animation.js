@@ -275,22 +275,35 @@
           var pcx = cx * CELL + CELL / 2, pcy = cy * CELL + CELL / 2;
           var ddx = pcx - tp.x, ddy = pcy - tp.y;
 
-          var parDist = ddx * tp.vx + ddy * tp.vy;
-          if (parDist < 0) parDist = -parDist;
-          if (parDist > WAVE_PAR_WIDTH) continue;
+          var parProj = ddx * tp.vx + ddy * tp.vy;  // signed: + = forward
+          var parDist = parProj < 0 ? -parProj : parProj;
 
           var perpProj = ddx * pvx + ddy * pvy;
           var perpDist = perpProj < 0 ? -perpProj : perpProj;
-          var bandDist = perpDist - wavePerpR;
+
+          // Effective wave radius: circular arc in front, straight bars on the sides/back.
+          // For parProj <= 0 this equals perpDist (existing side-wave behavior).
+          var fwd = parProj > 0 ? parProj : 0;
+          var distEff = Math.sqrt(fwd * fwd + perpProj * perpProj);
+
+          var bandDist = distEff - wavePerpR;
           if (bandDist < 0) bandDist = -bandDist;
           if (bandDist > WAVE_WIDTH) continue;
+
+          // Backward/side portion: fade based on parallel distance so bars have finite length.
+          var parTaper;
+          if (parProj <= 0) {
+            if (parDist > WAVE_PAR_WIDTH) continue;
+            var parNorm = parDist / WAVE_PAR_WIDTH;
+            parTaper = 1 - parNorm * parNorm;
+          } else {
+            parTaper = 1;
+          }
 
           var leadColRow = Math.floor(columns[cx].y);
           var leadPerpProj = ddx * pvx + (leadColRow * CELL + CELL * 0.5 - tp.y) * pvy;
           if (leadPerpProj * perpProj > 0 && Math.abs(leadPerpProj) < perpDist) continue;
 
-          var parNorm = parDist / WAVE_PAR_WIDTH;
-          var parTaper = 1 - parNorm * parNorm;
           var perpProfile = 1 - bandDist / WAVE_WIDTH;
           var darkVal = WAVE_ALPHA * perpProfile * parTaper * lifeFrac;
           if (darkVal < 0.01) continue;
