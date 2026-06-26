@@ -195,7 +195,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   text-transform: uppercase;
   padding: 0.3rem 0.6rem 0.65rem;
   border-radius: 5px 5px 0 0;
-  border: 1px solid #6b6358;
+  border: 2px solid #6e6e6e;
   border-bottom: none;
 }
 
@@ -217,7 +217,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   gap: 0.35rem;
   line-height: 1.4;
   background: none;
-  border: 1px solid #6b6358;
+  border: 2px solid #6e6e6e;
   border-bottom: none;
   border-radius: 5px 5px 0 0;
   padding: 0.3rem 0.6rem 0.65rem;
@@ -242,7 +242,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   height: 16px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 2.5;
+  stroke-width: 3.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   flex-shrink: 0;
