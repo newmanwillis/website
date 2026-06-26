@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nav Concept Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@300;400&family=Archivo:wght@800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --ink: #0f0e0c;
+      --border: #dedad2;
+      --muted: #8a8880;
+      --line: #6e6e6e;
+      --hover: #585858;
+    }
+
+    body {
+      background: #ccc9c1;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      padding: 2.5rem 2rem;
+      color: var(--ink);
+    }
+
+    h1 {
+      font-family: sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .samples {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .sample {
+      border-radius: 6px;
+      overflow: hidden;
+      background: #c0bdb5;
+    }
+
+    .sample-label {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
+      font-weight: 400;
+      padding: 0.7rem 1.1rem 0.6rem;
+      background: #b8b5ae;
+      border-bottom: 1px solid #aeaba4;
+    }
+
+    /* ── canvas pixel pattern ── */
+    .page-sim {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .canvas-layer {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, rgba(58,56,48,0.10) 1.2px, transparent 1.2px);
+      background-size: 8px 8px;
+    }
+
+    /* content panel sits over canvas */
+    .panel {
+      position: relative;
+      background: var(--bg);
+      margin: 0 48px;
+      padding: 0.75rem 1.8rem 1.8rem;
+    }
+
+    /* shared fake content */
+    .fake-category {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8a8784;
+      margin-bottom: 0.45rem;
+    }
+    .fake-title {
+      font-family: 'Archivo', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 0.55rem;
+    }
+    .fake-summary {
+      font-size: 0.82rem;
+      color: #252320;
+      border-left: 2px solid var(--border);
+      padding-left: 0.8rem;
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+    }
+    .fake-block {
+      height: 80px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    .fake-block.short { height: 50px; }
+
+    /* ── shared btn styles ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--line);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px 5px 0 0;
+      padding: 0.28rem 0.55rem 0.6rem;
+    }
+    .btn:hover { background: var(--hover); color: var(--bg); }
+    .btn svg {
+      width: 13px; height: 13px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+
+    /* ════════════════════════════════════════
+       OPTION 1 — Breadcrumb
+    ════════════════════════════════════════ */
+    .opt1 .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border-bottom: 2px solid var(--line);
+      margin: 0 -1.8rem 1.5rem;
+      padding: 0.35rem 1.8rem 0.5rem;
+    }
+    .opt1 .crumb {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--line);
+      text-decoration: none;
+    }
+    .opt1 .crumb:hover { color: var(--hover); }
+    .opt1 .sep {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.88rem;
+      color: #b0aca6;
+      margin: 0 0.45rem;
+      font-weight: 400;
+    }
+    .opt1 .crumb.current {
+      color: #b0aca6;
+      font-weight: 600;
+      cursor: default;
+    }
+    .opt1 .crumb.current:hover { color: #b0aca6; }
+
+
+    /* ════════════════════════════════════════
+       OPTION 2 — Title in header band
+    ════════════════════════════════════════ */
+    .opt2 .header-band {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--line);
+      margin: 0 -1.8rem 1.5rem;
+      padding: 0 1.8rem 0 0;
+    }
+    .opt2 .band-left {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 0.2rem;
+    }
+    .opt2 .band-right {
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: #b0aca6;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-bottom: 0.6rem;
+    }
+    /* hide title from content when shown in band */
+    .opt2 .fake-title { display: none; }
+
+
+    /* ════════════════════════════════════════
+       OPTION 3 — Full-width band
+    ════════════════════════════════════════ */
+    .opt3 .page-sim { background: var(--bg); }
+    .opt3 .full-band {
+      position: relative;
+      z-index: 2;
+      background: var(--bg);
+      border-bottom: 2px solid var(--line);
+      padding: 0 calc(48px + 1.8rem);
+    }
+    .opt3 .band-inner {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 0.2rem;
+    }
+    .opt3 .panel {
+      margin-top: 0;
+      padding-top: 1.2rem;
+    }
+
+
+    /* ════════════════════════════════════════
+       OPTION 4 — Sticky header
+    ════════════════════════════════════════ */
+    .opt4 .page-sim {
+      height: 280px;
+      overflow-y: auto;
+    }
+    .opt4 .canvas-layer { position: fixed; display: none; } /* just use bg color for scroll demo */
+    .opt4 .page-sim { background: var(--bg); }
+    .opt4 .panel {
+      margin: 0;
+      padding: 0 1.8rem 1.8rem;
+      background: var(--bg);
+    }
+    .opt4 .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      border-bottom: 2px solid var(--line);
+      padding: 0 1.8rem 0 0;
+      display: flex;
+      align-items: flex-end;
+    }
+    .opt4 .sticky-inner {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 0.2rem;
+    }
+    .opt4 .scroll-hint {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b0aca6;
+      padding: 0.5rem 0 0.5rem 1rem;
+      font-family: sans-serif;
+      margin-left: auto;
+      align-self: center;
+    }
+
+
+    /* ════════════════════════════════════════
+       OPTION 5 — Vertical left strip
+    ════════════════════════════════════════ */
+    .opt5 .panel {
+      display: flex;
+      gap: 0;
+      padding: 0;
+    }
+    .opt5 .side-nav {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1rem 0 1rem;
+      border-right: 2px solid var(--line);
+      gap: 0.15rem;
+      flex-shrink: 0;
+      width: 3.5rem;
+    }
+    .opt5 .side-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--line);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.4rem 0;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      letter-spacing: 0.06em;
+      border-radius: 0 5px 5px 0;
+    }
+    .opt5 .side-btn:hover { background: var(--hover); color: var(--bg); border-radius: 0 5px 5px 0; }
+    .opt5 .side-content {
+      padding: 1.5rem 1.8rem 1.8rem;
+      flex: 1;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Nav redesign concepts</h1>
+
+  <div class="samples">
+
+    <!-- OPTION 1: Breadcrumb -->
+    <div class="sample">
+      <div class="sample-label">Option 1 — Breadcrumb with current project name</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="panel opt1">
+          <div class="breadcrumb">
+            <a class="crumb" href="#">Home</a>
+            <span class="sep">/</span>
+            <a class="crumb" href="#">Projects</a>
+            <span class="sep">/</span>
+            <span class="crumb current">Google Robotics UI</span>
+          </div>
+          <div class="fake-category">Professional · AR, Mobile</div>
+          <div class="fake-title">Google Robotics UI</div>
+          <div class="fake-summary">City-scale AR experiences built at Sturfee for Android and iOS.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 2: Title in header band -->
+    <div class="sample">
+      <div class="sample-label">Option 2 — Project title integrated into nav band</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="panel opt2">
+          <div class="header-band">
+            <div class="band-left">
+              <a class="btn" href="#">Home</a>
+              <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            </div>
+            <div class="band-right">Google Robotics UI</div>
+          </div>
+          <div class="fake-category">Professional · AR, Mobile</div>
+          <div class="fake-summary">City-scale AR experiences built at Sturfee for Android and iOS.</div>
+          <div class="fake-block"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 3: Full-width band -->
+    <div class="sample">
+      <div class="sample-label">Option 3 — Full-width spanning band</div>
+      <div class="page-sim opt3">
+        <div class="canvas-layer"></div>
+        <div class="full-band">
+          <div class="band-inner">
+            <a class="btn" href="#">Home</a>
+            <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+          </div>
+        </div>
+        <div class="panel opt3">
+          <div class="fake-category">Professional · AR, Mobile</div>
+          <div class="fake-title">Google Robotics UI</div>
+          <div class="fake-summary">City-scale AR experiences built at Sturfee for Android and iOS.</div>
+          <div class="fake-block short"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 4: Sticky header -->
+    <div class="sample">
+      <div class="sample-label">Option 4 — Sticky header (scroll inside to see it stick)</div>
+      <div class="page-sim opt4">
+        <div class="panel opt4">
+          <div class="sticky-nav">
+            <div class="sticky-inner">
+              <a class="btn" href="#">Home</a>
+              <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            </div>
+            <span class="scroll-hint">↑ try scrolling</span>
+          </div>
+          <div style="padding-top: 1.2rem;">
+            <div class="fake-category">Professional · AR, Mobile</div>
+            <div class="fake-title">Google Robotics UI</div>
+            <div class="fake-summary">City-scale AR experiences built at Sturfee for Android and iOS.</div>
+            <div class="fake-block"></div>
+            <div class="fake-block"></div>
+            <div class="fake-block short"></div>
+            <div class="fake-block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 5: Vertical left strip -->
+    <div class="sample">
+      <div class="sample-label">Option 5 — Vertical nav strip along left edge</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="panel opt5">
+          <div class="side-nav">
+            <a class="side-btn" href="#">Home</a>
+            <button class="side-btn">Projects</button>
+          </div>
+          <div class="side-content">
+            <div class="fake-category">Professional · AR, Mobile</div>
+            <div class="fake-title">Google Robotics UI</div>
+            <div class="fake-summary">City-scale AR experiences built at Sturfee for Android and iOS.</div>
+            <div class="fake-block short"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

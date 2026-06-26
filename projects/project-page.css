@@ -187,12 +187,12 @@ body:has(.lightbox-overlay.active) .back-bar {
   align-items: center;
   text-decoration: none;
   line-height: 1.4;
-  color: #6e6e6e;
+  color: #6b6358;
   font-family: 'Sora', sans-serif;
   font-size: 0.95rem;
   letter-spacing: 0.04em;
   font-weight: 700;
-  text-transform: none;
+  text-transform: uppercase;
   padding: 0.3rem 0.6rem 0.65rem;
   border-radius: 5px 5px 0 0;
 }
@@ -222,8 +222,8 @@ body:has(.lightbox-overlay.active) .back-bar {
   font-size: 0.95rem;
   letter-spacing: 0.04em;
   font-weight: 700;
-  text-transform: none;
-  color: #6e6e6e;
+  text-transform: uppercase;
+  color: #6b6358;
 }
 
 .topnav-projects-btn:hover,
