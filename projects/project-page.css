@@ -673,10 +673,12 @@ body:has(.lightbox-overlay.active) .back-bar {
   height: 16px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 2.5;
+  stroke-width: 3.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   flex-shrink: 0;
+  position: relative;
+  top: -1px;
 }
 
 
@@ -685,6 +687,7 @@ body:has(.lightbox-overlay.active) .back-bar {
   stroke: none;
   width: 15px;
   height: 15px;
+  top: -2px;
 }
 
 .nav-pill-placeholder {
