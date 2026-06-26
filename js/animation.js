@@ -166,10 +166,7 @@
       vx = dx / len; vy = dy / len;
     }
     applyWakeAt(x, y, now);
-    // blockPos/blockNeg: perpendicular signed projections beyond which a column streak
-    // has disrupted this trail point's wave. Infinity/-Infinity means unblocked.
-    mouseTrail.push({ x: x, y: y, born: now, vx: vx, vy: vy,
-                      blockPos: Infinity, blockNeg: -Infinity });
+    mouseTrail.push({ x: x, y: y, born: now, vx: vx, vy: vy });
     if (mouseTrail.length > MAX_TRAIL_POINTS) mouseTrail.shift();
     lastTrailX = x; lastTrailY = y;
   }
@@ -254,8 +251,9 @@
       mouseTrail.shift();
     }
 
-    // Pass 1: Wave bands — positive darkening that spreads perpendicular to motion.
-    // blockPos/blockNeg stop the wave wherever a column streak has cut through it.
+    // Wave bands — positive darkening that spreads perpendicular to motion.
+    // A per-pixel ray march from the trail to each candidate pixel stops the wave
+    // wherever a flashing column pixel sits in between.
     for (var ti = 0; ti < mouseTrail.length; ti++) {
       var tp = mouseTrail[ti];
       if (!tp.vx && !tp.vy) continue;
@@ -282,12 +280,14 @@
           if (parDist > WAVE_PAR_WIDTH) continue;
 
           var perpProj = ddx * pvx + ddy * pvy;
-          if (perpProj >= tp.blockPos || perpProj <= tp.blockNeg) continue;
-
           var perpDist = perpProj < 0 ? -perpProj : perpProj;
           var bandDist = perpDist - wavePerpR;
           if (bandDist < 0) bandDist = -bandDist;
           if (bandDist > WAVE_WIDTH) continue;
+
+          var leadColRow = Math.floor(columns[cx].y);
+          var leadPerpProj = ddx * pvx + (leadColRow * CELL + CELL * 0.5 - tp.y) * pvy;
+          if (leadPerpProj * perpProj > 0 && Math.abs(leadPerpProj) < perpDist) continue;
 
           var parNorm = parDist / WAVE_PAR_WIDTH;
           var parTaper = 1 - parNorm * parNorm;
@@ -323,26 +323,6 @@
         if (gy < 0 || gy >= rows) continue;
         var p = grid[x * rows + gy];
         if (!p) continue;
-
-        // If a column sweeps through an active wave pixel, permanently block the wave
-        // in that perpendicular direction for every trail point whose wave covers this cell.
-        // This stops the wave from re-forming past the column's path.
-        if (mouseRipple) {
-          var inf = mouseRipple[x * rows + gy];
-          if (inf > 0.005) {
-            var pcx = x * CELL + CELL / 2, pcy = gy * CELL + CELL / 2;
-            for (var ti = 0; ti < mouseTrail.length; ti++) {
-              var tp = mouseTrail[ti];
-              if (!tp.vx && !tp.vy) continue;
-              var pvx = -tp.vy, pvy = tp.vx;
-              var ddx = pcx - tp.x, ddy = pcy - tp.y;
-              var perpProj = ddx * pvx + ddy * pvy;
-              // Block outward in whichever perpendicular direction this pixel lies
-              if (perpProj > 0 && perpProj < tp.blockPos) tp.blockPos = perpProj;
-              if (perpProj < 0 && perpProj > tp.blockNeg) tp.blockNeg = perpProj;
-            }
-          }
-        }
 
         p.seededDark = randAmbient(); p.seededArmed = true;
         p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
@@ -387,7 +367,7 @@
   var resizeTimer = null;
 
   function draw(t, now, dt) {
-    advanceColumns(dt);      // must run before updateMouseRipple so blocking sees last frame's wave
+    advanceColumns(dt);
     applyRipples(now, t);
     updateMouseRipple(now);  // fills mouseRipple[] fresh every frame
 
