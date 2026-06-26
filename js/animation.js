@@ -24,15 +24,15 @@
 
   // mouse water wave parameters
   var WATER_INNER_R    = CELL * 2;   // 16px — cursor/trail clear zone radius (temporary, fades back)
-  var WAVE_SPEED       = 70;         // px/s — wave expands perpendicular to motion
+  var WAVE_SPEED       = 50;         // px/s — wave expands perpendicular to motion
   var WAVE_WIDTH       = CELL * 2;   // 16px — wave band thickness
   var WAVE_ALPHA       = 0.12;       // max darkening at wave crest (on top of ambient)
   var WAVE_PAR_WIDTH   = CELL * 5;   // 40px — wave extent along direction of motion
-  var WATER_TRAIL_AGE  = 1000;       // ms — trail point lifetime
+  var WATER_TRAIL_AGE  = 1800;       // ms — trail point lifetime
   var TRAIL_MIN_SQ     = CELL * CELL;// min squared distance between trail points
   var MAX_TRAIL_POINTS = 80;
   var INNER_R_SQ       = WATER_INNER_R * WATER_INNER_R;
-  var WAKE_DURATION    = 1200;       // ms — time for a woken pixel to return to full ambient
+  var WAKE_DURATION    = 2600;       // ms — time for a woken pixel to return to full ambient
 
   function easeOut(t) { var inv = 1 - t; return 1 - inv * inv * inv; }
   function randAmbient() { return AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN); }
