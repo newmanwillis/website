@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top Nav Style Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700&family=DM+Sans:wght@300;400&family=Archivo:wght@800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --ink: #0f0e0c;
+      --border: #dedad2;
+      --muted: #8a8880;
+      --line: #6e6e6e;
+      --hover: #585858;
+    }
+
+    body {
+      background: #d8d5ce;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      padding: 2.5rem 2rem;
+      color: var(--ink);
+    }
+
+    h1 {
+      font-family: sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .sample {
+      background: #ccc9c1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .sample-label {
+      font-family: sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 400;
+      padding: 0.75rem 1rem 0.6rem;
+      background: #c0bdb5;
+      border-bottom: 1px solid #b5b2ab;
+    }
+
+    /* ── Simulated page with canvas bg ── */
+    .page-sim {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* pixel grid approximating the canvas animation */
+    .canvas-layer {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle, rgba(58,56,48,0.11) 1.2px, transparent 1.2px);
+      background-size: 8px 8px;
+    }
+
+    /* white content panel */
+    .content-panel {
+      position: relative;
+      background: var(--bg);
+      margin: 0 40px;
+      padding: 0.75rem 1.5rem 1.5rem;
+      min-height: 200px;
+    }
+
+    /* ── Shared top nav styles ── */
+    .topnav {
+      border-bottom: 2px solid var(--line);
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding: 0 1.5rem 0 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .topnav-inner {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 0.2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--line);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.28rem 0.55rem 0.6rem;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .btn svg {
+      width: 14px; height: 14px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .btn:hover {
+      background: var(--hover);
+      color: var(--bg);
+    }
+
+    /* simulated content */
+    .fake-category {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8a8784;
+      margin-bottom: 0.4rem;
+    }
+
+    .fake-title {
+      font-family: 'Archivo', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 0.6rem;
+    }
+
+    .fake-summary {
+      font-size: 0.8rem;
+      color: #252320;
+      border-left: 2px solid var(--border);
+      padding-left: 0.8rem;
+      line-height: 1.6;
+    }
+
+    /* ════════════════════════════════
+       OPTION 1 — Canvas shows through nav
+    ════════════════════════════════ */
+    .opt1 .topnav {
+      background: transparent;
+      position: relative;
+    }
+    /* remove white panel coverage for nav area only */
+    .opt1 .content-panel {
+      background: transparent;
+    }
+    .opt1 .content-panel::before {
+      content: '';
+      position: absolute;
+      /* starts below the topnav — approximately after the nav height */
+      top: 3.2rem;
+      bottom: 0;
+      left: 0; right: 0;
+      background: var(--bg);
+      z-index: 0;
+    }
+    .opt1 .topnav,
+    .opt1 .topnav-inner,
+    .opt1 .btn {
+      position: relative;
+      z-index: 1;
+    }
+    .opt1 .fake-category,
+    .opt1 .fake-title,
+    .opt1 .fake-summary {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ════════════════════════════════
+       OPTION 2 — Subtle tint
+    ════════════════════════════════ */
+    .opt2 .topnav {
+      background: #ede9e2;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ════════════════════════════════
+       OPTION 3 — Top border (boxed band)
+    ════════════════════════════════ */
+    .opt3 .topnav {
+      border-top: 2px solid var(--line);
+      padding-top: 0.5rem;
+    }
+
+    /* ════════════════════════════════
+       OPTION 4 — Darkened band
+    ════════════════════════════════ */
+    .opt4 .topnav {
+      background: rgba(0,0,0,0.045);
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding-left: 1.5rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Top nav differentiation — style options</h1>
+
+  <div class="grid">
+
+    <!-- OPTION 1 -->
+    <div class="sample">
+      <div class="sample-label">Option 1 — Canvas shows through nav area</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="content-panel opt1">
+          <div class="topnav">
+            <div class="topnav-inner">
+              <a class="btn" href="#">Home</a>
+              <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            </div>
+          </div>
+          <div class="fake-category">Game · 2023</div>
+          <div class="fake-title">Project Title</div>
+          <div class="fake-summary">A short summary of what this project is and the role played in its creation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 2 -->
+    <div class="sample">
+      <div class="sample-label">Option 2 — Subtle warm tint</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="content-panel opt2">
+          <div class="topnav">
+            <div class="topnav-inner">
+              <a class="btn" href="#">Home</a>
+              <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            </div>
+          </div>
+          <div class="fake-category">Game · 2023</div>
+          <div class="fake-title">Project Title</div>
+          <div class="fake-summary">A short summary of what this project is and the role played in its creation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 3 -->
+    <div class="sample">
+      <div class="sample-label">Option 3 — Boxed band (top + bottom border)</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="content-panel opt3">
+          <div class="topnav">
+            <div class="topnav-inner">
+              <a class="btn" href="#">Home</a>
+              <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            </div>
+          </div>
+          <div class="fake-category">Game · 2023</div>
+          <div class="fake-title">Project Title</div>
+          <div class="fake-summary">A short summary of what this project is and the role played in its creation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION 4 -->
+    <div class="sample">
+      <div class="sample-label">Option 4 — Darkened band overlay</div>
+      <div class="page-sim">
+        <div class="canvas-layer"></div>
+        <div class="content-panel opt4">
+          <div class="topnav">
+            <div class="topnav-inner">
+              <a class="btn" href="#">Home</a>
+              <button class="btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            </div>
+          </div>
+          <div class="fake-category">Game · 2023</div>
+          <div class="fake-title">Project Title</div>
+          <div class="fake-summary">A short summary of what this project is and the role played in its creation.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
