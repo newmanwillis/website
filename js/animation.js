@@ -22,17 +22,20 @@
   var RIPPLE_CLEAR_R = 4 * CELL;
   var RIPPLE_TARGET_MAX = AMB_MAX * 0.70;
 
-  // mouse water wave parameters
-  var WATER_INNER_R    = CELL * 2;   // 16px — cursor/trail clear zone radius (temporary, fades back)
-  var WAVE_SPEED       = 50;         // px/s — wave expands perpendicular to motion
-  var WAVE_WIDTH       = CELL * 2;   // 16px — wave band thickness
-  var WAVE_ALPHA       = 0.12;       // max darkening at wave crest (on top of ambient)
-  var WAVE_PAR_WIDTH   = CELL * 5;   // 40px — wave extent along direction of motion
-  var WATER_TRAIL_AGE  = 1800;       // ms — trail point lifetime
-  var TRAIL_MIN_SQ     = CELL * CELL;// min squared distance between trail points
-  var MAX_TRAIL_POINTS = 80;
-  var INNER_R_SQ       = WATER_INNER_R * WATER_INNER_R;
-  var WAKE_DURATION    = 2600;       // ms — time for a woken pixel to return to full ambient
+  // mouse glitch trail parameters
+  var GLITCH_DURATION = 500;        // ms — how long a glitched pixel stays glitched
+  var EMERGE_DURATION = 2500;       // ms — slow fade-in from background after glitch clears
+  // Warm-grey variations of the base pixel color rgba(58,56,48) — toned down glitch palette
+  var GLITCH_COLORS = [
+    'rgba(58,56,48,',    // base
+    'rgba(82,76,62,',    // lighter warm
+    'rgba(36,34,30,',    // darker
+    'rgba(72,66,54,',    // warm mid
+    'rgba(44,46,52,',    // slightly cool
+    'rgba(96,90,76,',    // lightest
+    'rgba(50,46,40,',    // muted warm
+    'rgba(28,28,32,',    // near-black cool
+  ];
 
   function easeOut(t) { var inv = 1 - t; return 1 - inv * inv * inv; }
   function randAmbient() { return AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN); }
@@ -46,7 +49,7 @@
   }
 
   function currentDarkness(p, t) {
-    if (p.state === 'cleared' || p.state === 'waking') return 0;
+    if (p.state === 'cleared') return 0;
     if (p.state === 'flashing') return Math.max(0, p.flashAlpha);
     if (p.state === 'tinted') return p.rippleAlpha;
     var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
@@ -62,9 +65,6 @@
   var pixels = [];
   var grid = [];
   var columns = [];
-  // Per-pixel wave darkening, recomputed each frame (positive values only).
-  // Separate from the permanent cleared/tinted state so the wave effect is temporary.
-  var mouseRipple = null;
 
   function initGrid() {
     cols = Math.ceil(w / CELL);
@@ -91,8 +91,6 @@
     grid = new Array(cols * rows);
     pixels.forEach(function(p) { grid[p.x * rows + p.y] = p; });
 
-    mouseRipple = new Float32Array(cols * rows);
-    mouseTrail = [];
 
     // columns: stratified random vertical distribution
     columns = [];
@@ -116,76 +114,86 @@
         if (gy < 0 || gy >= rows) continue;
         var p = grid[x * rows + gy];
         if (!p) continue;
-        p.seededDark = randAmbient(); p.seededArmed = true;
         p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
+        if (k === 0) {
+          p.seededDark = randAmbient(); p.seededSpeed = 0.0002 + Math.random() * 0.00022; p.seededPhase = Math.random() * Math.PI * 2; p.seededArmed = true;
+        } else {
+          p.seededArmed = false;
+        }
       }
     }
   }
 
-  // ── Mouse & trail tracking ──
-  // Both the clear zone and the wave darkening are TEMPORARY (stored in mouseRipple[],
-  // recomputed each frame). Negative values = clearing (water parting), positive = wave
-  // darkening. Everything returns to ambient oscillation as trail points age and expire.
+  // ── Mouse glitch trail ──
   var mouseX = -1000, mouseY = -1000;
-  var mouseTrail = [];
-  var lastTrailX = -9999, lastTrailY = -9999;
+  var prevMouseX = -1000, prevMouseY = -1000;  // for path interpolation between events
+  var glitchIntensity = 0;     // 0–1, builds with movement time, decays slowly at rest
+  var glitchLastMoveTime = 0;  // for time-based ramp
 
-  // Set pixels within WATER_INNER_R of (cx, cy) to 'waking' state.
-  // First contact randomises the ambient target; cursor refreshes keep wakeStartTime = now
-  // so the pixel stays invisible while the cursor is there, then self-recovers once it moves.
-  function applyWakeAt(cx, cy, now) {
-    var xMinC = Math.max(0, Math.floor((cx - WATER_INNER_R) / CELL));
-    var xMaxC = Math.min(cols - 1, Math.ceil((cx + WATER_INNER_R) / CELL));
-    var yMinC = Math.max(0, Math.floor((cy - WATER_INNER_R) / CELL));
-    var yMaxC = Math.min(rows - 1, Math.ceil((cy + WATER_INNER_R) / CELL));
+  // Radius grows from CELL*1.2 (subtle cursor dot) to CELL*3 (wide spread) as intensity rises.
+  function applyGlitchAt(cx, cy, now) {
+    var radius = CELL * (1.2 + 1.8 * glitchIntensity);
+    var rSq = radius * radius;
+    var xMinC = Math.max(0, Math.floor((cx - radius) / CELL));
+    var xMaxC = Math.min(cols - 1, Math.ceil((cx + radius) / CELL));
+    var yMinC = Math.max(0, Math.floor((cy - radius) / CELL));
+    var yMaxC = Math.min(rows - 1, Math.ceil((cy + radius) / CELL));
     for (var gx = xMinC; gx <= xMaxC; gx++) {
       for (var gy = yMinC; gy <= yMaxC; gy++) {
         var pcx = gx * CELL + CELL / 2, pcy = gy * CELL + CELL / 2;
         var ddx = pcx - cx, ddy = pcy - cy;
-        if (ddx * ddx + ddy * ddy > INNER_R_SQ) continue;
+        if (ddx * ddx + ddy * ddy > rSq) continue;
         var p = grid[gx * rows + gy];
-        if (!p || p.state === 'flashing') continue;
-        if (p.state !== 'waking') {
-          // First contact: assign a random ambient target for this recovery
-          p.ambMin = AMB_MIN + Math.random() * 0.02;
-          p.ambMax = AMB_MIN + 0.02 + Math.random() * (AMB_MAX - AMB_MIN - 0.02);
-        }
-        p.state = 'waking';
-        p.wakeStartTime = now; // kept at 'now' each frame under cursor → stays invisible
+        if (!p || p.state === 'flashing' || p.state === 'cleared') continue;
+        p.state = 'glitching';
+        p.glitchStart = now;
+        p.newAmbMin = AMB_MIN + Math.random() * 0.02;
+        p.newAmbMax = AMB_MIN + 0.02 + Math.random() * (AMB_MAX - AMB_MIN - 0.02);
+        p.newSpeed = 0.0002 + Math.random() * 0.00022; p.newPhase = Math.random() * Math.PI * 2;
       }
     }
   }
 
-  function addTrailPoint(x, y, now) {
-    var dx = x - lastTrailX, dy = y - lastTrailY;
-    var distSq = dx * dx + dy * dy;
-    if (distSq < TRAIL_MIN_SQ) return;
-    var vx = 0, vy = 0;
-    if (lastTrailX > -9000) {
-      var len = Math.sqrt(distSq);
-      vx = dx / len; vy = dy / len;
+  function stampGlitchPath(cx, cy, now) {
+    if (prevMouseX > -500) {
+      // Interpolate from previous position so fast movement fills the full path.
+      var dx = cx - prevMouseX, dy = cy - prevMouseY;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var steps = Math.ceil(dist / CELL);
+      for (var i = 1; i <= steps; i++) {
+        applyGlitchAt(prevMouseX + dx * i / steps, prevMouseY + dy * i / steps, now);
+      }
+    } else {
+      applyGlitchAt(cx, cy, now);
     }
-    applyWakeAt(x, y, now);
-    mouseTrail.push({ x: x, y: y, born: now, vx: vx, vy: vy });
-    if (mouseTrail.length > MAX_TRAIL_POINTS) mouseTrail.shift();
-    lastTrailX = x; lastTrailY = y;
   }
 
   document.addEventListener('mousemove', function(e) {
+    var now = performance.now();
+    var moveDt = Math.min(now - glitchLastMoveTime, 100);  // cap gaps (e.g. after tab switch)
+    glitchLastMoveTime = now;
+    glitchIntensity = Math.min(1, glitchIntensity + moveDt / 2000);
+    stampGlitchPath(e.clientX, e.clientY, now);
+    prevMouseX = e.clientX; prevMouseY = e.clientY;
     mouseX = e.clientX; mouseY = e.clientY;
-    addTrailPoint(mouseX, mouseY, performance.now());
   });
   document.addEventListener('mouseleave', function() {
     mouseX = -1000; mouseY = -1000;
-    lastTrailX = -9999; lastTrailY = -9999;
+    prevMouseX = -1000; prevMouseY = -1000;
   });
   document.addEventListener('touchmove', function(e) {
-    mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY;
-    addTrailPoint(mouseX, mouseY, performance.now());
+    var now = performance.now();
+    var moveDt = Math.min(now - glitchLastMoveTime, 100);
+    glitchLastMoveTime = now;
+    glitchIntensity = Math.min(1, glitchIntensity + moveDt / 2000);
+    var tx = e.touches[0].clientX, ty = e.touches[0].clientY;
+    stampGlitchPath(tx, ty, now);
+    prevMouseX = tx; prevMouseY = ty;
+    mouseX = tx; mouseY = ty;
   }, { passive: true });
   document.addEventListener('touchend', function() {
     mouseX = -1000; mouseY = -1000;
-    lastTrailX = -9999; lastTrailY = -9999;
+    prevMouseX = -1000; prevMouseY = -1000;
   });
 
   // ── Click ripples ──
@@ -236,92 +244,6 @@
     }
   }
 
-  // ── Mouse water effect (per-frame, temporary) ──
-  // mouseRipple[] is rebuilt every frame with two kinds of values:
-  //   positive → wave darkening (displaced water pushed outward)
-  //   negative → clear zone (water parted by cursor/trail, fading back to equilibrium)
-  // All effects fade as trail points age and return to 0 when they expire.
-  // The cursor position holds full-strength clearing while on canvas.
-  function updateMouseRipple(now) {
-    if (!mouseRipple) return;
-    mouseRipple.fill(0);
-
-    // Purge expired trail points
-    while (mouseTrail.length > 0 && now - mouseTrail[0].born > WATER_TRAIL_AGE) {
-      mouseTrail.shift();
-    }
-
-    // Wave bands — positive darkening that spreads perpendicular to motion.
-    // A per-pixel ray march from the trail to each candidate pixel stops the wave
-    // wherever a flashing column pixel sits in between.
-    for (var ti = 0; ti < mouseTrail.length; ti++) {
-      var tp = mouseTrail[ti];
-      if (!tp.vx && !tp.vy) continue;
-
-      var age = now - tp.born;
-      var lifeFrac = 1 - age / WATER_TRAIL_AGE;
-      var wavePerpR = WATER_INNER_R + age * WAVE_SPEED / 1000;
-      var bbR = wavePerpR + WAVE_WIDTH + CELL;
-
-      var xMinC = Math.max(0, Math.floor((tp.x - bbR) / CELL));
-      var xMaxC = Math.min(cols - 1, Math.ceil((tp.x + bbR) / CELL));
-      var yMinC = Math.max(0, Math.floor((tp.y - bbR) / CELL));
-      var yMaxC = Math.min(rows - 1, Math.ceil((tp.y + bbR) / CELL));
-
-      var pvx = -tp.vy, pvy = tp.vx;
-
-      for (var cx = xMinC; cx <= xMaxC; cx++) {
-        for (var cy = yMinC; cy <= yMaxC; cy++) {
-          var pcx = cx * CELL + CELL / 2, pcy = cy * CELL + CELL / 2;
-          var ddx = pcx - tp.x, ddy = pcy - tp.y;
-
-          var parProj = ddx * tp.vx + ddy * tp.vy;  // signed: + = forward
-          var parDist = parProj < 0 ? -parProj : parProj;
-
-          var perpProj = ddx * pvx + ddy * pvy;
-          var perpDist = perpProj < 0 ? -perpProj : perpProj;
-
-          // Effective wave radius: circular arc in front, straight bars on the sides/back.
-          // For parProj <= 0 this equals perpDist (existing side-wave behavior).
-          var fwd = parProj > 0 ? parProj : 0;
-          var distEff = Math.sqrt(fwd * fwd + perpProj * perpProj);
-
-          var bandDist = distEff - wavePerpR;
-          if (bandDist < 0) bandDist = -bandDist;
-          if (bandDist > WAVE_WIDTH) continue;
-
-          // Backward/side portion: fade based on parallel distance so bars have finite length.
-          var parTaper;
-          if (parProj <= 0) {
-            if (parDist > WAVE_PAR_WIDTH) continue;
-            var parNorm = parDist / WAVE_PAR_WIDTH;
-            parTaper = 1 - parNorm * parNorm;
-          } else {
-            parTaper = 1;
-          }
-
-          var leadColRow = Math.floor(columns[cx].y);
-          var leadPerpProj = ddx * pvx + (leadColRow * CELL + CELL * 0.5 - tp.y) * pvy;
-          if (leadPerpProj * perpProj > 0 && Math.abs(leadPerpProj) < perpDist) continue;
-
-          var perpProfile = 1 - bandDist / WAVE_WIDTH;
-          var darkVal = WAVE_ALPHA * perpProfile * parTaper * lifeFrac;
-          if (darkVal < 0.01) continue;
-
-          var idx = cx * rows + cy;
-          if (darkVal > mouseRipple[idx]) mouseRipple[idx] = darkVal;
-        }
-      }
-    }
-
-    // Cursor — refresh waking state each frame so it stays invisible while hovering.
-    // wakeStartTime is reset to 'now' every frame, so the pixel only starts recovering
-    // once the cursor moves away and the refreshes stop.
-    if (mouseX >= 0 && mouseX < w && mouseY >= 0 && mouseY < h) {
-      applyWakeAt(mouseX, mouseY, now);
-    }
-  }
-
   function advanceColumns(dt) {
     for (var x = 0; x < cols; x++) {
       var col = columns[x];
@@ -337,8 +259,12 @@
         var p = grid[x * rows + gy];
         if (!p) continue;
 
-        p.seededDark = randAmbient(); p.seededArmed = true;
         p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
+        if (gy === toY) {
+          p.seededDark = randAmbient(); p.seededSpeed = 0.0002 + Math.random() * 0.00022; p.seededPhase = Math.random() * Math.PI * 2; p.seededArmed = true;
+        } else {
+          p.seededArmed = false;
+        }
       }
     }
   }
@@ -380,9 +306,18 @@
   var resizeTimer = null;
 
   function draw(t, now, dt) {
+    // Rapidly drain intensity while mouse is still; no decay while actively moving.
+    // Rate: ~0.002/ms means ~0.5 s from full to zero.
+    if (now - glitchLastMoveTime > 50) {
+      glitchIntensity = Math.max(0, glitchIntensity - 0.002 * dt);
+    }
+    // Per-frame refresh: stamp glitch at cursor each frame, but only while mouse is moving.
+    // Stopping clears the condition so pixels can finish their glitch cycle and size resets.
+    if (mouseX >= 0 && mouseX < w && mouseY >= 0 && mouseY < h && now - glitchLastMoveTime < 50) {
+      applyGlitchAt(mouseX, mouseY, now);
+    }
     advanceColumns(dt);
     applyRipples(now, t);
-    updateMouseRipple(now);  // fills mouseRipple[] fresh every frame
 
     ctx.fillStyle = '#f5f4f0';
     ctx.fillRect(0, 0, w, h);
@@ -394,15 +329,13 @@
       // Cleared by click ripple — show background
       if (p.state === 'cleared') continue;
 
-      var inf = mouseRipple ? mouseRipple[p.x * rows + p.y] : 0;
-
       if (p.state === 'flashing') {
         // Column streak — not affected by mouse water effects
         p.flashAlpha -= FLASH_DECAY * dt;
         if (p.seededArmed && p.flashAlpha <= p.seededDark) {
           p.ambMin = Math.max(AMB_MIN, p.seededDark - 0.015);
           p.ambMax = Math.min(AMB_MAX, p.seededDark + 0.015);
-          p.phase = 0; p.seededArmed = false; p.state = 'ambient';
+          p.speed = p.seededSpeed; p.phase = p.seededPhase; p.seededArmed = false; p.state = 'ambient';
         }
         if (p.flashAlpha <= AMB_MIN) { p.seededArmed = false; p.state = 'ambient'; }
         if (p.state === 'flashing') {
@@ -413,33 +346,55 @@
       }
 
       if (p.state === 'tinted') {
-        // From click ripple
         var alpha = p.rippleAlpha;
-        if (inf > 0) alpha = Math.min(LEAD_DARK, alpha + inf);
         if (alpha <= 0.001) continue;
         ctx.fillStyle = fillColor(alpha);
         ctx.fillRect(px, py, CELL - 1, CELL - 1);
         continue;
       }
 
-      if (p.state === 'waking') {
-        // Pixel was touched by the mouse; it starts at 0 and independently oscillates
-        // back toward its ambient target over WAKE_DURATION ms.
-        var prog = Math.min(1, (now - p.wakeStartTime) / WAKE_DURATION);
-        var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
-        var darkness = (p.ambMin + (p.ambMax - p.ambMin) * wave) * prog;
-        if (prog >= 1) p.state = 'ambient';
-        if (darkness > 0.001) {
-          ctx.fillStyle = fillColor(darkness);
-          ctx.fillRect(px, py, CELL - 1, CELL - 1);
+      if (p.state === 'glitching') {
+        var prog = (now - p.glitchStart) / GLITCH_DURATION;
+        if (prog < 1) {
+          // Compute where this pixel's ambient oscillation is right now so we can
+          // fade toward it rather than toward transparent — no background flash on exit.
+          var gwave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
+          var ambDark = p.ambMin + (p.ambMax - p.ambMin) * gwave;
+          var peakAlpha = 0.14 + 0.26 * glitchIntensity;  // 0.14 (barely visible) → 0.40 (dramatic)
+          var galpha = peakAlpha + (ambDark - peakAlpha) * prog;
+          // Size varies more at higher intensity; at intensity 0, sz stays at CELL-1 (normal)
+          var maxOff = (glitchIntensity * 2.5) | 0;  // 0–2
+          var sz = (CELL - 1) - maxOff + (Math.random() * (maxOff * 2 + 1) | 0);
+          if (sz < 4) sz = 4; if (sz > 9) sz = 9;
+          var off = (CELL - 1 - sz) >> 1;
+          ctx.fillStyle = GLITCH_COLORS[Math.random() * GLITCH_COLORS.length | 0] + galpha.toFixed(3) + ')';
+          ctx.fillRect(px + off, py + off, sz, sz);
+          continue;
         }
+        p.ambMin = p.newAmbMin; p.ambMax = p.newAmbMax; p.speed = p.newSpeed; p.phase = p.newPhase;
+        p.emergeStart = now;
+        p.state = 'emerging';
         continue;
       }
 
-      // Ambient: wave darkening (positive inf only — no negative inf now).
+      if (p.state === 'emerging') {
+        var eprog = (now - p.emergeStart) / EMERGE_DURATION;
+        if (eprog < 1) {
+          var ewave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
+          var eTarget = p.ambMin + (p.ambMax - p.ambMin) * ewave;
+          var ealpha = eTarget * eprog;
+          if (ealpha > 0.001) {
+            ctx.fillStyle = fillColor(ealpha);
+            ctx.fillRect(px, py, CELL - 1, CELL - 1);
+          }
+          continue;
+        }
+        p.state = 'ambient';  // fall through to ambient draw
+      }
+
+      // Ambient
       var wave = 0.5 + 0.5 * Math.sin(t * p.speed + p.phase);
       var darkness = p.ambMin + (p.ambMax - p.ambMin) * wave;
-      if (inf > 0) darkness = Math.min(LEAD_DARK, darkness + inf);
 
       if (darkness <= 0.001) continue;
       ctx.fillStyle = fillColor(darkness);
