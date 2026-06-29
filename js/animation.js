@@ -9,6 +9,8 @@
   var ctx = canvasEl.getContext('2d');
   ctx.scale(dpr, dpr);
 
+  var INTERACTIVE = false; // change to true to enable mouse/click effects
+
   var CELL = 8;
   var cols, rows;
   var BASE_R = 58, BASE_G = 56, BASE_B = 48;
@@ -157,6 +159,7 @@
   }
 
   function addTrailPoint(x, y, now) {
+    if (!INTERACTIVE) return;
     var dx = x - lastTrailX, dy = y - lastTrailY;
     var distSq = dx * dx + dy * dy;
     if (distSq < TRAIL_MIN_SQ) return;
@@ -381,8 +384,10 @@
 
   function draw(t, now, dt) {
     advanceColumns(dt);
-    applyRipples(now, t);
-    updateMouseRipple(now);  // fills mouseRipple[] fresh every frame
+    if (INTERACTIVE) {
+      applyRipples(now, t);
+      updateMouseRipple(now);  // fills mouseRipple[] fresh every frame
+    }
 
     ctx.fillStyle = '#f5f4f0';
     ctx.fillRect(0, 0, w, h);
