@@ -21,8 +21,7 @@
   }
 
   function isProjectPage() {
-    var cf = currentFile();
-    return projects.some(function (p) { return p.file === cf; });
+    return !!document.querySelector('.page-content');
   }
 
   function buildMenuItems() {
