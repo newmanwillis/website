@@ -19,7 +19,7 @@
   var RIPPLE_MAX_R = 130;
   var RIPPLE_LIFE = 2000;
   var FLASH_DECAY = 0.0015;
-  var DROPLET_CHANCE = 0.12;  // probability a column-passed pixel becomes a lingering droplet
+  var DROPLET_CHANCE = 0.18;  // probability a column-passed pixel becomes a lingering droplet
   var DROPLET_ALPHA  = LEAD_DARK - (1 / 3) * (LEAD_DARK - AMB_MAX); // matches k=1 (second pixel) brightness ≈ 0.15
   var DROPLET_HOLD   = 1500; // ms — hold at full darkness before fading begins
 
@@ -116,7 +116,7 @@
     }
     for (var x = 0; x < cols; x++) {
       var colY = positions[x];
-      columns.push({ y: colY, speed: randSpeed() });
+      columns.push({ y: colY, speed: randSpeed(), lastWasDroplet: false });
       for (var k = 0; k < TRAIL_LEN; k++) {
         var gy = Math.floor(colY) - k;
         if (gy < 0 || gy >= rows) continue;
@@ -337,6 +337,7 @@
       if (col.y > rows + TRAIL_LEN + 2) {
         col.y = -TRAIL_LEN - Math.random() * rows * 0.5;
         col.speed = randSpeed();
+        col.lastWasDroplet = false;
       }
       var fromY = Math.floor(prevY), toY = Math.floor(col.y);
       for (var gy = fromY; gy <= toY; gy++) {
@@ -344,13 +345,15 @@
         var p = grid[x * rows + gy];
         if (!p) continue;
 
-        if (Math.random() < DROPLET_CHANCE) {
+        if (!col.lastWasDroplet && Math.random() < DROPLET_CHANCE) {
           var speedNorm = (col.speed - 0.003) / 0.007; // 0 = slowest, 1 = fastest
           var minLife = 6000 - speedNorm * 2000; // slow: 6000ms min, fast: 4000ms min
           p.flashAlpha = DROPLET_ALPHA; p.dropletBorn = now; p.dropletLife = minLife + Math.random() * (8000 - minLife); p.seededArmed = false; p.rippleAlpha = 0; p.state = 'droplet';
+          col.lastWasDroplet = true;
         } else {
           p.seededDark = randAmbient(); p.seededArmed = true;
           p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
+          col.lastWasDroplet = false;
         }
       }
     }
