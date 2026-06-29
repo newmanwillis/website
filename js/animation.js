@@ -14,7 +14,12 @@
   var CELL = 8;
   var cols, rows;
   var BASE_R = 58, BASE_G = 56, BASE_B = 48;
-  var AMB_MIN = 0.03, AMB_MAX = 0.13, LEAD_DARK = 0.16;
+  
+  // original
+  // var AMB_MIN = 0.03, AMB_MAX = 0.13, LEAD_DARK = 0.16;
+  
+  // var AMB_MIN = 0.03, AMB_MAX = 0.12, LEAD_DARK = 0.15;
+  var AMB_MIN = 0.03, AMB_MAX = 0.11, LEAD_DARK = 0.13;
   var TRAIL_LEN = 10;
   var RIPPLE_MAX_R = 130;
   var RIPPLE_LIFE = 2000;
@@ -335,7 +340,8 @@
       var prevY = col.y;
       col.y += col.speed * dt;
       if (col.y > rows + TRAIL_LEN + 2) {
-        col.y = -TRAIL_LEN - Math.random() * rows * 0.5;
+        col.y = -TRAIL_LEN - Math.random() * TRAIL_LEN * 2;
+        // col.y = -5 - Math.random() * 20;
         col.speed = randSpeed();
         col.lastWasDroplet = false;
       }
