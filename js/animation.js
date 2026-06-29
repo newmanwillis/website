@@ -41,7 +41,7 @@
 
   function easeOut(t) { var inv = 1 - t; return 1 - inv * inv * inv; }
   function randAmbient() { return AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN); }
-  function randSpeed() { return 0.003 + Math.random() * 0.007; }
+  function randSpeed() { return 0.003 + Math.random() * 0.006; }
 
   var alphaCache = {};
   function fillColor(a) {
@@ -82,7 +82,7 @@
         pixels.push({
           x: x, y: y,
           phase: Math.random() * Math.PI * 2,
-          speed: 0.0002 + Math.random() * 0.00022,
+          speed: 0.0002 + Math.random() * 0.002,
           ambMin: Math.max(AMB_MIN, initDark - 0.015),
           ambMax: Math.min(AMB_MAX, initDark + 0.015),
           seededDark: randAmbient(),
