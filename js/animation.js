@@ -19,6 +19,9 @@
   var RIPPLE_MAX_R = 130;
   var RIPPLE_LIFE = 2000;
   var FLASH_DECAY = 0.0015;
+  var DROPLET_CHANCE = 0.12;  // probability a column-passed pixel becomes a lingering droplet
+  var DROPLET_ALPHA  = LEAD_DARK - (1 / 3) * (LEAD_DARK - AMB_MAX); // matches k=1 (second pixel) brightness ≈ 0.15
+  var DROPLET_HOLD   = 1500; // ms — hold at full darkness before fading begins
 
   // click ripple zones (in px from click point)
   var RIPPLE_CLEAR_R = 4 * CELL;
@@ -326,7 +329,7 @@
     }
   }
 
-  function advanceColumns(dt) {
+  function advanceColumns(dt, now) {
     for (var x = 0; x < cols; x++) {
       var col = columns[x];
       var prevY = col.y;
@@ -341,8 +344,14 @@
         var p = grid[x * rows + gy];
         if (!p) continue;
 
-        p.seededDark = randAmbient(); p.seededArmed = true;
-        p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
+        if (Math.random() < DROPLET_CHANCE) {
+          var speedNorm = (col.speed - 0.003) / 0.007; // 0 = slowest, 1 = fastest
+          var minLife = 6000 - speedNorm * 2000; // slow: 6000ms min, fast: 4000ms min
+          p.flashAlpha = DROPLET_ALPHA; p.dropletBorn = now; p.dropletLife = minLife + Math.random() * (8000 - minLife); p.seededArmed = false; p.rippleAlpha = 0; p.state = 'droplet';
+        } else {
+          p.seededDark = randAmbient(); p.seededArmed = true;
+          p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
+        }
       }
     }
   }
@@ -384,7 +393,7 @@
   var resizeTimer = null;
 
   function draw(t, now, dt) {
-    advanceColumns(dt);
+    advanceColumns(dt, now);
     if (INTERACTIVE) {
       applyRipples(now, t);
       updateMouseRipple(now);  // fills mouseRipple[] fresh every frame
@@ -413,6 +422,22 @@
         if (p.flashAlpha <= AMB_MIN) { p.seededArmed = false; p.state = 'ambient'; }
         if (p.state === 'flashing') {
           ctx.fillStyle = fillColor(Math.min(LEAD_DARK, Math.max(0, p.flashAlpha)));
+          ctx.fillRect(px, py, CELL - 1, CELL - 1);
+          continue;
+        }
+      }
+
+      if (p.state === 'droplet') {
+        var fadeElapsed = Math.max(0, now - p.dropletBorn - DROPLET_HOLD);
+        var progress = Math.min(1, fadeElapsed / (p.dropletLife - DROPLET_HOLD));
+        p.flashAlpha = DROPLET_ALPHA * (1 - progress * progress * progress * progress); // power 4: stays dark for most of lifetime, fades sharply near end
+        if (p.flashAlpha <= AMB_MIN) {
+          p.ambMin = AMB_MIN;
+          p.ambMax = AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN);
+          p.phase = -Math.PI / 2 - t * p.speed; // start oscillation at its minimum so darkness = ambMin, no jump
+          p.state = 'ambient';
+        } else {
+          ctx.fillStyle = fillColor(p.flashAlpha);
           ctx.fillRect(px, py, CELL - 1, CELL - 1);
           continue;
         }
