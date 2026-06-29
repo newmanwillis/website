@@ -170,4 +170,10 @@
   updateNav();
 
   window.addEventListener('navchange', updateNav);
+
+  // Proactively download Sora so it's ready before SPA navigation reaches a project page
+  if (document.fonts) {
+    document.fonts.load('700 1em "Sora"');
+    document.fonts.load('600 1em "Sora"');
+  }
 })();
