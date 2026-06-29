@@ -75,12 +75,13 @@
     pixels = [];
     for (var y = 0; y < rows; y++) {
       for (var x = 0; x < cols; x++) {
+        var initDark = randAmbient();
         pixels.push({
           x: x, y: y,
           phase: Math.random() * Math.PI * 2,
           speed: 0.0002 + Math.random() * 0.00022,
-          ambMin: AMB_MIN + Math.random() * 0.02,
-          ambMax: AMB_MIN + 0.02 + Math.random() * (AMB_MAX - AMB_MIN - 0.02),
+          ambMin: Math.max(AMB_MIN, initDark - 0.015),
+          ambMax: Math.min(AMB_MAX, initDark + 0.015),
           seededDark: randAmbient(),
           seededArmed: false,
           flashAlpha: 0,
