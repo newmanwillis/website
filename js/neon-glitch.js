@@ -8,14 +8,15 @@
   function apply(state) {
     if (!h1El) return;
     if (state === 'normal') {
-      h1El.style.textShadow = '';
-      h1El.style.opacity = '';
+      h1El.style.transition  = '';
+      h1El.style.textShadow  = '';
+      h1El.style.opacity     = '';
     } else if (state === 'bright') {
-      h1El.style.textShadow = BRIGHT;
-      h1El.style.opacity = '';
+      h1El.style.textShadow  = BRIGHT;
+      h1El.style.opacity     = '';
     } else if (state === 'off') {
-      h1El.style.textShadow = 'none';
-      h1El.style.opacity = '0.12';
+      h1El.style.textShadow  = 'none';
+      h1El.style.opacity     = '0.12';
     }
   }
 
@@ -33,29 +34,35 @@
   function glitch() {
     if (!h1El) return;
 
-    var steps = [];
+    // Gradually build to full brightness over 1 second
+    h1El.style.transition = 'text-shadow 1s ease';
+    apply('bright');
 
-    // Initial surge
-    steps.push({ state: 'bright', ms: 60 + Math.random() * 80 });
+    // Once the build-up completes, cut the transition and start glitching
+    timer = setTimeout(function () {
+      if (!active || !h1El) return;
+      h1El.style.transition = 'none';
 
-    // 1–3 flicker cycles
-    var n = 1 + Math.floor(Math.random() * 3);
-    for (var i = 0; i < n; i++) {
-      steps.push({ state: 'off',    ms: 40  + Math.random() * 110 });
-      steps.push({ state: 'bright', ms: 25  + Math.random() * 70  });
-    }
+      var steps = [];
 
-    // Final cut-out
-    steps.push({ state: 'off', ms: 55 + Math.random() * 90 });
+      // 1–3 flicker cycles
+      var n = 1 + Math.floor(Math.random() * 3);
+      for (var i = 0; i < n; i++) {
+        steps.push({ state: 'off',    ms: 40  + Math.random() * 110 });
+        steps.push({ state: 'bright', ms: 25  + Math.random() * 70  });
+      }
 
-    // Occasional extra stutter at the end
-    if (Math.random() > 0.45) {
-      steps.push({ state: 'bright', ms: 20 + Math.random() * 35 });
-      steps.push({ state: 'off',    ms: 35 + Math.random() * 55 });
-    }
+      // Final cut-out
+      steps.push({ state: 'off', ms: 55 + Math.random() * 90 });
 
-    // runSteps returns to normal and reschedules after the last step
-    runSteps(steps, 0);
+      // Occasional extra stutter at the end
+      if (Math.random() > 0.45) {
+        steps.push({ state: 'bright', ms: 20 + Math.random() * 35 });
+        steps.push({ state: 'off',    ms: 35 + Math.random() * 55 });
+      }
+
+      runSteps(steps, 0);
+    }, 1000);
   }
 
   function scheduleNext() {

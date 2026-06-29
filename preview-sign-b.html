@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Preview B — Pixel Border</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600&family=Titillium+Web:wght@700;900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f5f4f0;
+      color: #0f0e0c;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* z-index stack:
+       0 — bg-canvas  (animation.js background)
+       1 — .sign      (fill + glow + text)
+       2 — rect-canvas (pixel border — always on top of the glow so it's never washed out) */
+
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #rect-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .sign {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      text-align: center;
+      padding: 2.6rem 5.5rem 2.4rem;
+      background: rgba(255, 255, 255, 0.15);
+
+      box-shadow:
+        0 0 14px rgba(255,255,255,1),
+        0 0 35px rgba(255,255,255,0.98),
+        0 0 80px rgba(255,255,255,0.88),
+        0 0 160px rgba(255,255,255,0.65),
+        0 0 280px rgba(255,255,255,0.35),
+        inset 0 0 28px rgba(255,255,255,1),
+        inset 0 0 75px rgba(255,255,255,0.65);
+    }
+
+    .sign h1 {
+      font-family: 'Teko', sans-serif;
+      font-size: 4.8rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      text-shadow:
+        0 0 6px #ffffff,
+        0 0 14px #ffffff,
+        0 0 35px rgba(255,255,255,1),
+        0 0 70px rgba(255,255,255,0.95),
+        0 0 120px rgba(255,255,255,0.8),
+        0 0 200px rgba(255,255,255,0.5);
+    }
+
+    .sign .header-role {
+      font-size: 1.49rem;
+      font-family: 'Titillium Web', sans-serif;
+      font-weight: 700;
+      text-shadow:
+        0 0 6px #ffffff,
+        0 0 14px #ffffff,
+        0 0 35px rgba(255,255,255,1),
+        0 0 70px rgba(255,255,255,0.9),
+        0 0 120px rgba(255,255,255,0.6);
+    }
+
+    .sign .header-bio {
+      font-size: 1.1rem;
+      font-family: 'Titillium Web', sans-serif;
+      font-weight: 700;
+      max-width: 360px;
+      line-height: 1.65;
+      margin: 0 auto 0.3rem;
+      text-shadow:
+        0 0 6px #ffffff,
+        0 0 14px #ffffff,
+        0 0 35px rgba(255,255,255,1),
+        0 0 70px rgba(255,255,255,0.9),
+        0 0 120px rgba(255,255,255,0.6);
+    }
+
+    .sign .header-contact {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-size: 0.97rem;
+      font-weight: 700;
+      text-shadow:
+        0 0 6px #ffffff,
+        0 0 14px #ffffff,
+        0 0 35px rgba(255,255,255,1),
+        0 0 70px rgba(255,255,255,0.9),
+        0 0 120px rgba(255,255,255,0.6);
+    }
+
+    .sign .header-contact a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 2px solid #9e9c99;
+      padding-bottom: 1px;
+    }
+
+    .contact-divider { opacity: 0.4; }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <header class="sign">
+    <h1>Newman Willis</h1>
+    <div class="header-role">Unity Developer</div>
+    <p class="header-bio">AR, VR, mobile, web, and gaming projects</p>
+    <div class="header-contact">
+      <a href="#">newmanwillis@gmail.com</a>
+      <span class="contact-divider">·</span>
+      <a href="#">LinkedIn ↗</a>
+      <span class="contact-divider">·</span>
+      <a href="#">Resume ↗</a>
+    </div>
+  </header>
+
+  <canvas id="rect-canvas"></canvas>
+
+  <script src="js/animation.js"></script>
+  <script>
+  // ── Pixel rectangle border ──
+  // rect-canvas sits above .sign (z-index 2 > 1) so the CSS glow on .sign
+  // can never wash out the pixel cells — they always paint on top.
+  // This script only draws border cells; fill is handled by .sign's CSS background.
+  (function () {
+    var CELL   = 8;
+    var sign   = document.querySelector('.sign');
+    var canvas = document.getElementById('rect-canvas');
+    var ctx    = canvas.getContext('2d');
+
+    function resize() {
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width  = window.innerWidth  * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio || 1),
+                          canvas.height / (window.devicePixelRatio || 1));
+
+      var r      = sign.getBoundingClientRect();
+      var left   = Math.round(r.left   / CELL) * CELL;
+      var top    = Math.round(r.top    / CELL) * CELL;
+      var right  = Math.round(r.right  / CELL) * CELL;
+      var bottom = Math.round(r.bottom / CELL) * CELL;
+
+      // CELL-1 × CELL-1 matches the bg animation's 7×7 cell size (leaving the same 1px gap)
+      ctx.fillStyle = '#0f0e0c';
+      for (var x = left; x < right; x += CELL) {
+        ctx.fillRect(x, top,           CELL - 1, CELL - 1);
+        ctx.fillRect(x, bottom - CELL, CELL - 1, CELL - 1);
+      }
+      for (var y = top + CELL; y < bottom - CELL; y += CELL) {
+        ctx.fillRect(left,         y, CELL - 1, CELL - 1);
+        ctx.fillRect(right - CELL, y, CELL - 1, CELL - 1);
+      }
+
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
+
+  // ── Glitch effect ──
+  (function () {
+    var sign  = document.querySelector('.sign');
+    var h1El  = document.querySelector('.sign h1');
+    var texts = Array.from(document.querySelectorAll('.sign h1, .sign .header-role, .sign .header-bio, .sign .header-contact'));
+    var timer = null;
+
+    var BRIGHT_BOX =
+      '0 0 25px rgba(255,255,255,1),' +
+      '0 0 65px rgba(255,255,255,1),' +
+      '0 0 160px rgba(255,255,255,0.95),' +
+      '0 0 320px rgba(255,255,255,0.8),' +
+      '0 0 550px rgba(255,255,255,0.5),' +
+      'inset 0 0 55px rgba(255,255,255,1),' +
+      'inset 0 0 150px rgba(255,255,255,0.8)';
+
+    var BRIGHT_H1 =
+      '0 0 8px #fff,0 0 20px #fff,0 0 50px #fff,' +
+      '0 0 100px rgba(255,255,255,0.95),' +
+      '0 0 180px rgba(255,255,255,0.85),' +
+      '0 0 300px rgba(255,255,255,0.6)';
+
+    var BRIGHT_SM =
+      '0 0 8px #fff,0 0 20px #fff,0 0 50px #fff,' +
+      '0 0 100px rgba(255,255,255,0.9),' +
+      '0 0 180px rgba(255,255,255,0.6)';
+
+    function apply(state) {
+      if (state === 'normal') {
+        sign.style.transition  = '';
+        sign.style.boxShadow   = '';
+        sign.style.background  = '';
+        texts.forEach(function (el) {
+          el.style.transition = '';
+          el.style.textShadow = '';
+        });
+      } else if (state === 'bright') {
+        sign.style.boxShadow  = BRIGHT_BOX;
+        sign.style.background = 'rgba(255,255,255,0.35)';
+        h1El.style.textShadow = BRIGHT_H1;
+        texts.forEach(function (el) {
+          if (el !== h1El) el.style.textShadow = BRIGHT_SM;
+        });
+      } else if (state === 'off') {
+        sign.style.boxShadow  = 'none';
+        sign.style.background = 'transparent';
+        texts.forEach(function (el) { el.style.textShadow = 'none'; });
+      }
+    }
+
+    function runSteps(steps, i) {
+      if (i >= steps.length) { apply('normal'); scheduleNext(); return; }
+      apply(steps[i].state);
+      timer = setTimeout(function () { runSteps(steps, i + 1); }, steps[i].ms);
+    }
+
+    function glitch() {
+      sign.style.transition = 'box-shadow 1s ease, background 1s ease';
+      texts.forEach(function (el) { el.style.transition = 'text-shadow 1s ease'; });
+      apply('bright');
+
+      timer = setTimeout(function () {
+        sign.style.transition = 'none';
+        texts.forEach(function (el) { el.style.transition = 'none'; });
+
+        var steps = [];
+        var n = 1 + Math.floor(Math.random() * 3);
+        for (var i = 0; i < n; i++) {
+          steps.push({ state: 'off',    ms: 40  + Math.random() * 110 });
+          steps.push({ state: 'bright', ms: 25  + Math.random() * 70  });
+        }
+        steps.push({ state: 'off', ms: 55 + Math.random() * 90 });
+        if (Math.random() > 0.45) {
+          steps.push({ state: 'bright', ms: 20 + Math.random() * 35 });
+          steps.push({ state: 'off',    ms: 35 + Math.random() * 55 });
+        }
+        runSteps(steps, 0);
+      }, 1000);
+    }
+
+    function scheduleNext() {
+      timer = setTimeout(glitch, 4000 + Math.random() * 8000);
+    }
+
+    timer = setTimeout(glitch, 2000);
+  })();
+  </script>
+</body>
+</html>
