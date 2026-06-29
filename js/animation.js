@@ -18,8 +18,8 @@
   // original
   // var AMB_MIN = 0.03, AMB_MAX = 0.13, LEAD_DARK = 0.16;
   
-  // var AMB_MIN = 0.03, AMB_MAX = 0.12, LEAD_DARK = 0.15;
-  var AMB_MIN = 0.03, AMB_MAX = 0.11, LEAD_DARK = 0.13;
+  var AMB_MIN = 0.03, AMB_MAX = 0.12, LEAD_DARK = 0.14;
+  // var AMB_MIN = 0.03, AMB_MAX = 0.11, LEAD_DARK = 0.13;
   var TRAIL_LEN = 10;
   var RIPPLE_MAX_R = 130;
   var RIPPLE_LIFE = 2000;
