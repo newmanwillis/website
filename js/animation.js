@@ -370,7 +370,9 @@
   var fadeEdgeL = -1, fadeEdgeR = -1;
   var panelStyle = null;
   var cachedContent = null;
+  var navStartTime = -1;
   function alignPanels() {
+    if (navStartTime >= 0) return;
     if (!cachedContent) cachedContent = document.querySelector('.page-content');
     var content = cachedContent;
     if (!content) {
@@ -502,10 +504,11 @@
 
     // stepped column fade at panel edges
     if (fadeEdgeL >= 0 && fadeEdgeR >= 0) {
+      var navAlpha = navStartTime >= 0 ? Math.max(0, 1 - (now - navStartTime) / 180) : 1;
       var fadeAlphas = [0.2, 0.4, 0.6, 0.8]; // outer → inner
       ctx.fillStyle = '#f5f4f0';
       for (var fi = 0; fi < fadeAlphas.length; fi++) {
-        ctx.globalAlpha = fadeAlphas[fi];
+        ctx.globalAlpha = fadeAlphas[fi] * navAlpha;
         ctx.fillRect((fadeEdgeL - fadeAlphas.length + fi) * CELL, 0, CELL, h);
         ctx.fillRect((fadeEdgeR + fadeAlphas.length - 1 - fi) * CELL, 0, CELL, h);
       }
@@ -543,8 +546,8 @@
   });
 
   window.addEventListener('load', alignPanels);
-  window.addEventListener('navstart', function() { fadeEdgeL = -1; fadeEdgeR = -1; cachedContent = null; });
-  window.addEventListener('navchange', function() { cachedContent = null; alignPanels(); });
+  window.addEventListener('navstart', function() { navStartTime = performance.now(); });
+  window.addEventListener('navchange', function() { navStartTime = -1; cachedContent = null; alignPanels(); });
 
   initGrid();
   alignPanels();
