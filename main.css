@@ -160,7 +160,7 @@ header h1 {
 .header-contact a {
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 2px solid #9e9c99;
+  border-bottom: 2px solid #7c7b78;
   padding-bottom: 1px;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
@@ -179,14 +179,15 @@ header h1 {
 
 
 .section-label {
+  font-family: 'Inter', sans-serif;
   font-size: 1.4rem;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--ink);
   margin-bottom: 1.25rem;
   padding-bottom: 0.3rem;
-  border-bottom: 2px solid rgba(15, 14, 12, 0.6);
+  border-bottom: 2.5px solid #0f0e0c;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
   text-align: center;

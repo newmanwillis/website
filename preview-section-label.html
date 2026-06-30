@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Section Label Font Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@700&family=Barlow+Condensed:wght@700;800&family=Montserrat:wght@800;900&family=Urbanist:wght@800;900&family=Manrope:wght@800&family=Archivo:wght@800;900&family=Syne:wght@800&family=Chakra+Petch:wght@700&family=Plus+Jakarta+Sans:wght@700;800&family=Antonio:wght@700&family=Fjalla+One&family=Roboto+Condensed:wght@700;800&family=Oswald:wght@700&family=DM+Sans:wght@900&family=Bebas+Neue&family=Nunito+Sans:wght@900&family=Inter:wght@800;900&family=Raleway:wght@800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f5f4f0;
+      color: #0f0e0c;
+      font-family: 'DM Sans', sans-serif;
+      padding: 3rem 2rem;
+    }
+
+    h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 2.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2rem 3rem;
+    }
+
+    .option {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .label {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #0f0e0c;
+      padding-bottom: 0.3rem;
+      border-bottom: 2px solid rgba(15, 14, 12, 0.6);
+      display: inline-block;
+    }
+
+    .label.w800 { font-weight: 800; }
+    .label.w900 { font-weight: 900; }
+
+    .name {
+      font-size: 0.72rem;
+      color: #999;
+      letter-spacing: 0.05em;
+    }
+
+    /* current */
+    .dm-sans    { font-family: 'DM Sans', sans-serif; }
+    .oswald     { font-family: 'Oswald', sans-serif; }
+    .barlow-sc  { font-family: 'Barlow Semi Condensed', sans-serif; }
+    .barlow-c   { font-family: 'Barlow Condensed', sans-serif; }
+    .montserrat { font-family: 'Montserrat', sans-serif; }
+    .urbanist   { font-family: 'Urbanist', sans-serif; }
+    .manrope    { font-family: 'Manrope', sans-serif; }
+    .archivo    { font-family: 'Archivo', sans-serif; }
+    .syne       { font-family: 'Syne', sans-serif; }
+    .chakra     { font-family: 'Chakra Petch', sans-serif; }
+    .pjs        { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .antonio    { font-family: 'Antonio', sans-serif; }
+    .fjalla     { font-family: 'Fjalla One', sans-serif; }
+    .roboto-c   { font-family: 'Roboto Condensed', sans-serif; }
+    .bebas      { font-family: 'Bebas Neue', sans-serif; letter-spacing: 4px; }
+    .nunito     { font-family: 'Nunito Sans', sans-serif; }
+    .inter      { font-family: 'Inter', sans-serif; }
+    .raleway    { font-family: 'Raleway', sans-serif; }
+  </style>
+</head>
+<body>
+  <h2>Section Label Font Options — "Projects"</h2>
+
+  <div class="grid">
+
+    <div class="option">
+      <span class="label dm-sans w900">Projects</span>
+      <span class="name">DM Sans 900 — current</span>
+    </div>
+
+    <div class="option">
+      <span class="label montserrat w900">Projects</span>
+      <span class="name">Montserrat 900</span>
+    </div>
+
+    <div class="option">
+      <span class="label montserrat w800">Projects</span>
+      <span class="name">Montserrat 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label inter w900">Projects</span>
+      <span class="name">Inter 900</span>
+    </div>
+
+    <div class="option">
+      <span class="label inter w800">Projects</span>
+      <span class="name">Inter 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label nunito w900">Projects</span>
+      <span class="name">Nunito Sans 900</span>
+    </div>
+
+    <div class="option">
+      <span class="label raleway w900">Projects</span>
+      <span class="name">Raleway 900</span>
+    </div>
+
+    <div class="option">
+      <span class="label raleway w800">Projects</span>
+      <span class="name">Raleway 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label urbanist w900">Projects</span>
+      <span class="name">Urbanist 900</span>
+    </div>
+
+    <div class="option">
+      <span class="label urbanist w800">Projects</span>
+      <span class="name">Urbanist 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label manrope w800">Projects</span>
+      <span class="name">Manrope 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label pjs w800">Projects</span>
+      <span class="name">Plus Jakarta Sans 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label archivo w900">Projects</span>
+      <span class="name">Archivo 900</span>
+    </div>
+
+    <div class="option">
+      <span class="label archivo w800">Projects</span>
+      <span class="name">Archivo 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label syne w800">Projects</span>
+      <span class="name">Syne 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label barlow-sc">Projects</span>
+      <span class="name">Barlow Semi Condensed 700</span>
+    </div>
+
+    <div class="option">
+      <span class="label barlow-c">Projects</span>
+      <span class="name">Barlow Condensed 700</span>
+    </div>
+
+    <div class="option">
+      <span class="label barlow-c w800">Projects</span>
+      <span class="name">Barlow Condensed 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label roboto-c">Projects</span>
+      <span class="name">Roboto Condensed 700</span>
+    </div>
+
+    <div class="option">
+      <span class="label roboto-c w800">Projects</span>
+      <span class="name">Roboto Condensed 800</span>
+    </div>
+
+    <div class="option">
+      <span class="label oswald">Projects</span>
+      <span class="name">Oswald 700</span>
+    </div>
+
+    <div class="option">
+      <span class="label antonio">Projects</span>
+      <span class="name">Antonio 700</span>
+    </div>
+
+    <div class="option">
+      <span class="label fjalla">Projects</span>
+      <span class="name">Fjalla One</span>
+    </div>
+
+    <div class="option">
+      <span class="label bebas">Projects</span>
+      <span class="name">Bebas Neue</span>
+    </div>
+
+    <div class="option">
+      <span class="label chakra">Projects</span>
+      <span class="name">Chakra Petch 700</span>
+    </div>
+
+  </div>
+</body>
+</html>
