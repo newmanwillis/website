@@ -181,12 +181,12 @@ header h1 {
 .section-label {
   font-family: 'Inter', sans-serif;
   font-size: 1.4rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--ink);
   margin-bottom: 1.25rem;
-  padding-bottom: 0.3rem;
+  padding-bottom: 0.15rem;
   border-bottom: 2.5px solid #0f0e0c;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
