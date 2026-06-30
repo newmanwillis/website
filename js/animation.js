@@ -24,7 +24,7 @@
   var RIPPLE_MAX_R = 130;
   var RIPPLE_LIFE = 2000;
   var FLASH_DECAY = 0.0015;
-  var DROPLET_CHANCE = 0.18;  // probability a column-passed pixel becomes a lingering droplet
+  var DROPLET_CHANCE = 0.2;  // probability a column-passed pixel becomes a lingering droplet
   var DROPLET_ALPHA  = LEAD_DARK - (1 / 3) * (LEAD_DARK - AMB_MAX); // matches k=1 (second pixel) brightness ≈ 0.15
   var DROPLET_HOLD   = 1500; // ms — hold at full darkness before fading begins
 
@@ -87,7 +87,10 @@
         pixels.push({
           x: x, y: y,
           phase: Math.random() * Math.PI * 2,
-          speed: 0.0002 + Math.random() * 0.002,
+          // speed: 0.0002 + Math.random() * 0.002
+          // speed: 0.0007 + Math.random() * 0.001,
+          speed: 0.00048 + Math.random() * 0.00161,
+          // speed: 0.0006 + Math.random() * 0.0011,
           ambMin: Math.max(AMB_MIN, initDark - 0.015),
           ambMax: Math.min(AMB_MAX, initDark + 0.015),
           seededDark: randAmbient(),
