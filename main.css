@@ -120,7 +120,7 @@ header h1 {
 }
 
 .header-role {
-  font-size: 1.49rem;
+  font-size: 1.6rem;
   font-family: 'Titillium Web', sans-serif;
   font-weight: 900;
   color: var(--ink);
@@ -130,7 +130,7 @@ header h1 {
 }
 
 .header-bio {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-family: 'Titillium Web', sans-serif;
   font-weight: 900;
   color: var(--ink);
