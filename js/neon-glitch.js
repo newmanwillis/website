@@ -1,22 +1,27 @@
 (function () {
-  var h1El = null;
-  var timer = null;
+  var ENABLED = false; // set to true to enable the neon glitch effect
+
+  var h1El   = null;
+  var timer  = null;
   var active = false;
 
-  var BRIGHT = '0 0 48px #f5f4f0, 0 0 96px #f5f4f0, 0 0 160px rgba(245,244,240,0.8), 0 0 220px rgba(245,244,240,0.4)';
+  var BRIGHT =
+    '0 0 8px #fff,' +
+    '0 0 20px #fff,' +
+    '0 0 50px #fff,' +
+    '0 0 100px rgba(255,255,255,0.95),' +
+    '0 0 180px rgba(255,255,255,0.85),' +
+    '0 0 300px rgba(255,255,255,0.6)';
 
   function apply(state) {
     if (!h1El) return;
     if (state === 'normal') {
-      h1El.style.transition  = '';
-      h1El.style.textShadow  = '';
-      h1El.style.opacity     = '';
+      h1El.style.transition = '';
+      h1El.style.textShadow = '';
     } else if (state === 'bright') {
-      h1El.style.textShadow  = BRIGHT;
-      h1El.style.opacity     = '';
+      h1El.style.textShadow = BRIGHT;
     } else if (state === 'off') {
-      h1El.style.textShadow  = 'none';
-      h1El.style.opacity     = '0.12';
+      h1El.style.textShadow = 'none';
     }
   }
 
@@ -26,19 +31,15 @@
       scheduleNext();
       return;
     }
-    var s = steps[i];
-    apply(s.state);
-    timer = setTimeout(function () { runSteps(steps, i + 1); }, s.ms);
+    apply(steps[i].state);
+    timer = setTimeout(function () { runSteps(steps, i + 1); }, steps[i].ms);
   }
 
   function glitch() {
     if (!h1El) return;
-
-    // Gradually build to full brightness over 1 second
     h1El.style.transition = 'text-shadow 1s ease';
     apply('bright');
 
-    // Once the build-up completes, cut the transition and start glitching
     timer = setTimeout(function () {
       if (!active || !h1El) return;
       h1El.style.transition = 'none';
@@ -61,6 +62,7 @@
         steps.push({ state: 'off',    ms: 35 + Math.random() * 55 });
       }
 
+      // runSteps returns to normal and reschedules after the last step
       runSteps(steps, 0);
     }, 1000);
   }
@@ -71,7 +73,7 @@
   }
 
   function start() {
-    h1El = document.querySelector('header h1');
+    h1El = document.querySelector('.intro-cover header h1');
     if (!h1El) return;
     active = true;
     scheduleNext();
@@ -80,10 +82,10 @@
   function stop() {
     active = false;
     if (timer) { clearTimeout(timer); timer = null; }
-    if (h1El) { apply('normal'); h1El = null; }
+    if (h1El) apply('normal');
+    h1El = null;
   }
 
-  start();
-
-  window.addEventListener('navchange', function () { stop(); start(); });
+  if (ENABLED) start();
+  window.addEventListener('navchange', function () { stop(); if (ENABLED) start(); });
 })();

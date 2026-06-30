@@ -87,11 +87,7 @@ body {
 }
 */
 
-/* ── HEADER TEXT SHADOW ── */
-header h1 {
-  text-shadow: 0 0 12px #f5f4f0, 0 0 24px #f5f4f0, 0 0 40px rgba(245, 244, 240, 0.8);
-}
-
+header h1,
 .header-role,
 .header-bio,
 .header-contact,
