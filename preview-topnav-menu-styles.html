@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top Nav Menu Style Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@500;700&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --ink: #0f0e0c;
+      --muted: #8a8880;
+      --border: #dedad2;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      opacity: 0.88;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .option-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ── Shared nav shell ── */
+    .topnav {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding-right: 1.1rem;
+      border-bottom: 2px solid #6e6e6e;
+      width: 420px;
+    }
+
+    .topnav.active { border-bottom-color: #585858; }
+
+    .topnav-home {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: #6b6358;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem 0.65rem;
+      border-radius: 5px 5px 0 0;
+      border: 2px solid #6e6e6e;
+      border-bottom: none;
+    }
+
+    .projects-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #585858;
+      border: 2px solid #585858;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      padding: 0.3rem 0.6rem 0.65rem;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      color: var(--bg);
+    }
+
+    .projects-btn svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; fill: none;
+      stroke-width: 3.5;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Shared menu structure */
+    .menu {
+      width: 220px;
+      padding: 0.35rem 0;
+    }
+
+    .menu ul { list-style: none; }
+
+    .menu a {
+      display: block;
+      padding: 0.45rem 1rem;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .menu .current {
+      display: block;
+      padding: 0.45rem 1rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── CURRENT ── */
+    .current-menu {
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+    }
+    .current-menu a        { color: var(--muted); }
+    .current-menu a:hover  { color: var(--bg); background: #585858; }
+    .current-menu .current { color: var(--ink); }
+
+    /* ── OPTION 1 — Dark inverted ── */
+    .opt-1 {
+      background: #0f0e0c;
+      border: none;
+    }
+    .opt-1 a        { color: rgba(245,244,240,0.6); }
+    .opt-1 a:hover  { color: var(--bg); background: rgba(255,255,255,0.1); }
+    .opt-1 .current { color: var(--bg); }
+
+    /* ── OPTION 1B — #585858 dark ── */
+    .opt-1b {
+      background: #585858;
+      border: none;
+    }
+    .opt-1b a        { color: rgba(245,244,240,0.65); }
+    .opt-1b a:hover  { color: var(--bg); background: rgba(255,255,255,0.12); }
+    .opt-1b .current { color: var(--bg); }
+
+    /* ── OPTION 2 — Warm fill + 2px border ── */
+    .opt-2 {
+      background: #eceae4;
+      border: 2px solid #585858;
+      box-shadow: none;
+    }
+    .opt-2 a        { color: #585858; }
+    .opt-2 a:hover  { color: var(--bg); background: #585858; }
+    .opt-2 .current { color: var(--ink); }
+
+    /* ── OPTION 2B — bg color + 2px ink border ── */
+    .opt-2b {
+      background: var(--bg);
+      border: 2px solid #585858;
+      box-shadow: none;
+    }
+    .opt-2b a        { color: #585858; }
+    .opt-2b a:hover  { color: var(--bg); background: #585858; }
+    .opt-2b .current { color: var(--ink); }
+
+    /* ── OPTION 3 — Frosted / semi-transparent ── */
+    .opt-3 {
+      background: rgba(245,244,240,0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(245,244,240,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .opt-3 a        { color: #585858; }
+    .opt-3 a:hover  { color: var(--bg); background: #585858; }
+    .opt-3 .current { color: var(--ink); }
+
+    /* ── OPTION 4 — White + strong shadow + ink top border ── */
+    .opt-4 {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--ink);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+    }
+    .opt-4 a        { color: var(--muted); }
+    .opt-4 a:hover  { color: var(--bg); background: #585858; }
+    .opt-4 .current { color: var(--ink); }
+
+    .row {
+      display: flex;
+      gap: 3.5rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .col { display: flex; flex-direction: column; gap: 0; }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="page">
+
+  <!-- CURRENT -->
+  <div>
+    <div class="option-label">Current — white bg, faint border, soft shadow</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu current-menu">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION 1 -->
+  <div>
+    <div class="option-label">Option 1A — Near-black (#0f0e0c) inverted background</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu opt-1">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="option-label">Option 1B — Button dark gray (#585858) inverted background</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu opt-1b">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION 2 -->
+  <div>
+    <div class="option-label">Option 2A — Slightly darker warm fill + 2px #585858 border</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu opt-2">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="option-label">Option 2B — Page background color + 2px #585858 border</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu opt-2b">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION 3 -->
+  <div>
+    <div class="option-label">Option 3 — Frosted / semi-transparent with backdrop blur</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu opt-3">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION 4 -->
+  <div>
+    <div class="option-label">Option 4 — White bg + ink top border + stronger shadow</div>
+    <div class="row">
+      <div class="col">
+        <div class="topnav active">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">Projects <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="menu opt-4">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a>Sturfee AR Projects</a></li>
+            <li><a>Breach</a></li>
+            <li><a>Rainbow Blues Cat</a></li>
+            <li><a>Oculus Escape</a></li>
+            <li><a>Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/animation.js"></script>
+</body>
+</html>
