@@ -24,9 +24,10 @@
   var RIPPLE_MAX_R = 130;
   var RIPPLE_LIFE = 2000;
   var FLASH_DECAY = 0.0015;
-  var DROPLET_CHANCE = 0.2;  // probability a column-passed pixel becomes a lingering droplet
+  var DROPLET_CHANCE = 0.22;  // probability a column-passed pixel becomes a lingering droplet
   var DROPLET_ALPHA  = LEAD_DARK - (1 / 3) * (LEAD_DARK - AMB_MAX); // matches k=1 (second pixel) brightness ≈ 0.15
-  var DROPLET_HOLD   = 1500; // ms — hold at full darkness before fading begins
+  var DROPLET_EFFECTIVE_ALPHA = 0.16;
+  var DROPLET_HOLD   = 400; // ms — hold at full darkness before fading begins
 
   // click ripple zones (in px from click point)
   var RIPPLE_CLEAR_R = 4 * CELL;
@@ -124,7 +125,7 @@
     }
     for (var x = 0; x < cols; x++) {
       var colY = positions[x];
-      columns.push({ y: colY, speed: randSpeed(), lastWasDroplet: false });
+      columns.push({ y: colY, speed: randSpeed(), lastWasDroplet: false, lastRow: Math.floor(colY) });
       for (var k = 0; k < TRAIL_LEN; k++) {
         var gy = Math.floor(colY) - k;
         if (gy < 0 || gy >= rows) continue;
@@ -347,23 +348,25 @@
         // col.y = -5 - Math.random() * 20;
         col.speed = randSpeed();
         col.lastWasDroplet = false;
+        col.lastRow = Math.floor(col.y);
       }
-      var fromY = Math.floor(prevY), toY = Math.floor(col.y);
-      for (var gy = fromY; gy <= toY; gy++) {
+      var toY = Math.floor(col.y);
+      for (var gy = col.lastRow + 1; gy <= toY; gy++) {
         if (gy < 0 || gy >= rows) continue;
         var p = grid[x * rows + gy];
         if (!p) continue;
 
         if (!col.lastWasDroplet && Math.random() < DROPLET_CHANCE) {
           var speedNorm = (col.speed - 0.003) / 0.007; // 0 = slowest, 1 = fastest
-          var minLife = 6000 - speedNorm * 2000; // slow: 6000ms min, fast: 4000ms min
-          p.flashAlpha = DROPLET_ALPHA; p.dropletBorn = now; p.dropletLife = minLife + Math.random() * (8000 - minLife); p.seededArmed = false; p.rippleAlpha = 0; p.state = 'droplet';
+          var minLife = 1800;
+          p.flashAlpha = DROPLET_ALPHA; p.dropletBorn = now; p.dropletLife = minLife + Math.random() * (4600 - minLife); p.dropletTarget = randAmbient(); p.seededArmed = false; p.rippleAlpha = 0; p.state = 'droplet';
           col.lastWasDroplet = true;
         } else {
           p.seededDark = randAmbient(); p.seededArmed = true;
           p.flashAlpha = LEAD_DARK; p.rippleAlpha = 0; p.state = 'flashing';
           col.lastWasDroplet = false;
         }
+        col.lastRow = gy;
       }
     }
   }
@@ -444,11 +447,12 @@
       if (p.state === 'droplet') {
         var fadeElapsed = Math.max(0, now - p.dropletBorn - DROPLET_HOLD);
         var progress = Math.min(1, fadeElapsed / (p.dropletLife - DROPLET_HOLD));
-        p.flashAlpha = DROPLET_ALPHA * (1 - progress * progress * progress * progress); // power 4: stays dark for most of lifetime, fades sharply near end
-        if (p.flashAlpha <= AMB_MIN) {
-          p.ambMin = AMB_MIN;
-          p.ambMax = AMB_MIN + Math.random() * (AMB_MAX - AMB_MIN);
-          p.phase = -Math.PI / 2 - t * p.speed; // start oscillation at its minimum so darkness = ambMin, no jump
+        p.flashAlpha = p.dropletTarget + (DROPLET_EFFECTIVE_ALPHA - p.dropletTarget) * (1 - Math.pow(progress, 1.5));
+        if (progress >= 1) {
+          p.ambMin = Math.max(AMB_MIN, p.dropletTarget - 0.015);
+          p.ambMax = Math.min(AMB_MAX, p.dropletTarget + 0.015);
+          var waveFrac = Math.max(0, Math.min(1, (p.dropletTarget - p.ambMin) / (p.ambMax - p.ambMin)));
+          p.phase = Math.asin(2 * waveFrac - 1) - t * p.speed;
           p.state = 'ambient';
         } else {
           ctx.fillStyle = fillColor(p.flashAlpha);
