@@ -187,7 +187,7 @@ header h1 {
   color: var(--ink);
   margin-bottom: 1.25rem;
   padding-bottom: 0.15rem;
-  border-bottom: 2.5px solid #0f0e0c;
+  border-bottom: 2.5px solid #49453c;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
   text-align: center;
