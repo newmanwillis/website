@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top Nav Menu Font Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Inter:wght@400;500;600;700&family=Figtree:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --ink: #0f0e0c;
+      --muted: #8a8880;
+      --border: #dedad2;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    .option-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 1rem;
+    }
+
+    /* Shared nav shell — same as real site */
+    .topnav {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding-right: 1.1rem;
+      border-bottom: 2px solid #585858;
+      width: 480px;
+    }
+
+    .topnav-home {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: #6b6358;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem 0.65rem;
+      border-radius: 5px 5px 0 0;
+      border: 2px solid #6e6e6e;
+      border-bottom: none;
+    }
+
+    .projects-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #585858;
+      border: 2px solid #585858;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      padding: 0.3rem 0.6rem 0.65rem;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      color: var(--bg);
+    }
+
+    .projects-btn svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; fill: none;
+      stroke-width: 3.5;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Dropdown shell */
+    .menu {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 0.35rem 0;
+      width: 210px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+      margin-top: 2px;
+    }
+
+    .menu ul { list-style: none; }
+
+    /* ── Font variants ── */
+
+    /* Current: DM Sans, inherits body */
+    .v-current .item       { display: block; padding: 0.45rem 1rem; color: #585858; font-size: 1.05rem; letter-spacing: 0.01em; }
+    .v-current .item:hover { background: #585858; color: var(--bg); }
+    .v-current .current    { display: block; padding: 0.45rem 1rem; color: var(--ink); font-weight: 600; font-size: 1.05rem; }
+
+    /* A: Sora — matches the nav buttons */
+    .v-a .item       { display: block; padding: 0.45rem 1rem; color: #585858; font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.02em; }
+    .v-a .item:hover { background: #585858; color: var(--bg); }
+    .v-a .current    { display: block; padding: 0.45rem 1rem; color: var(--ink); font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; }
+
+    /* B: Inter 500 — matches new project-category */
+    .v-b .item       { display: block; padding: 0.45rem 1rem; color: #585858; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.01em; }
+    .v-b .item:hover { background: #585858; color: var(--bg); }
+    .v-b .current    { display: block; padding: 0.45rem 1rem; color: var(--ink); font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; }
+
+    /* C: Inter 600, slightly smaller, tighter tracking */
+    .v-c .item       { display: block; padding: 0.45rem 1rem; color: #585858; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.03em; }
+    .v-c .item:hover { background: #585858; color: var(--bg); }
+    .v-c .current    { display: block; padding: 0.45rem 1rem; color: var(--ink); font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.03em; }
+
+    /* D: Figtree — used in card titles, friendly feel */
+    .v-d .item       { display: block; padding: 0.45rem 1rem; color: #585858; font-family: 'Figtree', sans-serif; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.01em; }
+    .v-d .item:hover { background: #585858; color: var(--bg); }
+    .v-d .current    { display: block; padding: 0.45rem 1rem; color: var(--ink); font-family: 'Figtree', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; }
+
+    /* E: DM Sans 500, smaller, tighter — more refined than current */
+    .v-e .item       { display: block; padding: 0.4rem 1rem; color: #585858; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em; }
+    .v-e .item:hover { background: #585858; color: var(--bg); }
+    .v-e .current    { display: block; padding: 0.4rem 1rem; color: var(--ink); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; }
+
+    .nav-row {
+      display: flex;
+      gap: 3rem;
+      align-items: flex-start;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURRENT -->
+  <div>
+    <div class="option-label">Current — DM Sans, 1.05rem, weight 400</div>
+    <div class="nav-row">
+      <div>
+        <div class="topnav">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">
+            Projects
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="menu">
+          <ul>
+            <span class="v-current current">Google Robotics UI</span>
+            <li><a class="v-current item">Sturfee AR Projects</a></li>
+            <li><a class="v-current item">Breach</a></li>
+            <li><a class="v-current item">Rainbow Blues Cat</a></li>
+            <li><a class="v-current item">Oculus Escape</a></li>
+            <li><a class="v-current item">Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION A -->
+  <div>
+    <div class="option-label">Option A — Sora 600 (matches nav buttons), 0.9rem</div>
+    <div class="nav-row">
+      <div>
+        <div class="topnav">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">
+            Projects
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="menu v-a">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a class="item">Sturfee AR Projects</a></li>
+            <li><a class="item">Breach</a></li>
+            <li><a class="item">Rainbow Blues Cat</a></li>
+            <li><a class="item">Oculus Escape</a></li>
+            <li><a class="item">Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div>
+    <div class="option-label">Option B — Inter 500, 0.95rem (matches project-category font)</div>
+    <div class="nav-row">
+      <div>
+        <div class="topnav">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">
+            Projects
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="menu v-b">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a class="item">Sturfee AR Projects</a></li>
+            <li><a class="item">Breach</a></li>
+            <li><a class="item">Rainbow Blues Cat</a></li>
+            <li><a class="item">Oculus Escape</a></li>
+            <li><a class="item">Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div>
+    <div class="option-label">Option C — Inter 600, 0.88rem, slight tracking</div>
+    <div class="nav-row">
+      <div>
+        <div class="topnav">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">
+            Projects
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="menu v-c">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a class="item">Sturfee AR Projects</a></li>
+            <li><a class="item">Breach</a></li>
+            <li><a class="item">Rainbow Blues Cat</a></li>
+            <li><a class="item">Oculus Escape</a></li>
+            <li><a class="item">Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION D -->
+  <div>
+    <div class="option-label">Option D — Figtree 500, 0.95rem (matches card titles)</div>
+    <div class="nav-row">
+      <div>
+        <div class="topnav">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">
+            Projects
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="menu v-d">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a class="item">Sturfee AR Projects</a></li>
+            <li><a class="item">Breach</a></li>
+            <li><a class="item">Rainbow Blues Cat</a></li>
+            <li><a class="item">Oculus Escape</a></li>
+            <li><a class="item">Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION E -->
+  <div>
+    <div class="option-label">Option E — DM Sans 500, 0.9rem, tighter (refined current)</div>
+    <div class="nav-row">
+      <div>
+        <div class="topnav">
+          <a class="topnav-home">Home</a>
+          <div class="projects-btn">
+            Projects
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="menu v-e">
+          <ul>
+            <span class="current">Google Robotics UI</span>
+            <li><a class="item">Sturfee AR Projects</a></li>
+            <li><a class="item">Breach</a></li>
+            <li><a class="item">Rainbow Blues Cat</a></li>
+            <li><a class="item">Oculus Escape</a></li>
+            <li><a class="item">Dead Week</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
