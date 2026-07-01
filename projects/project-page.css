@@ -272,7 +272,7 @@ body:has(.lightbox-overlay.active) .back-bar {
 .topnav-menu a {
   display: block;
   padding: 0.45rem 1rem;
-  color: #585858;
+  color: var(--muted);
   text-decoration: none;
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
