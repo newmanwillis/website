@@ -1,5 +1,7 @@
 /* project-page.css — shared styles for all project detail pages */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 #bg-canvas {
@@ -320,11 +322,12 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .project-category {
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.14em;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #8a8784;
+  color: var(--muted);
   margin-bottom: 0.75rem;
 }
 
@@ -338,12 +341,11 @@ body:has(.lightbox-overlay.active) .back-bar {
 }
 
 .project-summary {
-  font-size: 1.1rem;
-  font-weight: 400;
+  font-size: 1.15rem;
+  font-weight: 500;
   color: #252320;
-  border-left: 2px solid var(--border);
-  padding-left: 1.2rem;
-  line-height: 1.7;
+  line-height: 1.55;
+  padding-left: 0.5rem;
 }
 
 .meta-row {
