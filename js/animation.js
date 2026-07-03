@@ -358,8 +358,8 @@
 
         if (!col.lastWasDroplet && Math.random() < DROPLET_CHANCE) {
           var speedNorm = (col.speed - 0.003) / 0.007; // 0 = slowest, 1 = fastest
-          var minLife = 1800;
-          p.flashAlpha = DROPLET_ALPHA; p.dropletBorn = now; p.dropletLife = minLife + Math.random() * (4600 - minLife); p.dropletTarget = randAmbient(); p.seededArmed = false; p.rippleAlpha = 0; p.state = 'droplet';
+          var minLife = 2000;
+          p.flashAlpha = DROPLET_ALPHA; p.dropletBorn = now; p.dropletLife = minLife + Math.random() * (4800 - minLife); p.dropletTarget = randAmbient(); p.seededArmed = false; p.rippleAlpha = 0; p.state = 'droplet';
           col.lastWasDroplet = true;
         } else {
           p.seededDark = randAmbient(); p.seededArmed = true;
