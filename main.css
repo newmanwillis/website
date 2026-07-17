@@ -187,12 +187,15 @@ header h1 {
   border-bottom: 2.5px solid #000;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 .section-label-tab {
   position: relative;
-  display: inline-block;
+  display: block;
+  margin-bottom: -2px;
 }
 
 .section-label-tab-shape {
