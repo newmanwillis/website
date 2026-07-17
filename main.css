@@ -90,8 +90,7 @@ body {
 header h1,
 .header-role,
 .header-bio,
-.header-contact,
-.section-label {
+.header-contact {
   text-shadow:
     0 0 4px #f5f4f0,
     0 0 4px #f5f4f0,
@@ -184,13 +183,36 @@ header h1 {
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--ink);
   margin-bottom: 1.25rem;
-  padding-bottom: 0.15rem;
-  border-bottom: 2.5px solid #49453c;
+  border-bottom: 2.5px solid #000;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.45s;
   text-align: center;
+}
+
+.section-label-tab {
+  position: relative;
+  display: inline-block;
+}
+
+.section-label-tab-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.section-label-tab-shape path {
+  fill: #000;
+}
+
+.section-label-tab-text {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 0.55rem 2.5rem 0.5rem;
+  color: #fff;
 }
 
 .project-grid {
