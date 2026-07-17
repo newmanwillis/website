@@ -122,7 +122,7 @@ header h1 {
   font-size: 1.6rem;
   font-family: 'Titillium Web', sans-serif;
   font-weight: 900;
-  color: var(--ink);
+  color: #000;
   margin-bottom: -0.3rem;
   opacity: 0;
   animation: fadeUp 0.7s ease forwards 0.25s;
@@ -132,7 +132,7 @@ header h1 {
   font-size: 1.2rem;
   font-family: 'Titillium Web', sans-serif;
   font-weight: 900;
-  color: var(--ink);
+  color: #000;
   max-width: 400px;
   margin: 0 auto 0rem;
   line-height: 1.65;
