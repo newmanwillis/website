@@ -179,7 +179,7 @@ header h1 {
 
 .section-label {
   font-family: 'Inter', sans-serif;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -211,7 +211,7 @@ header h1 {
   position: relative;
   z-index: 1;
   display: inline-block;
-  padding: 0.55rem 3.5rem 0.5rem;
+  padding: 0.15rem 4.5rem 0.03rem;
   color: #fff;
 }
 
