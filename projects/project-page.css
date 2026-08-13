@@ -1070,3 +1070,9 @@ body:has(.lightbox-overlay.active) .back-bar {
   transform: scale(1.35);
 }
 
+
+/* Current-page highlight in the Projects dropdown (2026-08): the page
+   you're on reads as the open folder — quiet warm fill, ink text. */
+.topnav-menu .current {
+  background: #eae8e1;
+}
