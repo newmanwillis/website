@@ -8,9 +8,19 @@
 // readable pixels, then crossfade column-by-column into the real text.
 // All four lines run as an overlapping top-down cascade (~1.4s total).
 //
-// Runs once per full page load, homepage only. Skipped entirely for
-// prefers-reduced-motion. Any failure or slow font load falls back to
-// simply showing the header (safety timeout below).
+// Robustness:
+//  - The header is hidden by CSS before first paint via the inline
+//    `header-intro-pending` bootstrap in index.html's <head>, so there is
+//    no flash of un-animated text on a cold load. This script takes over
+//    that hiding synchronously.
+//  - The pixel effect needs canvas pixel readback (getImageData). Firefox
+//    with resistFingerprinting / canvas-extraction blocking returns blank
+//    data, and other environments can fail in similar ways. We probe for
+//    this up front and validate every sample; if the pixel path is not
+//    usable we run a grid-flavoured stepped wipe instead, so the entrance
+//    still looks designed rather than popping in.
+//  - Skipped entirely for prefers-reduced-motion; a hard safety timeout
+//    reveals the header no matter what goes wrong.
 (function () {
   'use strict';
 
@@ -32,16 +42,28 @@
     { sel: '.header-contact', delay: 470, dur: 460 }
   ];
   var SAFETY_MS = 3600;
+  var MIN_CELLS = 4;      // fewer than this means the sample is unusable
+  var FONT_WAIT_MS = 1200; // cap on waiting for webfonts before starting
+
+  var htmlEl = document.documentElement;
+  function clearPending() { htmlEl.classList.remove('header-intro-pending'); }
 
   var header = document.querySelector('.intro-cover header');
-  if (!header) return;                                   // homepage only
-  if (document.querySelector('.page-content')) return;   // not project pages
+  if (!header || document.querySelector('.page-content')) { clearPending(); return; }
   var h1 = header.querySelector('h1');
-  if (!h1) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!h1) { clearPending(); return; }
 
-  var els = [h1].concat(LINES.map(function (l) { return header.querySelector(l.sel); }));
-  if (els.some(function (e) { return !e; })) return;
+  var lineEls = LINES.map(function (l) { return header.querySelector(l.sel); });
+  if (lineEls.some(function (e) { return !e; })) { clearPending(); return; }
+  var els = [h1].concat(lineEls);
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { clearPending(); return; }
+
+  // Take over the pre-paint hiding synchronously: add our own hidden class
+  // first, then release the bootstrap class, so nothing is ever visible
+  // in between.
+  els.forEach(function (el) { el.classList.add('intro-anim-hidden'); });
+  clearPending();
 
   var timeouts = [], rafs = [], canvases = [], finished = false;
   function later(fn, ms) { timeouts.push(setTimeout(fn, ms)); }
@@ -53,25 +75,69 @@
     timeouts.forEach(clearTimeout);
     canvases.forEach(function (c) { c.remove(); });
     els.forEach(function (el) {
-      el.classList.remove('intro-anim-hidden');
+      el.classList.remove('intro-anim-hidden', 'header-intro-wipe-x', 'header-intro-wipe-y');
       el.style.clipPath = '';
+      el.style.animationDelay = '';
     });
   }
-
-  // hide immediately (script runs before first paint at end of body)
-  els.forEach(function (el) { el.classList.add('intro-anim-hidden'); });
-  // absolute safety net: whatever happens, the header is visible
   setTimeout(revealAll, SAFETY_MS);
 
+  // Device pixel ratio, capped and used via exact integer backing sizes so
+  // fractional ratios (Windows display scaling) can never desync the
+  // row stride we index with below.
+  var DPR = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+
+  // ── canvas capability probe ──────────────────────────────────────────
+  // Returns false when pixel readback is blocked or lies (Firefox
+  // resistFingerprinting, hardened privacy modes, some embedded webviews).
+  function canvasReadbackWorks() {
+    try {
+      var c = document.createElement('canvas');
+      c.width = 8; c.height = 8;
+      var x = c.getContext('2d');
+      if (!x) return false;
+      x.fillStyle = '#000';
+      x.fillRect(0, 0, 8, 8);
+      var d = x.getImageData(0, 0, 8, 8).data;
+      var solid = 0;
+      for (var i = 3; i < d.length; i += 4) if (d[i] > 200) solid++;
+      return solid > 32; // expect all 64 opaque; allow noise-injection slack
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ── graceful fallback: grid-flavoured stepped wipe (no canvas) ────────
+  function wipeIn(el, delay, vertical) {
+    el.style.animationDelay = delay + 'ms';
+    el.classList.remove('intro-anim-hidden');
+    el.classList.add(vertical ? 'header-intro-wipe-y' : 'header-intro-wipe-x');
+    var done = function () {
+      el.classList.remove('header-intro-wipe-x', 'header-intro-wipe-y');
+      el.style.animationDelay = '';
+      el.style.clipPath = '';
+      el.removeEventListener('animationend', done);
+    };
+    el.addEventListener('animationend', done);
+    later(done, delay + 900); // belt and braces if animationend never fires
+  }
+  function runFallback() {
+    wipeIn(lineEls[0], LINES[0].delay, false);
+    wipeIn(h1, NAME_START, true);
+    wipeIn(lineEls[1], LINES[1].delay, false);
+    wipeIn(lineEls[2], LINES[2].delay, false);
+  }
+
   function makeCanvas(L, T, W, H) {
-    var dpr = window.devicePixelRatio || 1;
     var c = document.createElement('canvas');
     c.className = 'header-intro-canvas';
-    c.width = W * dpr; c.height = H * dpr;
+    c.width = Math.max(1, Math.round(W * DPR));
+    c.height = Math.max(1, Math.round(H * DPR));
     c.style.width = W + 'px'; c.style.height = H + 'px';
     c.style.left = L + 'px'; c.style.top = T + 'px';
     document.body.appendChild(c);
-    c.getContext('2d').scale(dpr, dpr);
+    var ctx = c.getContext('2d');
+    ctx.setTransform(c.width / W, 0, 0, c.height / H, 0, 0);
     canvases.push(c);
     return c;
   }
@@ -81,14 +147,21 @@
   // sampled cells land exactly on the rendered glyphs.
   function drawTextUnit(o, el, x, y, wdt, hgt) {
     var cs = getComputedStyle(el);
-    o.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-    if ('letterSpacing' in o) o.letterSpacing = cs.letterSpacing;
+    var size = cs.fontSize;
+    var spec = cs.fontStyle + ' ' + cs.fontWeight + ' ' + size + ' ' + cs.fontFamily;
+    o.font = spec;
+    // If the browser rejected the shorthand, ctx.font keeps its previous
+    // value — fall back to a minimal, always-valid form.
+    if (o.font.indexOf(parseInt(size, 10)) === -1) o.font = size + ' ' + cs.fontFamily;
+    if ('letterSpacing' in o) {
+      try { o.letterSpacing = cs.letterSpacing; } catch (e) {}
+    }
     o.textAlign = 'center';
     o.textBaseline = 'alphabetic';
     var text = el.textContent.trim().replace(/\s+/g, ' ');
     var m = o.measureText(text);
-    var fasc = m.fontBoundingBoxAscent || parseFloat(cs.fontSize) * 0.8;
-    var fdesc = m.fontBoundingBoxDescent || parseFloat(cs.fontSize) * 0.2;
+    var fasc = m.fontBoundingBoxAscent || m.actualBoundingBoxAscent || parseFloat(size) * 0.8;
+    var fdesc = m.fontBoundingBoxDescent || m.actualBoundingBoxDescent || parseFloat(size) * 0.2;
     o.fillText(text, x + wdt / 2, y + (hgt - (fasc + fdesc)) / 2 + fasc);
   }
 
@@ -101,27 +174,34 @@
              H: Math.ceil((r.bottom + sy) / CELL) * CELL - T };
   }
 
+  // Offscreen surface with integer backing size; sx/sy are the exact
+  // device-pixels-per-CSS-pixel factors actually in effect.
   function offscreen(W, H) {
-    var dpr = window.devicePixelRatio || 1;
     var off = document.createElement('canvas');
-    off.width = W * dpr; off.height = H * dpr;
+    var pw = Math.max(1, Math.round(W * DPR)), ph = Math.max(1, Math.round(H * DPR));
+    off.width = pw; off.height = ph;
     var o = off.getContext('2d');
-    o.scale(dpr, dpr);
+    o.setTransform(pw / W, 0, 0, ph / H, 0, 0);
     o.fillStyle = INK;
-    return o;
+    return { o: o, pw: pw, ph: ph, kx: pw / W, ky: ph / H };
   }
 
-  function sampleCellsFrom(o, W, H, threshold) {
-    var dpr = window.devicePixelRatio || 1;
-    var img = o.getImageData(0, 0, W * dpr, H * dpr).data;
+  function sampleCellsFrom(s, W, H, threshold) {
+    var img;
+    try {
+      img = s.o.getImageData(0, 0, s.pw, s.ph).data;
+    } catch (e) {
+      return null;
+    }
     var cells = [];
     for (var cy = 0; cy < H / CELL; cy++) {
       for (var cx = 0; cx < W / CELL; cx++) {
         var acc = 0, n = 0;
         for (var sy = 1; sy < CELL; sy += 2) {
           for (var sx = 1; sx < CELL; sx += 2) {
-            var px = ((cx * CELL + sx) * dpr) | 0, py = ((cy * CELL + sy) * dpr) | 0;
-            acc += img[(py * W * dpr + px) * 4 + 3]; n++;
+            var px = Math.min(s.pw - 1, ((cx * CELL + sx) * s.kx) | 0);
+            var py = Math.min(s.ph - 1, ((cy * CELL + sy) * s.ky) | 0);
+            acc += img[(py * s.pw + px) * 4 + 3]; n++;
           }
         }
         var a = acc / n / 255;
@@ -142,18 +222,19 @@
       units.push({ kind: 'text', el: el });
     }
     var r = el.getBoundingClientRect();
-    if (r.width < 4) return null;
+    if (r.width < 4 || r.height < 4) return null;
     var g = gridBox(r);
-    var o = offscreen(g.W, g.H);
+    var s = offscreen(g.W, g.H);
     var sx = window.scrollX, sy = window.scrollY;
     units.forEach(function (u) {
       var ur = u.el.getBoundingClientRect();
       if (ur.width <= 0) return;
       var x = ur.left + sx - g.L, y = ur.top + sy - g.T;
-      if (u.kind === 'box') o.fillRect(x, y, ur.width, ur.height);
-      else drawTextUnit(o, u.el, x, y, ur.width, ur.height);
+      if (u.kind === 'box') s.o.fillRect(x, y, ur.width, ur.height);
+      else drawTextUnit(s.o, u.el, x, y, ur.width, ur.height);
     });
-    var cells = sampleCellsFrom(o, g.W, g.H, 0.08);
+    var cells = sampleCellsFrom(s, g.W, g.H, 0.08);
+    if (!cells || cells.length < MIN_CELLS) return null;
     return { L: g.L, T: g.T, W: g.W, H: g.H, cells: cells,
              elLeft: r.left + sx, elW: r.width };
   }
@@ -161,10 +242,11 @@
   function trailReveal(el, delay, dur) {
     later(function () {
       if (finished) return;
-      var s = sampleLine(el);
+      var s = null;
+      try { s = sampleLine(el); } catch (e) { s = null; }
+      if (!s) { wipeIn(el, 0, false); return; } // graceful, still designed
       el.style.clipPath = 'inset(0 100% 0 0)';
       el.classList.remove('intro-anim-hidden');
-      if (!s || !s.cells.length) { el.style.clipPath = ''; return; }
       var canvas = makeCanvas(s.L, s.T, s.W, s.H);
       var ctx = canvas.getContext('2d');
       var span = s.W + CELL;
@@ -218,19 +300,24 @@
   // ── name: 2px base sample aggregated to 8/6/4/2px levels ──
   function sampleName() {
     var r = h1.getBoundingClientRect();
-    if (r.width < 10) return null;
+    if (r.width < 10 || r.height < 10) return null;
     var g = gridBox(r);
-    var o = offscreen(g.W, g.H);
+    var s = offscreen(g.W, g.H);
     var sx = window.scrollX, sy = window.scrollY;
-    drawTextUnit(o, h1, (r.left + sx) - g.L, (r.top + sy) - g.T, r.width, r.height);
-    var dpr = window.devicePixelRatio || 1;
-    var img = o.getImageData(0, 0, g.W * dpr, g.H * dpr).data;
+    drawTextUnit(s.o, h1, (r.left + sx) - g.L, (r.top + sy) - g.T, r.width, r.height);
+    var img;
+    try {
+      img = s.o.getImageData(0, 0, s.pw, s.ph).data;
+    } catch (e) {
+      return null;
+    }
     var c2x = g.W / 2, c2y = g.H / 2;
     var a2 = new Float32Array(c2x * c2y);
     for (var y2 = 0; y2 < c2y; y2++) {
       for (var x2 = 0; x2 < c2x; x2++) {
-        var px = ((x2 * 2 + 1) * dpr) | 0, py = ((y2 * 2 + 1) * dpr) | 0;
-        a2[y2 * c2x + x2] = img[(py * g.W * dpr + px) * 4 + 3] / 255;
+        var px = Math.min(s.pw - 1, ((x2 * 2 + 1) * s.kx) | 0);
+        var py = Math.min(s.ph - 1, ((y2 * 2 + 1) * s.ky) | 0);
+        a2[y2 * c2x + x2] = img[(py * s.pw + px) * 4 + 3] / 255;
       }
     }
     function aggregate(f) { // f = subcells (2px units) per side
@@ -252,8 +339,10 @@
       }
       return out;
     }
+    var lv8 = aggregate(4);
+    if (lv8.length < MIN_CELLS) return null;
     return { L: g.L, T: g.T, W: g.W, H: g.H,
-             lv8: aggregate(4), lv6: aggregate(3), lv4: aggregate(2), lv2: aggregate(1) };
+             lv8: lv8, lv6: aggregate(3), lv4: aggregate(2), lv2: aggregate(1) };
   }
 
   function drawLevel(ctx, s, cells, size) {
@@ -270,8 +359,9 @@
   function nameRun(delay) {
     later(function () {
       if (finished) return;
-      var s = sampleName();
-      if (!s || !s.lv8.length) { h1.classList.remove('intro-anim-hidden'); return; }
+      var s = null;
+      try { s = sampleName(); } catch (e) { s = null; }
+      if (!s) { wipeIn(h1, 0, true); return; }
       var canvas = makeCanvas(s.L, s.T, s.W, s.H);
       var ctx = canvas.getContext('2d');
       s.lv8.forEach(function (c) {
@@ -311,23 +401,42 @@
   }
 
   function play() {
+    if (!canvasReadbackWorks()) { runFallback(); return; }
     try {
-      LINES.forEach(function (l) {
-        trailReveal(header.querySelector(l.sel), l.delay, l.dur);
-      });
+      LINES.forEach(function (l, i) { trailReveal(lineEls[i], l.delay, l.dur); });
       nameRun(NAME_START);
     } catch (e) {
-      revealAll();
+      runFallback();
     }
   }
 
-  // start once fonts have settled (capped wait — never block the header)
+  // ── start once webfonts have actually settled ────────────────────────
+  // document.fonts.ready can resolve before the stylesheet's @font-face
+  // rules are known (the font CSS is a separate request), so we verify
+  // with fonts.check() and poll briefly rather than trusting it alone.
   var started = false;
   function go() { if (!started && !finished) { started = true; play(); } }
+
+  function fontsSettled() {
+    try {
+      return document.fonts.check('600 1em Teko') &&
+             document.fonts.check('700 1em Inter');
+    } catch (e) {
+      return true; // can't tell — don't block the animation
+    }
+  }
+
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(go);
-    document.fonts.load('600 1em Teko').then(go).catch(function () {});
-    setTimeout(go, 900);
+    var t0 = performance.now();
+    (function pollFonts() {
+      if (started || finished) return;
+      if (fontsSettled() || performance.now() - t0 > FONT_WAIT_MS) { go(); return; }
+      setTimeout(pollFonts, 50);
+    })();
+    document.fonts.ready.then(function () {
+      // give layout one frame to reflow with the real metrics
+      requestAnimationFrame(function () { requestAnimationFrame(go); });
+    });
   } else {
     setTimeout(go, 150);
   }

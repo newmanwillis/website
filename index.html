@@ -9,6 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Quantico:wght@400;700&family=Chakra+Petch:wght@600;700&family=Teko:wght@600;700&family=Titillium+Web:wght@300;600;700&family=Fjalla+One&family=Antonio:wght@700&family=Archivo:wght@700;800&family=Archivo+Narrow:wght@700&family=Roboto+Condensed:wght@700&family=Montserrat:wght@700;800&family=Manrope:wght@700;800&family=Merriweather:wght@700&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;600&family=Inter:wght@700;800&family=Sora:wght@600;700&family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&family=Barlow+Semi+Condensed:wght@400;600;700&family=Urbanist:wght@600;700;800&family=Figtree:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="projects/project-page.css" />
   <link rel="stylesheet" href="main.css" />
+
+  <!-- Hide the header before first paint so js/header-intro.js can animate
+       it in without a flash. Only runs when JS is on and motion is allowed;
+       clears itself if the intro script never loads. -->
+  <script>
+    (function () {
+      try {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var d = document.documentElement;
+        d.className += (d.className ? ' ' : '') + 'header-intro-pending';
+        setTimeout(function () { d.classList.remove('header-intro-pending'); }, 3000);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 

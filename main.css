@@ -445,6 +445,17 @@ header h1,
   opacity: 1;
 }
 
+/* Pre-paint hiding: an inline bootstrap in index.html's <head> adds
+   .header-intro-pending to <html> before anything is painted, so the
+   header never flashes un-animated on a cold load. js/header-intro.js
+   takes over (or the bootstrap's own failsafe clears it). */
+.header-intro-pending .intro-cover header h1,
+.header-intro-pending .intro-cover header .header-role,
+.header-intro-pending .intro-cover header .header-bio,
+.header-intro-pending .intro-cover header .header-contact {
+  visibility: hidden;
+}
+
 .intro-anim-hidden { visibility: hidden; }
 
 .header-intro-canvas {
@@ -452,6 +463,27 @@ header h1,
   z-index: 5;
   pointer-events: none;
   transition: opacity 0.18s ease;
+}
+
+/* Fallback entrance, used when canvas pixel readback is unavailable
+   (e.g. Firefox with canvas-extraction blocking). A stepped wipe on the
+   same 8px rhythm, so the entrance still reads as part of the system. */
+.header-intro-wipe-x {
+  animation: introWipeX 0.42s steps(26, end) both;
+}
+
+.header-intro-wipe-y {
+  animation: introWipeY 0.55s steps(11, end) both;
+}
+
+@keyframes introWipeX {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes introWipeY {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
 }
 
 /* Project cards: two-layer shadow (contact + ambient), eased lift and
