@@ -8,11 +8,16 @@
 // readable pixels, then crossfade column-by-column into the real text.
 // All four lines run as an overlapping top-down cascade (~1.4s total).
 //
+// Runs on first load AND on client-side navigation back to the homepage:
+// js/router.js swaps #site-content in place rather than reloading, so the
+// intro re-arms on its 'navchange' event and tears down on 'navstart'
+// (this script lives outside #site-content, so it is never re-executed).
+//
 // Robustness:
 //  - The header is hidden by CSS before first paint via the inline
 //    `header-intro-pending` bootstrap in index.html's <head>, so there is
-//    no flash of un-animated text on a cold load. This script takes over
-//    that hiding synchronously.
+//    no flash of un-animated text on a cold load. On router navigation the
+//    hide happens synchronously in the navchange handler, before paint.
 //  - The pixel effect needs canvas pixel readback (getImageData). Firefox
 //    with resistFingerprinting / canvas-extraction blocking returns blank
 //    data, and other environments can fail in similar ways. We probe for
@@ -42,90 +47,89 @@
     { sel: '.header-contact', delay: 470, dur: 460 }
   ];
   var SAFETY_MS = 3600;
-  var MIN_CELLS = 4;      // fewer than this means the sample is unusable
-  var FONT_WAIT_MS = 1200; // cap on waiting for webfonts before starting
+  var MIN_CELLS = 4;        // fewer than this means the sample is unusable
+  var FONT_WAIT_LOAD = 1200; // cap on waiting for webfonts on a cold load
+  var FONT_WAIT_NAV = 400;   // fonts are already cached after a route change
 
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var htmlEl = document.documentElement;
   function clearPending() { htmlEl.classList.remove('header-intro-pending'); }
 
-  var header = document.querySelector('.intro-cover header');
-  if (!header || document.querySelector('.page-content')) { clearPending(); return; }
-  var h1 = header.querySelector('h1');
-  if (!h1) { clearPending(); return; }
-
-  var lineEls = LINES.map(function (l) { return header.querySelector(l.sel); });
-  if (lineEls.some(function (e) { return !e; })) { clearPending(); return; }
-  var els = [h1].concat(lineEls);
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { clearPending(); return; }
-
-  // Take over the pre-paint hiding synchronously: add our own hidden class
-  // first, then release the bootstrap class, so nothing is ever visible
-  // in between.
-  els.forEach(function (el) { el.classList.add('intro-anim-hidden'); });
-  clearPending();
-
-  var timeouts = [], rafs = [], canvases = [], finished = false;
-  function later(fn, ms) { timeouts.push(setTimeout(fn, ms)); }
-  function raf(fn) { rafs.push(requestAnimationFrame(fn)); }
-  function revealAll() {
-    if (finished) return;
-    finished = true;
-    rafs.forEach(cancelAnimationFrame);
-    timeouts.forEach(clearTimeout);
-    canvases.forEach(function (c) { c.remove(); });
-    els.forEach(function (el) {
-      el.classList.remove('intro-anim-hidden', 'header-intro-wipe-x', 'header-intro-wipe-y');
-      el.style.clipPath = '';
-      el.style.animationDelay = '';
-    });
-  }
-  setTimeout(revealAll, SAFETY_MS);
-
   // Device pixel ratio, capped and used via exact integer backing sizes so
-  // fractional ratios (Windows display scaling) can never desync the
-  // row stride we index with below.
+  // fractional ratios (Windows display scaling) can never desync the row
+  // stride we index with below.
   var DPR = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
 
-  // ── canvas capability probe ──────────────────────────────────────────
-  // Returns false when pixel readback is blocked or lies (Firefox
+  // ── canvas capability probe (computed once, cached) ──────────────────
+  // False when pixel readback is blocked or lies (Firefox
   // resistFingerprinting, hardened privacy modes, some embedded webviews).
+  var readbackOK = null;
   function canvasReadbackWorks() {
+    if (readbackOK !== null) return readbackOK;
     try {
       var c = document.createElement('canvas');
       c.width = 8; c.height = 8;
       var x = c.getContext('2d');
-      if (!x) return false;
+      if (!x) return (readbackOK = false);
       x.fillStyle = '#000';
       x.fillRect(0, 0, 8, 8);
       var d = x.getImageData(0, 0, 8, 8).data;
       var solid = 0;
       for (var i = 3; i < d.length; i += 4) if (d[i] > 200) solid++;
-      return solid > 32; // expect all 64 opaque; allow noise-injection slack
+      readbackOK = solid > 32; // expect all 64 opaque; allow noise slack
     } catch (e) {
-      return false;
+      readbackOK = false;
     }
+    return readbackOK;
   }
 
-  // ── graceful fallback: grid-flavoured stepped wipe (no canvas) ────────
-  function wipeIn(el, delay, vertical) {
-    el.style.animationDelay = delay + 'ms';
-    el.classList.remove('intro-anim-hidden');
-    el.classList.add(vertical ? 'header-intro-wipe-y' : 'header-intro-wipe-x');
-    var done = function () {
-      el.classList.remove('header-intro-wipe-x', 'header-intro-wipe-y');
-      el.style.animationDelay = '';
+  // ── per-run state ────────────────────────────────────────────────────
+  // A "run" is one playthrough of the intro for one set of header
+  // elements. Router navigation tears the current run down and starts a
+  // fresh one, so nothing from a previous page can leak forward.
+  var R = null;
+
+  function teardown() {
+    if (!R) return;
+    R.finished = true;
+    R.rafs.forEach(cancelAnimationFrame);
+    R.timeouts.forEach(clearTimeout);
+    R.canvases.forEach(function (c) { c.remove(); });
+    // Any element still in the document gets restored to a visible,
+    // un-styled state. (After a route swap the old nodes are detached,
+    // which is harmless.)
+    R.els.forEach(function (el) {
+      el.classList.remove('intro-anim-hidden', 'header-intro-wipe-x', 'header-intro-wipe-y');
       el.style.clipPath = '';
-      el.removeEventListener('animationend', done);
-    };
-    el.addEventListener('animationend', done);
-    later(done, delay + 900); // belt and braces if animationend never fires
+      el.style.animationDelay = '';
+    });
+    if (R.safety) clearTimeout(R.safety);
+    R = null;
   }
-  function runFallback() {
-    wipeIn(lineEls[0], LINES[0].delay, false);
-    wipeIn(h1, NAME_START, true);
-    wipeIn(lineEls[1], LINES[1].delay, false);
-    wipeIn(lineEls[2], LINES[2].delay, false);
+
+  // Belt-and-braces: remove any canvas this script ever created, even if
+  // its run object was already discarded.
+  function sweepStrayCanvases() {
+    document.querySelectorAll('.header-intro-canvas').forEach(function (c) { c.remove(); });
+  }
+
+  function later(fn, ms) { var r = R; r.timeouts.push(setTimeout(function () {
+    if (r.finished) return; fn();
+  }, ms)); }
+  function raf(fn) { var r = R; r.rafs.push(requestAnimationFrame(function (t) {
+    if (r.finished) return; fn(t);
+  })); }
+
+  // ── DOM lookup ───────────────────────────────────────────────────────
+  function collect() {
+    var header = document.querySelector('.intro-cover header');
+    if (!header) return null;
+    if (document.querySelector('.page-content')) return null; // project page
+    var h1 = header.querySelector('h1');
+    if (!h1) return null;
+    var lineEls = LINES.map(function (l) { return header.querySelector(l.sel); });
+    if (lineEls.some(function (e) { return !e; })) return null;
+    return { header: header, h1: h1, lineEls: lineEls, els: [h1].concat(lineEls) };
   }
 
   function makeCanvas(L, T, W, H) {
@@ -138,7 +142,7 @@
     document.body.appendChild(c);
     var ctx = c.getContext('2d');
     ctx.setTransform(c.width / W, 0, 0, c.height / H, 0, 0);
-    canvases.push(c);
+    R.canvases.push(c);
     return c;
   }
 
@@ -148,8 +152,7 @@
   function drawTextUnit(o, el, x, y, wdt, hgt) {
     var cs = getComputedStyle(el);
     var size = cs.fontSize;
-    var spec = cs.fontStyle + ' ' + cs.fontWeight + ' ' + size + ' ' + cs.fontFamily;
-    o.font = spec;
+    o.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + size + ' ' + cs.fontFamily;
     // If the browser rejected the shorthand, ctx.font keeps its previous
     // value — fall back to a minimal, always-valid form.
     if (o.font.indexOf(parseInt(size, 10)) === -1) o.font = size + ' ' + cs.fontFamily;
@@ -174,7 +177,7 @@
              H: Math.ceil((r.bottom + sy) / CELL) * CELL - T };
   }
 
-  // Offscreen surface with integer backing size; sx/sy are the exact
+  // Offscreen surface with integer backing size; kx/ky are the exact
   // device-pixels-per-CSS-pixel factors actually in effect.
   function offscreen(W, H) {
     var off = document.createElement('canvas');
@@ -211,6 +214,28 @@
     return cells;
   }
 
+  // ── graceful fallback: grid-flavoured stepped wipe (no canvas) ────────
+  function wipeIn(el, delay, vertical) {
+    el.style.animationDelay = delay + 'ms';
+    el.classList.remove('intro-anim-hidden');
+    el.classList.add(vertical ? 'header-intro-wipe-y' : 'header-intro-wipe-x');
+    var done = function () {
+      el.classList.remove('header-intro-wipe-x', 'header-intro-wipe-y');
+      el.style.animationDelay = '';
+      el.style.clipPath = '';
+      el.removeEventListener('animationend', done);
+    };
+    el.addEventListener('animationend', done);
+    later(done, delay + 900); // if animationend never fires
+  }
+
+  function runFallback() {
+    wipeIn(R.lineEls[0], LINES[0].delay, false);
+    wipeIn(R.h1, NAME_START, true);
+    wipeIn(R.lineEls[1], LINES[1].delay, false);
+    wipeIn(R.lineEls[2], LINES[2].delay, false);
+  }
+
   // ── supporting lines: trailing pixel front, dwell, column crossfade ──
   function sampleLine(el) {
     var isContact = el.classList.contains('header-contact');
@@ -241,7 +266,6 @@
 
   function trailReveal(el, delay, dur) {
     later(function () {
-      if (finished) return;
       var s = null;
       try { s = sampleLine(el); } catch (e) { s = null; }
       if (!s) { wipeIn(el, 0, false); return; } // graceful, still designed
@@ -256,7 +280,6 @@
       var total = dur + RAMP_IN + DWELL + RAMP_OUT + 100;
       var t0 = performance.now();
       function frame(now) {
-        if (finished) return;
         var t = now - t0;
         // crisp text is revealed DWELL+RAMP_IN ms behind the pixel front
         var frontReveal = ((t - DWELL - RAMP_IN) / dur) * span;
@@ -277,10 +300,10 @@
           var e = p * p;
           var amb = Math.min(0.11, p * 0.9);
           var alpha = amb + Math.max(0, c.a - 0.11) * e;
-          var R = Math.round(BG_R + (INK_R - BG_R) * e);
-          var G = Math.round(BG_G + (INK_G - BG_G) * e);
-          var B = Math.round(BG_B + (INK_B - BG_B) * e);
-          ctx.fillStyle = 'rgb(' + R + ',' + G + ',' + B + ')';
+          var Rc = Math.round(BG_R + (INK_R - BG_R) * e);
+          var Gc = Math.round(BG_G + (INK_G - BG_G) * e);
+          var Bc = Math.round(BG_B + (INK_B - BG_B) * e);
+          ctx.fillStyle = 'rgb(' + Rc + ',' + Gc + ',' + Bc + ')';
           ctx.globalAlpha = alpha * aOut;
           ctx.fillRect(c.x, c.y, CELL - 1, CELL - 1);
         }
@@ -298,7 +321,7 @@
   }
 
   // ── name: 2px base sample aggregated to 8/6/4/2px levels ──
-  function sampleName() {
+  function sampleName(h1) {
     var r = h1.getBoundingClientRect();
     if (r.width < 10 || r.height < 10) return null;
     var g = gridBox(r);
@@ -358,9 +381,9 @@
 
   function nameRun(delay) {
     later(function () {
-      if (finished) return;
+      var h1 = R.h1;
       var s = null;
-      try { s = sampleName(); } catch (e) { s = null; }
+      try { s = sampleName(h1); } catch (e) { s = null; }
       if (!s) { wipeIn(h1, 0, true); return; }
       var canvas = makeCanvas(s.L, s.T, s.W, s.H);
       var ctx = canvas.getContext('2d');
@@ -370,7 +393,6 @@
       var buildTotal = SWEEP + JITTER + RAMP;
       var t0 = performance.now();
       function frame(now) {
-        if (finished) return;
         var el = now - t0;
         ctx.clearRect(0, 0, s.W, s.H);
         ctx.fillStyle = INK;
@@ -403,20 +425,17 @@
   function play() {
     if (!canvasReadbackWorks()) { runFallback(); return; }
     try {
-      LINES.forEach(function (l, i) { trailReveal(lineEls[i], l.delay, l.dur); });
+      LINES.forEach(function (l, i) { trailReveal(R.lineEls[i], l.delay, l.dur); });
       nameRun(NAME_START);
     } catch (e) {
       runFallback();
     }
   }
 
-  // ── start once webfonts have actually settled ────────────────────────
+  // ── webfont readiness ────────────────────────────────────────────────
   // document.fonts.ready can resolve before the stylesheet's @font-face
   // rules are known (the font CSS is a separate request), so we verify
   // with fonts.check() and poll briefly rather than trusting it alone.
-  var started = false;
-  function go() { if (!started && !finished) { started = true; play(); } }
-
   function fontsSettled() {
     try {
       return document.fonts.check('600 1em Teko') &&
@@ -426,18 +445,78 @@
     }
   }
 
-  if (document.fonts && document.fonts.ready) {
-    var t0 = performance.now();
-    (function pollFonts() {
-      if (started || finished) return;
-      if (fontsSettled() || performance.now() - t0 > FONT_WAIT_MS) { go(); return; }
-      setTimeout(pollFonts, 50);
-    })();
-    document.fonts.ready.then(function () {
-      // give layout one frame to reflow with the real metrics
-      requestAnimationFrame(function () { requestAnimationFrame(go); });
-    });
-  } else {
-    setTimeout(go, 150);
+  // ── run lifecycle ────────────────────────────────────────────────────
+  // `ctx` must already be collected and its elements already hidden.
+  function beginRun(ctx, fontWaitMs) {
+    R = { timeouts: [], rafs: [], canvases: [], finished: false,
+          header: ctx.header, h1: ctx.h1, lineEls: ctx.lineEls, els: ctx.els,
+          safety: null };
+    var mine = R;
+    mine.safety = setTimeout(function () { if (R === mine) teardown(); }, SAFETY_MS);
+
+    var started = false;
+    function go() {
+      if (started || R !== mine || mine.finished) return;
+      started = true;
+      // let layout settle (matters after a router content swap)
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          if (R !== mine || mine.finished) return;
+          play();
+        });
+      });
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      var t0 = performance.now();
+      (function pollFonts() {
+        if (started || R !== mine || mine.finished) return;
+        if (fontsSettled() || performance.now() - t0 > fontWaitMs) { go(); return; }
+        setTimeout(pollFonts, 50);
+      })();
+      document.fonts.ready.then(go);
+    } else {
+      setTimeout(go, 150);
+    }
   }
+
+  function hide(ctx) {
+    ctx.els.forEach(function (el) { el.classList.add('intro-anim-hidden'); });
+  }
+
+  // ── initial page load ────────────────────────────────────────────────
+  var initial = reduced ? null : collect();
+  if (initial) {
+    // Take over the pre-paint hiding synchronously: add our own hidden
+    // class first, then release the bootstrap class, so nothing is ever
+    // visible in between.
+    hide(initial);
+    clearPending();
+    beginRun(initial, FONT_WAIT_LOAD);
+  } else {
+    clearPending();
+  }
+
+  // ── client-side navigation (js/router.js) ────────────────────────────
+  // navstart fires before #site-content is replaced: stop any in-flight
+  // run so its canvases (which live on <body>, outside the swapped
+  // container) can't be orphaned onto the next page.
+  window.addEventListener('navstart', function () {
+    teardown();
+    sweepStrayCanvases();
+  });
+
+  // navchange fires immediately after the swap, in the same task — hiding
+  // here is synchronous and therefore happens before the browser paints,
+  // so the header never flashes un-animated.
+  window.addEventListener('navchange', function () {
+    teardown();
+    sweepStrayCanvases();
+    clearPending();
+    if (reduced) return;
+    var ctx = collect();
+    if (!ctx) return;          // navigated to a project page
+    hide(ctx);
+    beginRun(ctx, FONT_WAIT_NAV);
+  });
 })();
