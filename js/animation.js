@@ -1,13 +1,26 @@
 (function() {
   var canvasEl = document.getElementById('bg-canvas');
   if (!canvasEl) return;
+  // The canvas is `position:fixed; width:100%; height:100%`, so its CSS box is
+  // the document's client box, which EXCLUDES a classic scrollbar --
+  // window.innerWidth includes it. Sizing the backing store from innerWidth
+  // squeezes the drawing horizontally by the scrollbar width: no error at x=0,
+  // the full width of it at the right edge of the screen.
+  function viewW() { return document.documentElement.clientWidth || window.innerWidth; }
+  function viewH() { return document.documentElement.clientHeight || window.innerHeight; }
+
   var dpr = window.devicePixelRatio || 1;
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-  canvasEl.width = w * dpr;
-  canvasEl.height = h * dpr;
+  var w = viewW();
+  var h = viewH();
   var ctx = canvasEl.getContext('2d');
-  ctx.scale(dpr, dpr);
+  function sizeCanvas() {
+    // Integer backing store, then a transform derived from it rather than from
+    // dpr, so a fractional device-pixel ratio can't stretch the drawing either.
+    canvasEl.width  = Math.round(w * dpr);
+    canvasEl.height = Math.round(h * dpr);
+    ctx.setTransform(canvasEl.width / w, 0, 0, canvasEl.height / h, 0, 0);
+  }
+  sizeCanvas();
 
   var INTERACTIVE = false; // change to true to enable mouse/click effects
 
@@ -388,19 +401,22 @@
       }
       return;
     }
-    var vw = window.innerWidth;
-    var maxW   = Math.min(vw, Math.min(1200, Math.max(1020, vw * 0.68)));
-    var contentL = (vw - maxW) / 2;
-    var contentR = contentL + maxW;
+    // Measure the panel instead of recomputing its width. --max is
+    // `clamp(1020px, 68vw, 1200px)` and vw units include the scrollbar, but the
+    // element is centred in the client box, which excludes it -- so the two
+    // bases disagree by half a scrollbar and any recomputed edge drifts.
+    var rect = content.getBoundingClientRect();
+    var contentL = rect.left;
+    var contentR = rect.right;
     var newEdgeL = Math.floor(contentL / CELL);
     var newEdgeR = Math.ceil(contentR / CELL);
-    if (newEdgeL === fadeEdgeL && newEdgeR === fadeEdgeR) return;
+    var cLeft  = newEdgeL * CELL - contentL;
+    var cRight = contentR - newEdgeR * CELL;
+    var css = '.page-content::before{left:' + cLeft + 'px!important;right:' + cRight + 'px!important}';
+    if (panelStyle && panelStyle.textContent === css) return;
     fadeEdgeL = newEdgeL; fadeEdgeR = newEdgeR;
-    var cLeft  = fadeEdgeL * CELL - contentL;
-    var cRight = contentR - fadeEdgeR * CELL;
     if (!panelStyle) { panelStyle = document.createElement('style'); document.head.appendChild(panelStyle); }
-    panelStyle.textContent =
-      '.page-content::before{left:' + cLeft + 'px!important;right:' + cRight + 'px!important}';
+    panelStyle.textContent = css;
   }
 
   var paused = false;
@@ -510,7 +526,10 @@
     }
 
     // stepped column fade at panel edges
-    if (fadeEdgeL >= 0 && fadeEdgeR >= 0) {
+    // Suppressed while page-transition.js owns the cover: it paints its own
+    // matching feathered edges, and drawing both stacks two translucent
+    // layers on the same columns, which pops when the stand-in is removed.
+    if (fadeEdgeL >= 0 && fadeEdgeR >= 0 && !window.__ptCover) {
       var navAlpha = navStartTime >= 0 ? Math.max(0, 1 - (now - navStartTime) / 180) : 1;
       var fadeAlphas = [0.2, 0.4, 0.6, 0.8]; // outer → inner
       ctx.fillStyle = '#f5f4f0';
@@ -523,17 +542,17 @@
     }
   }
 
-  var start = null, lastT = 0;
+  var start = null, lastT = 0, lastAlign = -1e9;
   function frame(ts) {
-    var vw = window.innerWidth, vh = window.innerHeight;
+    var vw = viewW(), vh = viewH();
     var newDpr = window.devicePixelRatio || 1;
     if (canvasEl.width !== Math.round(vw * newDpr) || canvasEl.height !== Math.round(vh * newDpr)) {
-      dpr = newDpr;
-      canvasEl.width = vw * dpr;
-      canvasEl.height = vh * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dpr = newDpr; w = vw; h = vh;
+      sizeCanvas();
     }
-    alignPanels();
+    // A scrollbar appearing changes the client box without firing `resize`, so
+    // the panel is re-measured periodically rather than only on layout events.
+    if (ts - lastAlign > 200) { lastAlign = ts; alignPanels(); }
     if (!paused) {
       if (!start) { start = ts; lastT = ts; }
       var t = ts - start;
@@ -545,8 +564,10 @@
   }
 
   window.addEventListener('resize', function() {
-    var newW = window.innerWidth, newH = window.innerHeight;
-    if (Math.abs(newW - w) <= 30 && Math.abs(newH - h) <= 30) return;
+    var newW = viewW(), newH = viewH();
+    // Any width change re-lays out the grid. The 30px dead zone exists only to
+    // ignore the mobile URL bar sliding in and out, which is a height change.
+    if (newW === w && Math.abs(newH - h) <= 30) return;
     w = newW; h = newH;
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(initGrid, 150);
