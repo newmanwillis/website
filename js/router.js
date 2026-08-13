@@ -35,13 +35,23 @@
     el.style.opacity = '0';
     await new Promise(function (r) { setTimeout(r, 180); });
 
+    // Update the document URL BEFORE injecting the new markup. Relative
+    // URLs inside it (card thumbnails, links) are resolved against the
+    // document's URL at the moment the elements are parsed in, so if the
+    // URL still pointed at the page we're leaving, a homepage thumbnail
+    // like "images/foo.jpg" would resolve to "/projects/images/foo.jpg".
+    // Firefox fetches images eagerly during parsing and 404s on that;
+    // Chrome happens to defer the fetch until after the URL changes, which
+    // masked the bug. (popstate navigations pass pushState=false — the
+    // browser has already updated the URL by the time we run.)
+    if (pushState) history.pushState({ url: url }, doc.title, url);
+
     el.innerHTML = newContent.innerHTML;
     document.title = doc.title;
     window.scrollTo(0, 0);
     runScripts(el);
 
     el.style.opacity = '1';
-    if (pushState) history.pushState({ url: url }, doc.title, url);
     window.dispatchEvent(new CustomEvent('navchange'));
   }
 
