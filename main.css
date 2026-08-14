@@ -546,22 +546,13 @@ header h1,
 /* ── PAGE TRANSITION ──
    Stand-in for the project pages' .page-content::before panel, used while the
    real one is being swapped in or out. Sits below the content layer, above the
-   background canvas. Its stepped edge columns mirror the feathering
-   animation.js paints, so the hand-off is a straight swap. */
+   background canvas. page-transition.js draws the panel and its feathered edge
+   columns onto it cell by cell, on the same 8px grid as the background. */
 #pt-cover {
   position: fixed;
-  top: 0; bottom: 0;
-  left: 0;
-  width: 0;
-  background: #f5f4f0;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 1;
   pointer-events: none;
   display: none;
-  will-change: width;
-}
-
-#pt-cover .pt-step {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 8px;
 }
