@@ -7,6 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;600&family=Figtree:wght@600;700&family=Inter:wght@700;800&family=Teko:wght@600;700&display=swap" rel="stylesheet" />
+  <!-- The router swaps a project page's markup into THIS document, so the
+       project page's own <head> never applies. These are the families
+       projects/project-page.css needs that the request above doesn't carry:
+       Archivo (.project-title, .block-text h2), Sora (the folder tabs),
+       Syne (.meta-value). Kept as a SEPARATE request on purpose -- folding
+       them into the line above is what broke Teko in Chrome. -->
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Sora:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="projects/project-page.css" />
   <link rel="stylesheet" href="main.css" />
 
