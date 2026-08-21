@@ -6,8 +6,23 @@
   // window.innerWidth includes it. Sizing the backing store from innerWidth
   // squeezes the drawing horizontally by the scrollbar width: no error at x=0,
   // the full width of it at the right edge of the screen.
-  function viewW() { return document.documentElement.clientWidth || window.innerWidth; }
-  function viewH() { return document.documentElement.clientHeight || window.innerHeight; }
+  // Measure the canvas's OWN box rather than the document client box. This
+  // canvas is `position:fixed; width:100%`, so its containing block is the
+  // initial containing block -- and mobile browsers WIDEN that block when
+  // anything on the page overflows sideways. Sizing the backing store from
+  // clientWidth then stretches the whole 8px grid across the bigger box (on a
+  // 320px screen: an 8.8px pitch, drifting further out the further right you
+  // look), which pulls the background off the header intro's true 8px grid.
+  // On desktop the two are the same number, scrollbar or not.
+  // Falls back to the client box before first layout, when the rect is 0.
+  function viewW() {
+    var r = canvasEl.getBoundingClientRect();
+    return Math.round(r.width) || document.documentElement.clientWidth || window.innerWidth;
+  }
+  function viewH() {
+    var r = canvasEl.getBoundingClientRect();
+    return Math.round(r.height) || document.documentElement.clientHeight || window.innerHeight;
+  }
 
   var dpr = window.devicePixelRatio || 1;
   var w = viewW();

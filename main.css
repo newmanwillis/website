@@ -542,6 +542,29 @@ header h1,
   header { padding: 3rem 1.5rem 1.8rem; }
 }
 
+/* The contact line is one no-wrap row about 26.2x its own font-size wide, so at
+   the desktop size it overflows the header on every phone -- and below ~375px
+   it spills past the viewport, which widens the initial containing block and
+   drags #bg-canvas off its 8px grid.
+
+   Scale the font with the header instead. cqw resolves against the header's
+   content box, and container-type guarantees that box can't be widened by its
+   own contents -- so unlike vw there's no feedback loop with the overflow this
+   is fixing (vw follows the widened block). gap in em keeps the line's
+   proportions as it scales. 3.63cqw = width / 27.5, ~5% of slack over the
+   measured 26.2x for cross-engine metric differences. Scoped to the media
+   query so nothing here exists at desktop widths at all. */
+@media (max-width: 440px) {
+  header { container-type: inline-size; }
+
+  .header-contact {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    font-size: min(0.97rem, 3.63cqw);
+    gap: 0.62em;
+  }
+}
+
 
 /* ── PAGE TRANSITION ──
    Stand-in for the project pages' .page-content::before panel, used while the
